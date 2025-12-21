@@ -1,0 +1,31 @@
+from fastapi import FastAPI
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.interval import IntervalTrigger
+from scheduler.singbox_scheduler import singbox_scheduler
+from api.routes import api_router
+import atexit
+
+app = FastAPI(title="Lightweight API Backend")
+
+# 挂载API路由，以/api为前缀
+app.include_router(api_router)
+
+scheduler = BackgroundScheduler()
+scheduler.start()
+
+# Add Singbox scheduler job: Run every 8 hours
+scheduler.add_job(
+    singbox_scheduler,
+    trigger=IntervalTrigger(hours=8),
+    id="singbox_job",
+    name="Singbox configuration update",
+    replace_existing=True
+)
+
+# Optional: Shutdown scheduler gracefully on app exit (for production)
+atexit.register(lambda: scheduler.shutdown())
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="localhost", port=8000)
