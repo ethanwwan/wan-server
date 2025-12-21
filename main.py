@@ -1,14 +1,32 @@
-from fastapi import FastAPI
+"""
+
+source .venv/bin/activate
+
+deactivate
+
+"""
+
+from fastapi import FastAPI,Request
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from scheduler.singbox_scheduler import singbox_scheduler
 from api.routes import api_router
+from api.response import success_response
 import atexit
 
 app = FastAPI(title="Lightweight API Backend")
 
 # 挂载API路由，以/api为前缀
 app.include_router(api_router)
+
+# root路由
+@app.get("/")
+async def root(request: Request):
+    return success_response(
+        data={ },
+        message="Service is running."
+    )
+
 
 scheduler = BackgroundScheduler()
 scheduler.start()

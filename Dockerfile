@@ -1,4 +1,4 @@
-# 使用官方Python 3.12基础镜像
+# 使用官方Python 3.12基础镜像，并通过--platform指定x86_64架构
 FROM python:3.12-slim
 
 # 设置工作目录
