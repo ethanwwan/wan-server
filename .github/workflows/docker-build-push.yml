@@ -1,10 +1,8 @@
 name: api-server Docker Build and Push
 
-# 触发条件：当推送到main分支或创建标签时
+# 触发条件：只在创建标签时
 on:
   push:
-    branches:
-      - main
     tags:
       - 'v*.*.*'
 
@@ -36,16 +34,9 @@ jobs:
       - name: Determine Docker tags
         id: docker-tags
         run: |
-          # 如果是标签推送，使用标签名作为镜像标签
-          if [[ "${{ github.ref_type }}" == "tag" ]]; then
-            TAG="${{ github.ref_name }}"
-            echo "tags=${DOCKERHUB_REPOSITORY}:${TAG},${DOCKERHUB_REPOSITORY}:latest" >> $GITHUB_OUTPUT
-          else
-            # 如果是分支推送，使用分支名（替换/为-）和commit SHA作为镜像标签
-            BRANCH="${GITHUB_REF_NAME//\//-}"
-            SHA="${GITHUB_SHA::7}"
-            echo "tags=${DOCKERHUB_REPOSITORY}:${BRANCH},${DOCKERHUB_REPOSITORY}:${SHA}" >> $GITHUB_OUTPUT
-          fi
+          # 只使用标签名作为镜像标签
+          TAG="${{ github.ref_name }}"
+          echo "tags=${DOCKERHUB_REPOSITORY}:${TAG}" >> $GITHUB_OUTPUT
 
       # 步骤5：构建并推送Docker镜像
       - name: Build and push Docker image
