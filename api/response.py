@@ -4,7 +4,6 @@
 """
 
 from typing import Any, Dict, Optional, Union
-from datetime import datetime
 from pydantic import BaseModel, Field
 
 
@@ -15,17 +14,15 @@ class ApiResponse(BaseModel):
     所有API响应都应该使用这个格式，确保一致性
     """
     code: int = Field(..., description="状态码")
-    message: str = Field(..., description="响应消息")
+    msg: str = Field(..., description="响应消息")
     data: Optional[Any] = Field(None, description="响应数据")
-    timestamp: str = Field(default_factory=lambda: datetime.now().strftime("%Y/%m/%d %H:%M:%S"), description="响应时间戳")
    
     class Config:
         json_schema_extra = {
             "example": {
                 "code": 200,
-                "message": "Success",
-                "data": {"key": "value"},
-                "timestamp": "2024/01/01 12:00:00"
+                "msg": "Success",
+                "data": {"key": "value"}
             }
         }
 
@@ -79,7 +76,7 @@ class ResponseMessages:
 
 def success_response(
     data: Any = None,
-    message: str = ResponseMessages.SUCCESS,
+    msg: str = ResponseMessages.SUCCESS,
     code: int = ResponseCodes.SUCCESS
 ) -> ApiResponse:
     """
@@ -87,7 +84,7 @@ def success_response(
     
     Args:
         data: 响应数据
-        message: 响应消息
+        msg: 响应消息
         code: 状态码
     
     Returns:
@@ -95,13 +92,13 @@ def success_response(
     """
     return ApiResponse(
         code=code,
-        message=message,
+        msg=msg,
         data=data
     )
 
 
 def error_response(
-    message: str = ResponseMessages.INTERNAL_ERROR,
+    msg: str = ResponseMessages.INTERNAL_ERROR,
     code: int = ResponseCodes.INTERNAL_ERROR,
     data: Optional[Any] = None
 ) -> ApiResponse:
@@ -109,7 +106,7 @@ def error_response(
     创建错误响应
     
     Args:
-        message: 错误消息
+        msg: 错误消息
         code: 错误状态码
         data: 额外的错误数据
     
@@ -118,48 +115,48 @@ def error_response(
     """
     return ApiResponse(
         code=code,
-        message=message,
+        msg=msg,
         data=data
     )
 
 
 def not_found_response(
-    message: str = ResponseMessages.NOT_FOUND,
+    msg: str = ResponseMessages.NOT_FOUND,
     data: Optional[Any] = None
 ) -> ApiResponse:
     """
     创建资源不存在响应
     """
     return error_response(
-        message=message,
+        msg=msg,
         code=ResponseCodes.NOT_FOUND,
         data=data
     )
 
 
 def unauthorized_response(
-    message: str = ResponseMessages.UNAUTHORIZED,
+    msg: str = ResponseMessages.UNAUTHORIZED,
     data: Optional[Any] = None
 ) -> ApiResponse:
     """
     创建未授权响应
     """
     return error_response(
-        message=message,
+        msg=msg,
         code=ResponseCodes.UNAUTHORIZED,
         data=data
     )
 
 
 def bad_request_response(
-    message: str = ResponseMessages.BAD_REQUEST,
+    msg: str = ResponseMessages.BAD_REQUEST,
     data: Optional[Any] = None
 ) -> ApiResponse:
     """
     创建请求参数错误响应
     """
     return error_response(
-        message=message,
+        msg=msg,
         code=ResponseCodes.BAD_REQUEST,
         data=data
     )
@@ -170,7 +167,7 @@ def paginated_response(
     total: int,
     page: int,
     size: int,
-    message: str = ResponseMessages.SUCCESS
+    msg: str = ResponseMessages.SUCCESS
 ) -> ApiResponse:
     """
     创建分页响应
@@ -180,7 +177,7 @@ def paginated_response(
         total: 总记录数
         page: 当前页码
         size: 每页大小
-        message: 响应消息
+        msg: 响应消息
         path: 请求路径
         method: 请求方法
     
@@ -203,7 +200,7 @@ def paginated_response(
     
     return success_response(
         data=pagination_data,
-        message=message
+        msg=msg
     )
 
 
@@ -211,14 +208,14 @@ def paginated_response(
 RESPONSE_TEMPLATES = {
     "health_check": lambda: success_response(
         data={"status": "healthy", "service": "api-server"},
-        message="Service is healthy"
+        msg="Service is healthy"
     ),
     "ping": lambda: success_response(
         data={"pong": True},
-        message="Pong"
+        msg="Pong"
     ),
     "version": lambda version: success_response(
         data={"version": version},
-        message="Version information"
+        msg="Version information"
     )
 }

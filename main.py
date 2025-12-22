@@ -23,8 +23,8 @@ app.include_router(api_router)
 @app.get("/")
 async def root(request: Request):
     return success_response(
-        data={ },
-        message="Service is running."
+        data=None,
+        msg="Service is running."
     )
 
 

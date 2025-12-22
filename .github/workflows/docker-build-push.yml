@@ -1,0 +1,74 @@
+name: api-server Docker Build and Push
+
+# 触发条件：当推送到main分支或创建标签时
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*.*.*'
+
+# 环境变量
+env:
+  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  DOCKERHUB_REPOSITORY: ethanwwan/api-server
+
+jobs:
+  # 构建和推送Docker镜像
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      # 步骤1：检出代码
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 步骤2：设置Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # 步骤3：登录到Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # 步骤4：确定Docker镜像标签
+      - name: Determine Docker tags
+        id: docker-tags
+        run: |
+          # 如果是标签推送，使用标签名作为镜像标签
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            TAG="${{ github.ref_name }}"
+            echo "tags=${DOCKERHUB_REPOSITORY}:${TAG},${DOCKERHUB_REPOSITORY}:latest" >> $GITHUB_OUTPUT
+          else
+            # 如果是分支推送，使用分支名（替换/为-）和commit SHA作为镜像标签
+            BRANCH="${GITHUB_REF_NAME//\//-}"
+            SHA="${GITHUB_SHA::7}"
+            echo "tags=${DOCKERHUB_REPOSITORY}:${BRANCH},${DOCKERHUB_REPOSITORY}:${SHA}" >> $GITHUB_OUTPUT
+          fi
+
+      # 步骤5：构建并推送Docker镜像
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          # 构建上下文
+          context: .
+          # 构建平台（支持多平台）
+          platforms: linux/amd64
+          # 镜像标签
+          tags: ${{ steps.docker-tags.outputs.tags }}
+          # 推送到Docker Hub
+          push: true
+          # 使用BuildKit缓存
+          cache-from: type=registry,ref=${DOCKERHUB_REPOSITORY}:buildcache
+          cache-to: type=registry,ref=${DOCKERHUB_REPOSITORY}:buildcache,mode=max
+          # Dockerfile路径
+          file: ./Dockerfile
+
+      # 步骤6：输出构建信息
+      - name: Print build information
+        run: |
+          echo "Docker image built and pushed successfully!"
+          echo "Repository: ${{ env.DOCKERHUB_REPOSITORY }}"
+          echo "Tags: ${{ steps.docker-tags.outputs.tags }}"

@@ -4,6 +4,8 @@ from api.response import success_response
 
 router = APIRouter()
 
+time_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
 # API状态统计
 @router.get("/stats")
 async def api_stats(request: Request):
@@ -21,9 +23,9 @@ async def api_stats(request: Request):
                 {"path": "/api/health", "method": "GET", "description": "健康检查"}
             ],
             "uptime": "running",
-            "last_updated": datetime.now().strftime("%Y/%m/%d %H:%M:%S")
+            "last_updated": time_now
         },
-        message="API statistics retrieved successfully",
+        msg="API statistics retrieved successfully",
         path=request.url.path,
         method=request.method
     )
@@ -37,8 +39,8 @@ async def health_check(request: Request):
     """
     # 使用标准响应格式
     return success_response(
-        data={ },
-        message="Service is healthy"
+        data=None,
+        msg="Service is healthy"
     )
 
 @router.get("/ping")
@@ -49,8 +51,8 @@ async def ping(request: Request):
     用于测试服务是否响应
     """
     return success_response(
-        data={"pong": True, "timestamp": datetime.now().strftime("%Y-%m-%d %H%M%S")},
-        message="Pong"
+        data={"pong": True, "timestamp": time_now},
+        msg="Pong"
     )
 
 @router.get("/status")
@@ -66,14 +68,14 @@ async def status(request: Request):
             "service": "api-server",
             "version": "1.0.0",
             "environment": "production",
-            "timestamp": datetime.now().strftime("%Y-%m-%d %H%M%S"),
+            "timestamp": time_now,
             "features": {
                 "scheduler": "enabled",
                 "database": "connected",
                 "cache": "available"
             }
         },
-        message="Service status retrieved successfully"
+        msg="Service status retrieved successfully"
     )
 
 
@@ -81,6 +83,6 @@ async def status(request: Request):
 async def time_check():
     """时间接口"""
     return success_response(
-        data={"timestamp": datetime.now().strftime("%Y/%m/%d %H:%M:%S")},
-        message="Current time retrieved successfully"
+        data={"timestamp": time_now},
+        msg="Current time retrieved successfully"
     )

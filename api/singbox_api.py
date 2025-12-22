@@ -17,5 +17,5 @@ async def get_singbox_config_json():
     if info:
         return info
     else:
-        return not_found_response(message="Error getting config json")
+        return not_found_response(msg="Error getting config json")
 

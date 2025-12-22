@@ -3,7 +3,6 @@ Singbox配置定时更新模块
 负责每8小时自动更新singbox配置文件
 """
 
-from pickle import NONE
 from typing import Any
 import requests
 import json
