@@ -34,8 +34,9 @@ jobs:
       - name: Determine Docker tags
         id: docker-tags
         run: |
-          # 只使用标签名作为镜像标签
+          # 去掉标签中的v前缀
           TAG="${{ github.ref_name }}"
+          TAG="${TAG#v}"  # 使用参数扩展去掉前缀v
           echo "tags=${DOCKERHUB_REPOSITORY}:${TAG}" >> $GITHUB_OUTPUT
 
       # 步骤5：构建并推送Docker镜像
