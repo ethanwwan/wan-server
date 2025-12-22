@@ -3,6 +3,7 @@ Singbox配置定时更新模块
 负责每8小时自动更新singbox配置文件
 """
 
+from pickle import NONE
 from typing import Any
 import requests
 import json
@@ -199,16 +200,23 @@ def singbox_scheduler():
 def get_config_info():
     """获取当前配置信息"""
   
+    config_data = None
+
     try:
         if os.path.exists(config_path):
             with open(config_path, 'r', encoding='utf-8') as f:
                 config_data = json.load(f)
             
-            return config_data
-        else:
-            return ""
+            if config_data:
+                # 将config_data转换为JSON字符串，然后进行base64编码
+                config_str = json.dumps(config_data, ensure_ascii=False, indent=4)
+                config_bytes = config_str.encode('utf-8')
+                config_data = base64.b64encode(config_bytes).decode('utf-8')
+
     except Exception as e:
-        return ""
+        print(f"[Singbox] Error getting config info: {e}")
+    finally:
+        return config_data
 
 
 def generate_json(outbounds:Any):
@@ -330,22 +338,22 @@ def generate_json(outbounds:Any):
                             "type": "remote",
                             "tag": "geoip-cn",
                             "format": "binary",
-                            "url": "https://raw.githubusercontent.com/SagerNet/sing-geoip/refs/heads/rule-set/geoip-cn.srs",
-                            "download_detour": "♻️ 自动选择"
+                            "url": "https://gh-proxy.org/https://raw.githubusercontent.com/SagerNet/sing-geoip/refs/heads/rule-set/geoip-cn.srs",
+                            "download_detour": "direct"
                         },
                         {
                             "type": "remote",
                             "tag": "geosite-cn",
                             "format": "binary",
-                            "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/refs/heads/rule-set/geosite-cn.srs",
-                            "download_detour": "♻️ 自动选择"
+                            "url": "https://gh-proxy.org/https://raw.githubusercontent.com/SagerNet/sing-geosite/refs/heads/rule-set/geosite-cn.srs",
+                            "download_detour": "direct"
                         },
                         {
                             "tag": "Global",
                             "type": "remote",
                             "format": "source",
-                            "url": "https://raw.githubusercontent.com/ethanwwan/sing-box-rules/refs/heads/main/rule_json/Global_All.json",
-                            "download_detour": "♻️ 自动选择"
+                            "url": "https://gh-proxy.org/https://raw.githubusercontent.com/ethanwwan/sing-box-rules/refs/heads/main/rule_json/Global_All.json",
+                            "download_detour": "direct"
                         }
                     ]
                 }
@@ -362,7 +370,7 @@ if __name__ == "__main__":
     
     # 执行配置更新
     print("\n--- Running Configuration Update ---")
-    singbox_scheduler()
+    # singbox_scheduler()
     
     print("\n=== Test Completed ===")
 

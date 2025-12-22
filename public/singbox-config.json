@@ -214,7 +214,7 @@
                 "insecure": false,
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "qq"
+                    "fingerprint": "ios"
                 }
             },
             "transport": {
@@ -238,7 +238,7 @@
                 "insecure": false,
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "firefox"
+                    "fingerprint": "ios"
                 }
             },
             "transport": {
@@ -262,7 +262,7 @@
                 "insecure": false,
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "qq"
+                    "fingerprint": "safari"
                 }
             },
             "transport": {
@@ -286,7 +286,7 @@
                 "insecure": false,
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "ios"
+                    "fingerprint": "safari"
                 }
             },
             "transport": {
@@ -310,7 +310,7 @@
                 "insecure": false,
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "firefox"
+                    "fingerprint": "edge"
                 }
             },
             "transport": {
@@ -334,7 +334,7 @@
                 "insecure": false,
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "ios"
+                    "fingerprint": "qq"
                 }
             },
             "transport": {
@@ -358,7 +358,7 @@
                 "insecure": false,
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "safari"
+                    "fingerprint": "edge"
                 }
             },
             "transport": {
@@ -382,7 +382,7 @@
                 "insecure": false,
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "firefox"
+                    "fingerprint": "qq"
                 }
             },
             "transport": {
@@ -406,7 +406,7 @@
                 "insecure": false,
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "qq"
+                    "fingerprint": "firefox"
                 }
             },
             "transport": {
@@ -430,7 +430,7 @@
                 "insecure": false,
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "firefox"
+                    "fingerprint": "safari"
                 }
             },
             "transport": {
@@ -478,7 +478,7 @@
                 "insecure": false,
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "qq"
+                    "fingerprint": "edge"
                 }
             },
             "transport": {
@@ -502,7 +502,7 @@
                 "insecure": false,
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "ios"
+                    "fingerprint": "qq"
                 }
             },
             "transport": {
@@ -612,22 +612,22 @@
                 "type": "remote",
                 "tag": "geoip-cn",
                 "format": "binary",
-                "url": "https://raw.githubusercontent.com/SagerNet/sing-geoip/refs/heads/rule-set/geoip-cn.srs",
-                "download_detour": "♻️ 自动选择"
+                "url": "https://gh-proxy.org/https://raw.githubusercontent.com/SagerNet/sing-geoip/refs/heads/rule-set/geoip-cn.srs",
+                "download_detour": "direct"
             },
             {
                 "type": "remote",
                 "tag": "geosite-cn",
                 "format": "binary",
-                "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/refs/heads/rule-set/geosite-cn.srs",
-                "download_detour": "♻️ 自动选择"
+                "url": "https://gh-proxy.org/https://raw.githubusercontent.com/SagerNet/sing-geosite/refs/heads/rule-set/geosite-cn.srs",
+                "download_detour": "direct"
             },
             {
                 "tag": "Global",
                 "type": "remote",
                 "format": "source",
-                "url": "https://raw.githubusercontent.com/ethanwwan/sing-box-rules/refs/heads/main/rule_json/Global_All.json",
-                "download_detour": "♻️ 自动选择"
+                "url": "https://gh-proxy.org/https://raw.githubusercontent.com/ethanwwan/sing-box-rules/refs/heads/main/rule_json/Global_All.json",
+                "download_detour": "direct"
             }
         ]
     }
