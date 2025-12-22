@@ -10,7 +10,6 @@ on:
 
 # 环境变量
 env:
-  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
   DOCKERHUB_REPOSITORY: ethanwwan/api-server
 
 jobs:
@@ -61,8 +60,8 @@ jobs:
           # 推送到Docker Hub
           push: true
           # 使用BuildKit缓存
-          cache-from: type=registry,ref=${DOCKERHUB_REPOSITORY}:buildcache
-          cache-to: type=registry,ref=${DOCKERHUB_REPOSITORY}:buildcache,mode=max
+          cache-from: type=registry,ref=${{ env.DOCKERHUB_REPOSITORY }}:buildcache
+          cache-to: type=registry,ref=${{ env.DOCKERHUB_REPOSITORY }}:buildcache,mode=max
           # Dockerfile路径
           file: ./Dockerfile
 
