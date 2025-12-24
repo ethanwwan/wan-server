@@ -37,7 +37,8 @@ jobs:
           # 去掉标签中的v前缀
           TAG="${{ github.ref_name }}"
           TAG="${TAG#v}"  # 使用参数扩展去掉前缀v
-          echo "tags=${DOCKERHUB_REPOSITORY}:${TAG}" >> $GITHUB_OUTPUT
+          # 同时包含特定版本标签和latest标签
+          echo "tags=${DOCKERHUB_REPOSITORY}:${TAG},${DOCKERHUB_REPOSITORY}:latest" >> $GITHUB_OUTPUT
 
       # 步骤5：构建并推送Docker镜像
       - name: Build and push Docker image
