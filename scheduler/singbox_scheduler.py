@@ -106,16 +106,16 @@ def replace_config(config: dict) -> dict:
                 
     return config
 
-def get_config_info():
+def get_config_json(is_latest: bool = True) -> dict:
     """获取当前配置信息"""
 
     config_data = None
+    target_config_path = config_path if is_latest else config_old_path
     
     try:
-        if os.path.exists(config_path):
-            with open(config_path, 'r', encoding='utf-8') as f:
+        if os.path.exists(target_config_path):
+            with open(target_config_path, 'r', encoding='utf-8') as f:
                 config_data = json.load(f)
-
 
     except Exception as e:
         print(f"[Singbox] 获取配置信息错误: {e}")
