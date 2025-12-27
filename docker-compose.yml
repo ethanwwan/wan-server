@@ -1,0 +1,33 @@
+
+services:
+  api-server:
+    # 构建镜像
+    image: ethanwwan/api-server:latest
+    
+    # 容器名称
+    container_name: api-server
+    
+    # 端口映射: 主机端口:容器端口
+    ports:
+      - "8166:8166"
+    
+    # 卷挂载
+    volumes:
+      # 挂载public目录用于存储singbox配置文件
+      - ./public:/app/public
+      
+      # 可选: 挂载scheduler目录以支持热重载（开发环境）
+      # - ./scheduler:/app/scheduler
+    
+    # 重启策略
+    restart: unless-stopped
+    
+    # 网络配置
+    networks:
+      - web-network
+
+
+# 网络定义
+networks:
+  web-network:
+    external: true
