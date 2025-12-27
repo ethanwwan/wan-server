@@ -40,6 +40,9 @@ scheduler.add_job(
     replace_existing=True
 )
 
+# 在服务启动时立即执行一次配置更新
+singbox_scheduler()
+
 # Optional: Shutdown scheduler gracefully on app exit (for production)
 atexit.register(lambda: scheduler.shutdown())
 

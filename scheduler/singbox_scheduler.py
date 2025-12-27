@@ -3,26 +3,26 @@ Singbox配置定时更新模块
 负责每8小时自动更新singbox配置文件
 """
 
-from typing import Any
 import requests
 import json
 import os
 from datetime import datetime
-import base64
-import urllib.parse
 import urllib3
 
 # 禁用InsecureRequestWarning警告
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-# 写入本地 config.json，使用 UTF-8 编码，保存到项目根目录下的public目录
+# 写入本地 config.json，使用 UTF-8 编码，保存到项目根目录下的public/singbox目录
 # 项目根目录是包含main.py的目录
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-config_dir = os.path.join(project_root, 'public')
-config_path = os.path.join(config_dir, 'singbox-config.json')
+config_dir = os.path.join(project_root, 'public', 'singbox')
+config_path = os.path.join(config_dir, 'config.json')
+config_old_path = os.path.join(config_dir, 'config_old.json')
 
 url = "https://47.238.198.94/iv/verify_mode.htm?token=9a49f8e2abcce3a0d3fd12e072065cdd"
 
+singbox_version = "1.12.14"
+singbox_old_version = "1.11.15"
 
 def singbox_scheduler():
     """
@@ -35,66 +35,47 @@ def singbox_scheduler():
     """
     print(f"[Singbox] 开始更新配置，时间: {datetime.now().isoformat()}")
     
+    update_config(is_latest=True)
+    update_config(is_latest=False)
+    
+    print(f"[Singbox] 配置更新成功完成，时间: {datetime.now().isoformat()}")
+    
+ 
+
+
+def update_config(is_latest: bool = True):
+    """更新配置"""
+
+    version = singbox_version if is_latest else singbox_old_version
+
+    headers = {"User-Agent": f"SFA/1.1{version} (595; sing-box {version}; language zh_CN)"}
+
     try:
-
-        headers = {
-            "User-Agent": "SFA/1.12.14 (595; sing-box 1.12.14; language zh_CN)",
-            # 直接用 sing-box 核心版本 + macOS 标识，看起来像官方 SFM 客户端
-            "Accept": "application/json, text/plain, */*",
-            "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
-            "Connection": "keep-alive",
-        }
-
         response = requests.get(url, headers=headers, verify=False, timeout=20)
-
         if response.status_code == 200 and response.text.strip():
-            try:
-                # 直接解析response.text作为完整的singbox配置JSON
-                config = json.loads(response.text.strip())
-                
-                config = replace_config(config)
+            # 直接解析response.text作为完整的singbox配置JSON
+            config = json.loads(response.text.strip())      
+            config = replace_config(config)
 
-                # 确保public目录存在
-                os.makedirs(config_dir, exist_ok=True)
+            # 确保public/singbox目录存在
+            os.makedirs(config_dir, exist_ok=True)
 
-                with open(config_path, 'w', encoding='utf-8') as f:
-                    json.dump(config, f, ensure_ascii=False, indent=4)
-                
-                # 获取并显示配置摘要信息
-                outbounds = config.get('outbounds', [])
-                print(f"[Singbox] 已获取 {len(outbounds)} 个出站配置")
-                print("=== 完整的 sing-box 配置已保存到 config.json ===")
-                
-            except json.JSONDecodeError as e:
-                print(f"[Singbox] JSON解析错误: {e}")
-                print(f"[Singbox] 响应内容前100个字符: {response.text[:100]}...")
-                return
-            except Exception as e:
-                print(f"[Singbox] 配置处理错误: {e}")
-                return
+            # 根据is_latest选择使用哪个配置路径
+            target_config_path = config_path if is_latest else config_old_path
+            with open(target_config_path, 'w', encoding='utf-8') as f:
+                json.dump(config, f, ensure_ascii=False, indent=4)
+
+            # 获取并显示配置摘要信息
+            outbounds = config.get('outbounds', [])
+            print(f"[Singbox] 已获取 {'最新' if is_latest else '旧版'} 配置，{len(outbounds)} 个出站配置")
 
         else:
-            print("[Singbox] 请求失败或空内容")
-       
-        
-        print(f"[Singbox] 配置更新成功完成，时间: {datetime.now().isoformat()}")
-        
-    except requests.RequestException as e:
-        print(f"[Singbox] 下载配置错误: {e}")
-        print(f"[Singbox] 请检查网络连接和URL")
-        
-    except json.JSONDecodeError as e:
-        print(f"[Singbox] 解析JSON配置错误: {e}")
-        print(f"[Singbox] 下载的文件不是有效的JSON格式")
-        
-    except OSError as e:
-        print(f"[Singbox] 保存配置文件错误: {e}")
-        print(f"[Singbox] 请检查文件权限和磁盘空间")
-        
-    except Exception as e:
-        print(f"[Singbox] 意外错误: {e}")
-        print(f"[Singbox] 配置更新失败")
+            print("[Singbox] 请求失败或内容为空")
 
+    except Exception as e:
+        print(f"[Singbox] 配置处理错误: {e}")
+        print(f"[Singbox] 配置更新失败")
+    
 
 def replace_config(config: dict) -> dict:
     """修改配置中的路由规则"""
@@ -149,11 +130,11 @@ if __name__ == "__main__":
     
     # 显示当前配置信息
     print("\n--- 当前配置信息 ---")
-    print(get_config_info())
+    # print(get_config_info())
     
     # 执行配置更新
-    print("\n--- 正在运行配置更新，当前版本1.12.14，版本号595 ---")
-    # singbox_scheduler()
+    print("\n--- 正在更新配置 ---")
+    singbox_scheduler()
     
     print("\n=== 测试完成 ===")
 
