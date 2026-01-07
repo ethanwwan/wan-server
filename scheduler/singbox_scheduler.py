@@ -66,13 +66,21 @@ def update_config(is_latest: bool = True):
             with open(target_config_path, 'w', encoding='utf-8') as f:
                 json.dump(config, f, ensure_ascii=False, indent=4)
 
-            # TODO 将config.json文件复制一份，到public/singbox/docker目录下
+            # 将config.json文件复制一份，到public/singbox/docker目录下
             # 确保docker目录存在
             if is_latest:    
                 docker_dir = os.path.join(config_dir, 'docker')
                 os.makedirs(docker_dir, exist_ok=True)
-                # 复制文件
-                shutil.copy(config_path, docker_dir)
+                # 修改一下文件
+                docker_config = config.copy()
+                inbounds = docker_config.get('inbounds', [])
+                for inbound in inbounds:
+                    if inbound.get('type') == 'tun':
+                        # 移除
+                        inbounds.remove(inbound)
+                # 把docker_config写入docker_dir/config.json
+                with open(os.path.join(docker_dir, 'config.json'), 'w', encoding='utf-8') as f:
+                    json.dump(docker_config, f, ensure_ascii=False, indent=4)
 
             # 获取并显示配置摘要信息
             outbounds = config.get('outbounds', [])

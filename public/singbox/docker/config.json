@@ -51,24 +51,6 @@
     },
     "inbounds": [
         {
-            "tag": "tun-in",
-            "type": "tun",
-            "address": [
-                "172.19.0.0/30",
-                "fdfe:dcba:9876::0/126"
-            ],
-            "stack": "system",
-            "auto_route": true,
-            "strict_route": true,
-            "platform": {
-                "http_proxy": {
-                    "enabled": true,
-                    "server": "127.0.0.1",
-                    "server_port": 7891
-                }
-            }
-        },
-        {
             "tag": "mixed-in",
             "type": "mixed",
             "listen": "127.0.0.1",
@@ -356,7 +338,7 @@
                 "server_name": "alicdn-1.sioln.me",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "firefox"
+                    "fingerprint": "safari"
                 }
             },
             "transport": {
@@ -385,7 +367,7 @@
                 "server_name": "360cdn-1.linkong.tech",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "qq"
+                    "fingerprint": "edge"
                 }
             },
             "transport": {
@@ -414,7 +396,7 @@
                 "server_name": "mms-static-version-e.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "safari"
+                    "fingerprint": "edge"
                 }
             },
             "transport": {
@@ -501,7 +483,7 @@
                 "server_name": "mms-static-version-h.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "firefox"
+                    "fingerprint": "safari"
                 }
             },
             "transport": {
@@ -530,7 +512,7 @@
                 "server_name": "mms-static-origin-e.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "qq"
+                    "fingerprint": "firefox"
                 }
             },
             "transport": {
@@ -559,7 +541,7 @@
                 "server_name": "mms-static-origin-f.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "qq"
+                    "fingerprint": "safari"
                 }
             },
             "transport": {
@@ -588,7 +570,7 @@
                 "server_name": "mms-static-origin-g.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "safari"
+                    "fingerprint": "firefox"
                 }
             },
             "transport": {
@@ -617,7 +599,7 @@
                 "server_name": "mms-static-origin-h.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "firefox"
+                    "fingerprint": "safari"
                 }
             },
             "transport": {
@@ -646,7 +628,7 @@
                 "server_name": "mms-static-lication-e.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "firefox"
+                    "fingerprint": "safari"
                 }
             },
             "transport": {
@@ -675,7 +657,7 @@
                 "server_name": "mms-static-lication-f.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "safari"
+                    "fingerprint": "firefox"
                 }
             },
             "transport": {
@@ -704,7 +686,7 @@
                 "server_name": "mms-static-lication-g.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "qq"
+                    "fingerprint": "edge"
                 }
             },
             "transport": {
@@ -733,7 +715,7 @@
                 "server_name": "mms-static-lication-h.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "safari"
+                    "fingerprint": "ios"
                 }
             },
             "transport": {
