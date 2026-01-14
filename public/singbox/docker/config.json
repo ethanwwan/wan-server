@@ -338,7 +338,7 @@
                 "server_name": "alicdn-1.sioln.me",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "qq"
+                    "fingerprint": "ios"
                 }
             },
             "transport": {
@@ -367,7 +367,7 @@
                 "server_name": "360cdn-1.linkong.tech",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "qq"
+                    "fingerprint": "ios"
                 }
             },
             "transport": {
@@ -425,7 +425,7 @@
                 "server_name": "mms-static-version-f.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "safari"
+                    "fingerprint": "edge"
                 }
             },
             "transport": {
@@ -483,7 +483,7 @@
                 "server_name": "mms-static-version-h.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "firefox"
+                    "fingerprint": "edge"
                 }
             },
             "transport": {
@@ -512,7 +512,7 @@
                 "server_name": "mms-static-origin-e.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "safari"
+                    "fingerprint": "firefox"
                 }
             },
             "transport": {
@@ -541,7 +541,7 @@
                 "server_name": "mms-static-origin-f.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "safari"
+                    "fingerprint": "firefox"
                 }
             },
             "transport": {
@@ -570,7 +570,7 @@
                 "server_name": "mms-static-origin-g.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "firefox"
+                    "fingerprint": "safari"
                 }
             },
             "transport": {
@@ -599,7 +599,7 @@
                 "server_name": "mms-static-origin-h.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "edge"
+                    "fingerprint": "ios"
                 }
             },
             "transport": {
@@ -628,7 +628,7 @@
                 "server_name": "mms-static-lication-e.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "safari"
+                    "fingerprint": "ios"
                 }
             },
             "transport": {
@@ -657,7 +657,7 @@
                 "server_name": "mms-static-lication-f.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "ios"
+                    "fingerprint": "edge"
                 }
             },
             "transport": {
@@ -686,7 +686,7 @@
                 "server_name": "mms-static-lication-g.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "safari"
+                    "fingerprint": "ios"
                 }
             },
             "transport": {
@@ -715,7 +715,7 @@
                 "server_name": "mms-static-lication-h.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "edge"
+                    "fingerprint": "ios"
                 }
             },
             "transport": {
