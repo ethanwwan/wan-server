@@ -47,8 +47,8 @@ coverage.xml
 Dockerfile.local
 
 # 本地配置文件
-/public/config.json
-/public/singbox-config.json
+/public/
+public/
 
 # 临时文件
 *.tmp

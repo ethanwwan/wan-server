@@ -43,16 +43,16 @@ async def get_iptv_config():
 
         # 发送请求
         response = requests.get(iptv_url, headers=headers, verify=False, timeout=30)
-        response.raise_for_status()  # 检查请求是否成功
-
         config_content = response.text.strip()
 
         if config_content:
             
+            print(f"[IPTV] 开始优化配置，时间: {datetime.now().isoformat()}")
             # 解析并优化配置
             optimized_config = parse_and_optimize_iptv_config(config_content)
-
-             # text/x-mpegUR
+            
+            print(f"[IPTV] 配置读取完成，时间: {datetime.now().isoformat()}")
+            
             return PlainTextResponse(
                 content=optimized_config,
                 media_type="text/x-mpegURL",
@@ -63,8 +63,6 @@ async def get_iptv_config():
             
         else:
             print(f"[IPTV] 请求返回空内容")
-        
-        print(f"[IPTV] 配置读取完成，时间: {datetime.now().isoformat()}")
         
     except Exception as e:
         print(f"[IPTV] 配置读取失败: {e}")

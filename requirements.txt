@@ -1,4 +1,5 @@
+#pip install -r requirements.txt
 fastapi[standard]==0.115.2
-uvicorn==0.32.0  # ASGI server to run the app
-apscheduler==3.10.4  # For scheduling tasks
+uvicorn==0.32.0 
+apscheduler==3.10.4  
 requests==2.32.3 
