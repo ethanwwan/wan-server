@@ -8,3 +8,7 @@
 
 
 # gunzip -c /vol1/1000/docker/images/api-server.tar.gz | docker load
+
+
+
+source .venv/bin/activate
