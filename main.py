@@ -10,9 +10,10 @@ from fastapi import FastAPI,Request
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from scheduler.singbox_scheduler import singbox_scheduler
-from api.routes import api_router
-from api.singbox_api import router as singbox_router
-from api.response import success_response
+from api.base.routes import api_router
+from api.singbox.singbox_api import router as singbox_router
+from api.iptv.iptv_api import router as iptv_router
+from api.base.response import success_response
 import atexit
 
 app = FastAPI(title="Lightweight API Backend")
@@ -20,6 +21,7 @@ app = FastAPI(title="Lightweight API Backend")
 # 挂载API路由
 app.include_router(api_router)
 app.include_router(singbox_router)
+app.include_router(iptv_router)
 
 # root路由
 @app.get("/")

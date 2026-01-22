@@ -5,7 +5,7 @@ Singbox管理API端点
 
 from fastapi import APIRouter
 from scheduler.singbox_scheduler import get_config_json
-from api.response import not_found_response
+from api.base.response import not_found_response
 
 router = APIRouter(prefix="/singbox") 
 
