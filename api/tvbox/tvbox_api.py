@@ -60,26 +60,6 @@ def get_config_file_names():
                 config_files.append(file_name)
     return config_files
 
-# 为每个TVBox配置文件创建路由
-file_names = get_config_file_names()
-
-for file_name in file_names:
-    # 移除.json扩展名，作为路由路径
-    route_path = f"/{file_name}"
-    
-    @router.get(route_path)
-    async def get_config(file_name=file_name):
-        """获取TVBox配置文件: {file_name}"""
-        data = get_tvbox_local_file(file_name)
-        
-        if data:
-            return data
-        else:
-            return not_found_response(msg=f"配置文件 {file_name} 不存在或无法解析")
-    
-    # 设置路由函数的__name__，避免FastAPI路由冲突
-    get_config.__name__ = f"get_tvbox_config_{file_name.replace('.', '_')}"
-
 # 添加config.json路由
 @router.get("/config.json")
 async def get_tvbox_config_json(request: Request):
@@ -102,6 +82,24 @@ async def get_tvbox_config_json(request: Request):
     else:
         return not_found_response(msg="配置文件 config.json 不存在或无法解析")
 
+# 使用通配符路由处理所有TVBox配置文件请求
+@router.get("/{file_name:path}")
+async def get_tvbox_config_file(file_name: str):
+    """获取TVBox配置文件"""
+    # 检查文件是否存在
+    file_path = os.path.join(TVBOX_DIR, file_name)
+    
+    if not os.path.exists(file_path):
+        return not_found_response(msg=f"配置文件 {file_name} 不存在")
+    
+    # 读取并返回文件内容
+    data = get_tvbox_local_file(file_name)
+    
+    if data:
+        return data
+    else:
+        return not_found_response(msg=f"配置文件 {file_name} 无法解析")
+
 
 if __name__ == "__main__":
     """
@@ -114,16 +112,6 @@ if __name__ == "__main__":
     config_files = get_config_file_names()
     print(f"获取到的配置文件列表: {config_files}")
     print(f"共找到 {len(config_files)} 个配置文件")
-    
-    # 测试get_tvbox_local_file函数
-    print("\n2. 测试get_tvbox_local_file函数:")
-    # 测试config.json
-    config_data = get_tvbox_local_file("config.json")
-    if config_data:
-        print("成功获取config.json文件内容")
-        print(f"config.json包含 {len(config_data.get('urls', []))} 个URL")
-    else:
-        print("无法获取config.json文件内容")
     
     # 测试其他文件
     if config_files:
