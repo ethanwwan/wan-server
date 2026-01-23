@@ -10,8 +10,13 @@
 - **Singbox配置管理**
   - 定时更新Singbox配置
   - 提供配置访问接口
+- **TVBox配置管理**
+  - 动态生成TVBox配置文件访问接口
+  - 支持配置文件URL和名称修改
+  - 自动映射本地配置文件
 - **后台任务调度**
   - 每8小时自动更新Singbox配置
+  - 每8小时自动更新TVBox配置
 - **轻量级架构**
   - 基于FastAPI构建，性能优异
   - 模块化设计，易于扩展
@@ -37,10 +42,15 @@ api-server/
 │   │   ├── iptv_api.py          # IPTV API接口
 │   │   ├── iptv_favorite_utils.py  # 收藏频道工具
 │   │   └── iptv_nas_utils.py       # NAS播放列表工具
-│   └── singbox/         # Singbox相关API
-│       └── singbox_api.py  # Singbox API接口
+│   ├── singbox/         # Singbox相关API
+│   │   └── singbox_api.py  # Singbox API接口
+│   └── tvbox/           # TVBox相关API
+│       └── tvbox_api.py  # TVBox API接口
 ├── scheduler/           # 调度器模块
-│   └── singbox_scheduler.py  # Singbox配置调度
+│   ├── singbox_scheduler.py  # Singbox配置调度
+│   └── tvbox_scheduler.py    # TVBox配置调度
+├── public/              # 静态文件目录
+│   └── tvbox/           # TVBox配置文件目录
 ├── .github/             # GitHub配置
 ├── .gitignore           # Git忽略文件
 ├── Dockerfile           # Docker配置
@@ -84,6 +94,8 @@ pip install -r requirements.txt
 - `api/iptv/iptv_favorite_utils.py` - IPTV收藏频道配置
 - `api/iptv/iptv_nas_utils.py` - NAS播放列表配置
 - `scheduler/singbox_scheduler.py` - Singbox配置
+- `scheduler/tvbox_scheduler.py` - TVBox配置
+- `public/tvbox/` - TVBox配置文件目录（放置JSON格式的配置文件）
 
 ### 4. 运行服务
 
@@ -149,6 +161,11 @@ docker run -p 8000:8000 api-server
 
 - 详见 `api/singbox/singbox_api.py`
 
+### TVBox 相关路由
+
+- `GET /api/tvbox/config.json` - 获取TVBox配置文件（特殊处理，修改URL和名称）
+- `GET /api/tvbox/{file_name}.json` - 获取TVBox配置文件（自动生成的路由，返回原始内容）
+
 ### API 文档访问
 
 启动服务后，可以通过以下地址访问API文档：
@@ -158,7 +175,10 @@ docker run -p 8000:8000 api-server
 
 ## 后台任务
 
-服务启动时会自动初始化后台任务调度器，每8小时执行一次Singbox配置更新。
+服务启动时会自动初始化后台任务调度器：
+
+- 每8小时执行一次Singbox配置更新
+- 每8小时执行一次TVBox配置更新
 
 ## 开发指南
 
@@ -211,6 +231,14 @@ python3 main.py
 欢迎提交Issue和Pull Request！
 
 ## 更新日志
+
+### v1.1.0
+- 新增TVBox配置管理功能
+  - 动态生成TVBox配置文件访问接口
+  - 支持配置文件URL和名称修改
+  - 自动映射本地配置文件
+- 新增tvbox_scheduler.py调度模块
+- 优化路由生成逻辑，解决路由冲突问题
 
 ### v1.0.0
 - 初始版本
