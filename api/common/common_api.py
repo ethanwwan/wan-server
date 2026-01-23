@@ -2,7 +2,7 @@ from fastapi import APIRouter, Request
 from datetime import datetime
 from api.base.response import success_response
 
-router = APIRouter()
+router = APIRouter(prefix="/common", tags=["Common"])
 
 time_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 

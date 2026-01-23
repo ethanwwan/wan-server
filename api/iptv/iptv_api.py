@@ -9,7 +9,7 @@ from .iptv_favorite_utils import fetch_iptv_favorite_config
 from .iptv_nas_utils import fetch_iptv_nas_playlist
 
 # 创建路由器
-router = APIRouter(prefix="/iptv")
+router = APIRouter(prefix="/iptv", tags=["IPTV"])
 
 @router.get("/favorite.m3u", response_class=PlainTextResponse)
 async def get_iptv_favorite_config():

@@ -7,7 +7,7 @@ from fastapi import APIRouter
 from scheduler.singbox_scheduler import get_config_json
 from api.base.response import not_found_response
 
-router = APIRouter(prefix="/singbox") 
+router = APIRouter(prefix="/singbox", tags=["Singbox"]) 
 
 @router.get("/config.json")
 async def get_singbox_latest_config():
