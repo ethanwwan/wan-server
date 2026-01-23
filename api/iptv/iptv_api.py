@@ -5,9 +5,6 @@ IPTV API模块
 
 from fastapi import APIRouter
 from fastapi.responses import PlainTextResponse
-import os
-import re
-from datetime import datetime
 from .iptv_favorite_utils import fetch_iptv_favorite_config
 from .iptv_nas_utils import fetch_iptv_nas_playlist
 

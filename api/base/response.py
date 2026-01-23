@@ -208,14 +208,14 @@ def paginated_response(
 RESPONSE_TEMPLATES = {
     "health_check": lambda: success_response(
         data={"status": "healthy", "service": "api-server"},
-        msg="Service is healthy"
+        msg="服务运行正常"
     ),
     "ping": lambda: success_response(
         data={"pong": True},
-        msg="Pong"
+        msg="响应成功"
     ),
     "version": lambda version: success_response(
         data={"version": version},
-        msg="Version information"
+        msg="版本信息"
     )
 }

@@ -25,9 +25,7 @@ async def api_stats(request: Request):
             "uptime": "running",
             "last_updated": time_now
         },
-        msg="API statistics retrieved successfully",
-        path=request.url.path,
-        method=request.method
+        msg="API统计信息获取成功"
     )
 
 @router.get("/health")
@@ -40,7 +38,7 @@ async def health_check(request: Request):
     # 使用标准响应格式
     return success_response(
         data=None,
-        msg="Service is healthy"
+        msg="服务运行正常"
     )
 
 @router.get("/ping")
@@ -52,7 +50,7 @@ async def ping(request: Request):
     """
     return success_response(
         data={"pong": True, "timestamp": time_now},
-        msg="Pong"
+        msg="响应成功"
     )
 
 @router.get("/status")
@@ -75,7 +73,7 @@ async def status(request: Request):
                 "cache": "available"
             }
         },
-        msg="Service status retrieved successfully"
+        msg="服务状态获取成功"
     )
 
 
@@ -84,5 +82,5 @@ async def time_check():
     """时间接口"""
     return success_response(
         data={"timestamp": time_now},
-        msg="Current time retrieved successfully"
+        msg="当前时间获取成功"
     )

@@ -3,11 +3,6 @@ IPTV NAS M3U配置文件工具模块
 提供获取IPTV NAS M3U配置文件内容的功能
 """
 
-from fastapi import APIRouter, HTTPException
-from fastapi.responses import PlainTextResponse
-import os
-import re
-from datetime import datetime
 import urllib3
 import requests
 

@@ -2,10 +2,6 @@
 IPTV收藏工具模块
 提供IPTV收藏 M3U配置文件的解析、优化和组装功能
 """
-
-from fastapi import APIRouter, HTTPException
-from fastapi.responses import PlainTextResponse
-import os
 import re
 from datetime import datetime
 import urllib3
