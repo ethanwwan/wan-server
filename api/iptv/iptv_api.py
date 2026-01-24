@@ -6,7 +6,7 @@ IPTV API模块
 from fastapi import APIRouter
 from fastapi.responses import PlainTextResponse
 from .iptv_favorite_utils import fetch_iptv_favorite_config
-from .iptv_nas_utils import fetch_iptv_nas_playlist
+from .iptv_nas_utils import fetch_iptv_nas_playlist, fetch_migu_playlist
 
 # 创建路由器
 router = APIRouter(prefix="/iptv", tags=["IPTV"])
@@ -51,6 +51,29 @@ async def get_iptv_playlist():
                 media_type="text/x-mpegURL",
                 headers={
                     "Content-Disposition": 'inline; filename="playlist.m3u"'
+                }
+            )
+    else:
+            print(f"[IPTV] 请求返回空内容")    
+
+
+@router.get("/migu.m3u", response_class=PlainTextResponse)
+async def get_migu_playlist():
+    """
+    获取Migu M3U配置文件内容
+    
+    返回:
+        PlainTextResponse: Migu M3U配置文件内容
+    """
+
+    content =  fetch_migu_playlist()
+
+    if content:
+        return PlainTextResponse(
+                content=content,
+                media_type="text/x-mpegURL",
+                headers={
+                    "Content-Disposition": 'inline; filename="migu.m3u"'
                 }
             )
     else:

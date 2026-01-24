@@ -10,8 +10,17 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 m3u_url = "http://192.168.1.12:8032/static/output/playlist.m3u"
 
+migu_url = "http://192.168.1.12:8015"
+
 def fetch_iptv_nas_playlist():
     """
     获取IPTV NAS M3U配置文件内容
     """
     return requests.get(m3u_url, verify=False, timeout=12).text.strip()
+
+
+def fetch_migu_playlist():
+    """
+    获取Migu M3U配置文件内容
+    """
+    return requests.get(migu_url, verify=False, timeout=12).text.strip()
