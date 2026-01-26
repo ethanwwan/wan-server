@@ -12,10 +12,13 @@ from apscheduler.triggers.interval import IntervalTrigger
 from scheduler.singbox_scheduler import singbox_scheduler
 from scheduler.tvbox_scheduler import tvbox_scheduler
 from api.base.routes import api_router
-
 from api.base.response import success_response
+from dotenv import load_dotenv
+import os
 import atexit
+import uvicorn
 
+load_dotenv()
 app = FastAPI(title="Lightweight API Backend")
 app.include_router(api_router)
 
@@ -58,5 +61,9 @@ atexit.register(lambda: scheduler.shutdown())
 
 
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("main:app", host="localhost", port=8000, reload=True)
+    uvicorn.run(
+        "main:app", 
+        host="0.0.0.0",
+        port=8016,
+        reload=os.getenv("ENVIRONMENT") == "dev"
+    )

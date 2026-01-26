@@ -16,8 +16,5 @@ COPY . .
 # 创建public目录（用于保存配置文件）
 RUN mkdir -p public
 
-# 暴露服务端口
-EXPOSE 8166
-
 # 定义启动命令
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8166"]
+CMD ["python", "main.py"]
