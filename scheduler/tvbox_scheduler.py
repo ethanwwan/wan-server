@@ -8,6 +8,13 @@ import time
 # TVBox配置目录
 TVBOX_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'public', 'tvbox')
 
+TVBOX_URL = os.getenv("TVBOX_URL",
+                       "")
+headers = {
+    "User-Agent": "okhttp/3.12.12",
+    "Accept": "application/json"
+}  
+
 # 确保目录存在
 os.makedirs(TVBOX_DIR, exist_ok=True)
 
@@ -24,13 +31,8 @@ def tvbox_scheduler():
     
     try:
         # 请求主接口获取urls数组
-        main_url = "https://www.iyouhun.com/tv/dc"
-        headers = {
-            "User-Agent": "okhttp/3.12.12",
-            "Accept": "application/json"
-        }   
-        
-        response = requests.get(main_url, headers=headers, timeout=20)
+    
+        response = requests.get(TVBOX_URL, headers=headers, timeout=20)
         response.raise_for_status()
         
         data = response.json()
@@ -50,17 +52,17 @@ def tvbox_scheduler():
                 new_item = item.copy()
 
                 # 处理不同格式的数据
-                url = item.get('url', '')
+                item_url = item.get('url', '')
                 name = item.get('name', '')
-                print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] [TVBox] 处理URL: {name} - {url}")
+                print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] [TVBox] 处理URL: {name} - {item_url}")
                 
                 # 跳过空URL
-                if not url:
+                if not item_url:
                     print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] [TVBox] 跳过空URL")
                     continue
                 
                 # 请求每个url的数据
-                config_response = requests.get(url, headers=headers, timeout=20)
+                config_response = requests.get(item_url, headers=headers, timeout=20)
                 config_response.raise_for_status()
                 # 处理响应内容，替换特殊字符
                 formatted_content = format_response_content(config_response.content)
@@ -68,16 +70,16 @@ def tvbox_scheduler():
                 final_content = replace_content(formatted_content)
 
                 if final_content is None or len(final_content) == 0:
-                    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] [TVBox] 无法格式化响应内容，跳过: {url}")
+                    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] [TVBox] 无法格式化响应内容，跳过: {item_url}")
                     continue
 
                 # 提取文件名（从url的最后部分）
                 # 例如：https://example.com/config.json -> config.json
-                file_name = url.split('/')[-1]
+                file_name = item_url.split('/')[-1]
                 
                 # 确保文件名有效
                 if not file_name:
-                    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] [TVBox] 无法提取文件名，跳过: {url}")
+                    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] [TVBox] 无法提取文件名，跳过: {item_url}")
                     continue
 
                 # 如果文件名不是.json结尾，需要加上
@@ -105,7 +107,7 @@ def tvbox_scheduler():
                 time.sleep(1)
                 
             except Exception as e:
-                print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] [TVBox] 处理URL失败: {url}, 错误: {str(e)}")
+                print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] [TVBox] 处理URL失败: {item_url}, 错误: {str(e)}")
         
         # 将修改后的urls列表赋值回data对象
         data['urls'] = new_urls

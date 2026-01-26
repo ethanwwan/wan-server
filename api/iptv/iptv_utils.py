@@ -8,9 +8,9 @@ import requests
 import re
 
 # 从环境变量读取配置，如果没有设置则使用默认值
-PLAYLIST_URL = os.environ.get("PLAYLIST_URL", "http://192.168.1.12:8032/static/output/playlist.m3u")
-MIGU_URL = os.environ.get("MIGU_URL", "http://192.168.1.12:8015/migu")
-OTT_URL = os.environ.get("OTT_URL", "https://live.ottiptv.cc/iptv.m3u?userid=7755950497&sign=b7578005974939b989b3895b921110bcb06c83ed6f42b7139ba8b94c719484c980303585b7a1ffcc75c631fb0e9e8cd3983d6dc87447c558c9dc7770f76795671c177a0ad46048&auth_token=17b0d6712a2beb7e9bfea802dc9d33a3")
+PLAYLIST_URL = os.getenv("IPTV_PLAYLIST_URL", "")
+MIGU_URL = os.getenv("IPTV_MIGU_URL", "")
+OTT_URL = os.getenv("IPTV_OTT_URL", "")
 
 # 从环境变量读取喜欢的频道列表，格式为逗号分隔的频道名称
 FAVORITE_CHANNELS = os.environ.get("FAVORITE_CHANNELS", "CCTV1,CCTV3,江苏卫视").split(",")  

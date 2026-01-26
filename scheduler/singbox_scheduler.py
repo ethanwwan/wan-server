@@ -6,7 +6,6 @@ Singbox配置定时更新模块
 import requests
 import json
 import os
-import shutil
 from datetime import datetime
 import urllib3
 
@@ -20,7 +19,7 @@ config_dir = os.path.join(project_root, 'public', 'singbox')
 config_path = os.path.join(config_dir, 'config.json')
 config_old_path = os.path.join(config_dir, 'config_old.json')
 
-url = "https://47.238.198.94/iv/verify_mode.htm?token=9a49f8e2abcce3a0d3fd12e072065cdd"
+SINGBOX_URL = os.getenv("SINGBOX_URL", "")
 
 singbox_version = "1.12.14"
 singbox_old_version = "1.11.15"
@@ -41,9 +40,6 @@ def singbox_scheduler():
     
     print(f"[Singbox] 配置更新成功完成，时间: {datetime.now().isoformat()}")
     
- 
-
-
 def update_config(is_latest: bool = True):
     """更新配置"""
 
@@ -52,7 +48,7 @@ def update_config(is_latest: bool = True):
     headers = {"User-Agent": f"SFA/1.1{version} (595; sing-box {version}; language zh_CN)"}
 
     try:
-        response = requests.get(url, headers=headers, verify=False, timeout=20)
+        response = requests.get(SINGBOX_URL, headers=headers, verify=False, timeout=20)
         if response.status_code == 200 and response.text.strip():
             # 直接解析response.text作为完整的singbox配置JSON
             config = json.loads(response.text.strip())      
@@ -126,7 +122,7 @@ def replace_config(config: dict) -> dict:
 def get_config_json(is_latest: bool = True) -> dict:
     """获取当前配置信息"""
 
-    config_data = None
+    config_data = {}
     target_config_path = config_path if is_latest else config_old_path
     
     try:
