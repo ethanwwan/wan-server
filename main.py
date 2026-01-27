@@ -1,16 +1,9 @@
-"""
-
-source .venv/bin/activate
-
-deactivate
-
-"""
-
-from fastapi import FastAPI,Request
+from fastapi import FastAPI
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from scheduler.singbox_scheduler import singbox_scheduler
 from scheduler.tvbox_scheduler import tvbox_scheduler
+from scheduler.iptv_scheduler import iptv_scheduler
 from api.base.routes import api_router
 from api.base.response import success_response
 from dotenv import load_dotenv
@@ -22,9 +15,8 @@ load_dotenv()
 app = FastAPI(title="Lightweight API Backend")
 app.include_router(api_router)
 
-# root路由
 @app.get("/")
-async def root(request: Request):
+async def root():
     return success_response(
         data=None,
         msg="服务正在运行中。"
@@ -51,14 +43,19 @@ scheduler.add_job(
     replace_existing=True
 )
 
-
-# 在服务启动时立即执行一次配置更新
-singbox_scheduler()
-tvbox_scheduler()
+# 添加IPTV配置更新任务
+scheduler.add_job(
+    iptv_scheduler,
+    trigger=IntervalTrigger(hours=8),
+    id="iptv_job",
+    name="IPTV configuration update",
+    replace_existing=True
+)
 
 # Optional: Shutdown scheduler gracefully on app exit (for production)
 atexit.register(lambda: scheduler.shutdown())
 
+iptv_scheduler()
 
 if __name__ == "__main__":
     uvicorn.run(

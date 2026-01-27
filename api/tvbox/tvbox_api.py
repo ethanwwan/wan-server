@@ -6,12 +6,11 @@ TVBox配置管理API端点
 import os
 import sys
 import json
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Response
+from api.base.response import not_found_response
 
 # 添加项目根目录到Python路径
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-
-from api.base.response import not_found_response
 
 router = APIRouter(prefix="/tvbox", tags=["TVBox"])
 
@@ -40,25 +39,6 @@ def get_tvbox_local_file(file_name: str):
             return json.loads(content)
     except Exception:
         return None
-
-# 自动扫描TVBox配置目录，获取所有JSON文件
-def get_config_file_names():
-    """
-    扫描TVBox配置目录，获取所有JSON文件
-    
-    Returns:
-        list: JSON文件列表
-    """
-    config_files = []
-    if os.path.exists(TVBOX_DIR):
-        for file_name in os.listdir(TVBOX_DIR):
-
-            if file_name == "config.json":
-                continue
-
-            if file_name.endswith('.json'):
-                config_files.append(file_name)
-    return config_files
 
 # 添加config.json路由
 @router.get("/config.json")
@@ -100,29 +80,4 @@ async def get_tvbox_config_file(file_name: str):
     else:
         return not_found_response(msg=f"配置文件 {file_name} 无法解析")
 
-
-if __name__ == "__main__":
-    """
-    测试TVBox配置管理API
-    """
-    print("开始测试TVBox配置管理API...")
-    
-    # 测试get_config_file_names函数
-    print("\n1. 测试get_config_file_names函数:")
-    config_files = get_config_file_names()
-    print(f"获取到的配置文件列表: {config_files}")
-    print(f"共找到 {len(config_files)} 个配置文件")
-    
-    # 测试其他文件
-    if config_files:
-        test_file = config_files[0]
-        test_data = get_tvbox_local_file(test_file)
-        if test_data:
-            print(f"成功获取{test_file}文件内容")
-            if 'sites' in test_data:
-                print(f"{test_file}包含 {len(test_data['sites'])} 个站点")
-        else:
-            print(f"无法获取{test_file}文件内容")
-    
-    print("\n测试完成!")
 

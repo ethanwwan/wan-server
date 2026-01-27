@@ -8,8 +8,7 @@ import time
 # TVBox配置目录
 TVBOX_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'public', 'tvbox')
 
-TVBOX_URL = os.getenv("TVBOX_URL",
-                       "")
+TVBOX_URL = os.getenv("TVBOX_URL","https://www.iyouhun.com/tv/dc")
 headers = {
     "User-Agent": "okhttp/3.12.12",
     "Accept": "application/json"
@@ -47,6 +46,8 @@ def tvbox_scheduler():
         new_urls = []
         # 遍历urls数组
         for item in urls:
+
+            item_url = ""
             try:
 
                 new_item = item.copy()
@@ -54,7 +55,7 @@ def tvbox_scheduler():
                 # 处理不同格式的数据
                 item_url = item.get('url', '')
                 name = item.get('name', '')
-                print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] [TVBox] 处理URL: {name} - {item_url}")
+                #print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] [TVBox] 处理URL: {name} - {item_url}")
                 
                 # 跳过空URL
                 if not item_url:
@@ -91,7 +92,7 @@ def tvbox_scheduler():
                 try:
                     with open(file_path, 'wb') as f:
                         f.write(final_content)
-                    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] [TVBox] 成功保存文件: {file_name}")
+                    #print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] [TVBox] 成功保存文件: {file_name}")
 
                     # 更新new_item的url
                     new_item['url'] = f"http://localhost/api/tvbox/{file_name}"    
@@ -207,14 +208,14 @@ def replace_content(content):
         # 如果key等于push_agent，则删除该站点
         if key == "push_agent":
             sites.remove(site)
-            print(f"  匹配到站点: key='{key}', name='{name}', 已成功删除")
+            #print(f"  匹配到站点: key='{key}', name='{name}', 已成功删除")
             continue
 
         for keyword in REPLACE_KEYWORDS:
             if keyword == key:
                 # 修改原始字典中的name值
                 site['name'] = "🚀豆瓣┃热播"
-                print(f"  匹配到站点: key='{key}', name='{name}', 匹配关键字: '{keyword}'，已成功设置为 '🚀豆瓣┃热播'")
+                #print(f"  匹配到站点: key='{key}', name='{name}', 匹配关键字: '{keyword}'，已成功设置为 '🚀豆瓣┃热播'")
                 break
     
     # 返回修改后的数据

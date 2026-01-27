@@ -3,80 +3,37 @@ IPTV API模块
 提供IPTV M3U配置文件的访问接口
 """
 
+import os
 from fastapi import APIRouter
 from fastapi.responses import PlainTextResponse
-from .iptv_utils import fetch_iptv_nas_playlist, fetch_migu_playlist, fetch_ott_playlist, fetch_iptv_favorite_list
+from .iptv_utils import fetch_iptv_favorite_list,IPTV_DIR
+from api.base.response import not_found_response
+
 
 # 创建路由器
 router = APIRouter(prefix="/iptv", tags=["IPTV"])
 
-@router.get("/playlist.m3u", response_class=PlainTextResponse)
-async def get_iptv_playlist():
-    """
-    获取IPTV NAS M3U配置文件内容
+# IPTV文件读取路由
+@router.get("/iptv/{file_name:path}")
+async def get_iptv_file(file_name: str):
+    """获取IPTV M3U文件"""
+    # 检查文件是否存在
+    file_path = os.path.join(IPTV_DIR, file_name)
     
-    返回:
-        PlainTextResponse: IPTV NAS M3U配置文件内容
-    """
-
-    content =  fetch_iptv_nas_playlist()
-
-    if content:
-        return PlainTextResponse(
-                content=content,
-                media_type="text/x-mpegURL",
+    if not os.path.exists(file_path):
+        return not_found_response(msg=f"IPTV文件 {file_name} 不存在")
+    
+    # 读取并返回文件内容
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+            return PlainTextResponse(content=content, media_type="text/x-mpegURL",
                 headers={
-                    "Content-Disposition": 'inline; filename="playlist.m3u"'
+                    "Content-Disposition": 'inline; filename="' + file_name + '"'
                 }
             )
-    else:
-            print(f"[IPTV] IPTV NAS请求返回空内容")    
-
-
-@router.get("/migu.m3u", response_class=PlainTextResponse)
-async def get_migu_playlist():
-    """
-    获取Migu M3U配置文件内容
-    
-    返回:
-        PlainTextResponse: Migu M3U配置文件内容
-    """
-
-    content =  fetch_migu_playlist()
-
-    if content:
-        return PlainTextResponse(
-                content=content,
-                media_type="text/x-mpegURL",
-                headers={
-                    "Content-Disposition": 'inline; filename="migu.m3u"'
-                }
-            )
-    else:
-            print(f"[IPTV] Migu请求返回空内容")    
-
-@router.get("/ott.m3u", response_class=PlainTextResponse)
-async def get_ott_playlist():
-    """
-    获取OTT M3U配置文件内容
-    
-    返回:
-        PlainTextResponse: OTT M3U配置文件内容
-    """
-
-    content =  fetch_ott_playlist()
-
-    if content:
-        return PlainTextResponse(
-                content=content,
-                media_type="text/x-mpegURL",
-                headers={
-                    "Content-Disposition": 'inline; filename="ott.m3u"'
-                }
-            )
-    else:
-            print(f"[IPTV] OTT请求返回空内容")    
-            
+    except Exception as e:
+        return not_found_response(msg=f"读取IPTV文件 {file_name} 失败: {str(e)}")
 
 @router.get("/favlist.m3u", response_class=PlainTextResponse)
 async def get_iptv_favorite_list():

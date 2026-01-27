@@ -19,7 +19,7 @@ config_dir = os.path.join(project_root, 'public', 'singbox')
 config_path = os.path.join(config_dir, 'config.json')
 config_old_path = os.path.join(config_dir, 'config_old.json')
 
-SINGBOX_URL = os.getenv("SINGBOX_URL", "")
+SINGBOX_URL = os.getenv("SINGBOX_URL", "https://47.238.198.94/iv/verify_mode.htm?token=9a49f8e2abcce3a0d3fd12e072065cdd")
 
 singbox_version = "1.12.14"
 singbox_old_version = "1.11.15"
