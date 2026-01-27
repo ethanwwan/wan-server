@@ -55,8 +55,6 @@ scheduler.add_job(
 # Optional: Shutdown scheduler gracefully on app exit (for production)
 atexit.register(lambda: scheduler.shutdown())
 
-iptv_scheduler()
-
 if __name__ == "__main__":
     uvicorn.run(
         "main:app", 
