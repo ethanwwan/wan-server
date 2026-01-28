@@ -149,15 +149,17 @@ def fetch_iptv_favorite_list():
             # 添加或修改group-title字段
             if 'group-title=' in extinf_line:
                 # 替换已存在的group-title值
-                extinf_line = re.sub(r'group-title=\"[^"]*\"', f'group-title="{group_title}"', extinf_line)
+                extinf_line = re.sub(r'group-title=\"[^\"]*\"', f'group-title="{group_title}"', extinf_line)
             else:
                 # 添加新的group-title字段
-                if extinf_line.endswith('"'):
-                    # 如果行尾有引号，在引号前添加
-                    extinf_line = extinf_line[:-1] + f' group-title="{group_title}"' + extinf_line[-1]
+                # 找到逗号位置，在逗号前添加group-title
+                comma_index = extinf_line.find(',')
+                if comma_index != -1:
+                    # 在逗号前插入group-title
+                    extinf_line = extinf_line[:comma_index] + f' group-title="{group_title}"' + extinf_line[comma_index:]
                 else:
-                    # 如果行尾没有引号，直接添加
-                    extinf_line = extinf_line + f' group-title="{group_title}"'
+                    # 如果没有逗号（异常情况），保持原样
+                    pass
             
             m3u_lines.append(extinf_line)
             m3u_lines.append(url_line)
