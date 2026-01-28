@@ -7,7 +7,7 @@ import os
 import re
 
 # 从环境变量读取喜欢的频道列表，格式为逗号分隔的频道名称
-FAVORITE_CHANNELS = os.environ.get("FAVORITE_CHANNELS", "CCTV1,CCTV3,江苏卫视").split(",")  
+FAVORITE_CHANNELS = os.getenv("FAVORITE_CHANNELS", "CCTV1,CCTV3,江苏卫视,嵊州").split(",")  
 
 # IPTV配置目录
 IPTV_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'public', 'iptv')
@@ -103,6 +103,10 @@ def fetch_iptv_favorite_list():
         channel_count = 0
         
         for extinf_line, url_line, channel_name in all_channels:
+
+            if "tvg-name" not in extinf_line:
+                continue
+
             # 检查是否匹配喜欢的频道
             matched = False
             

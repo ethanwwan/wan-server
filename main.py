@@ -52,7 +52,6 @@ scheduler.add_job(
     replace_existing=True
 )
 
-# Optional: Shutdown scheduler gracefully on app exit (for production)
 atexit.register(lambda: scheduler.shutdown())
 
 if __name__ == "__main__":
@@ -60,5 +59,5 @@ if __name__ == "__main__":
         "main:app", 
         host="0.0.0.0",
         port=8016,
-        reload=os.getenv("ENVIRONMENT") == "dev"
+        reload=os.getenv("APP_ENV") == "dev"
     )
