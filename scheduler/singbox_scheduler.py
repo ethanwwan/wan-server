@@ -6,6 +6,7 @@ Singbox配置定时更新模块
 import requests
 import json
 import os
+import socket
 from datetime import datetime
 import urllib3
 
@@ -90,6 +91,45 @@ def update_config(is_latest: bool = True):
         print(f"[Singbox] 配置更新失败")
     
 
+def get_server_ip(server: str) -> str:
+    """
+    获取服务器域名对应的IP地址
+    
+    Args:
+        server: 服务器域名
+    
+    Returns:
+        str: 服务器IP地址，如果获取失败则返回空字符串
+    """
+    try:
+        ip = socket.gethostbyname(server)
+        return ip
+    except Exception as e:
+        print(f"[Singbox] 获取服务器IP失败: {e}")
+        return ""
+
+
+def get_ip_location(ip: str) -> str:
+    """
+    获取IP地址对应的国家信息
+    
+    Args:
+        ip: IP地址
+    
+    Returns:
+        str: 国家信息，如果获取失败则返回空字符串
+    """
+    try:
+        response = requests.get(f"https://ipinfo.io/{ip}/country", timeout=5)
+        if response.status_code == 200:
+            country = response.text.strip().upper()
+            return country
+        return ""
+    except Exception as e:
+        print(f"[Singbox] 获取IP位置失败: {e}")
+        return ""
+
+
 def replace_config(config: dict) -> dict:
     """修改配置中的路由规则"""
 
@@ -116,6 +156,39 @@ def replace_config(config: dict) -> dict:
             "rule_set": "Global",
             "outbound": "🚀 节点选择"
         })
+
+    # 处理outbounds列表，添加国家信息到tag字段
+    outbounds = config.get('outbounds', [])
+    tag_map = {}
+    
+    for item in outbounds:
+        item_type = item.get('type')
+        server = item.get('server')
+        if item_type in ['hysteria2', 'tuic', 'vless'] and server:
+            ip = get_server_ip(server)
+            if ip:
+                country = get_ip_location(ip)
+                if country:
+                    old_tag = item.get('tag', '')
+                    if old_tag:
+                        new_tag = f"{old_tag}-{country}"
+                        item['tag'] = new_tag
+                        tag_map[old_tag] = new_tag
+                        print(f"[Singbox] 更新节点标签: {new_tag} (IP: {ip}, 国家: {country})")
+    
+    # 更新selector和urltest类型的outbounds列表
+    for item in outbounds:
+        item_type = item.get('type')
+        if item_type in ['selector', 'urltest']:
+            old_outbounds = item.get('outbounds', [])
+            new_outbounds = []
+            for old_tag in old_outbounds:
+                if old_tag in tag_map:
+                    new_outbounds.append(tag_map[old_tag])
+                    print(f"[Singbox] 更新{item_type}节点: {old_tag} -> {tag_map[old_tag]}")
+                else:
+                    new_outbounds.append(old_tag)
+            item['outbounds'] = new_outbounds
                 
     return config
 
