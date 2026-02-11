@@ -4,3 +4,4 @@ uvicorn==0.32.0
 apscheduler==3.10.4  
 requests==2.32.3
 python-dotenv==1.2.1
+dnspython==2.8.0
