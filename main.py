@@ -53,7 +53,6 @@ scheduler.add_job(
 atexit.register(lambda: scheduler.shutdown())
 
 if __name__ == "__main__":
-    singbox_scheduler()
     uvicorn.run(
         "main:app", 
         host="0.0.0.0",
