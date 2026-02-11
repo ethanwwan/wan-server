@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from scheduler.singbox_scheduler import singbox_scheduler
@@ -12,15 +13,12 @@ import atexit
 import uvicorn
 
 load_dotenv()
-app = FastAPI(title="Lightweight API Backend")
+app = FastAPI(title="Wan API Server")
 app.include_router(api_router)
 
 @app.get("/")
 async def root():
-    return success_response(
-        data=None,
-        msg="服务正在运行中。"
-    )
+    return RedirectResponse(url="/docs")
 
 
 scheduler = BackgroundScheduler()
@@ -55,6 +53,7 @@ scheduler.add_job(
 atexit.register(lambda: scheduler.shutdown())
 
 if __name__ == "__main__":
+    singbox_scheduler()
     uvicorn.run(
         "main:app", 
         host="0.0.0.0",
