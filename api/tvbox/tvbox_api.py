@@ -51,12 +51,29 @@ async def get_tvbox_config_json(request: Request):
     if data:
         print("获取到的config.json数据: " + json.dumps(data, ensure_ascii=False, indent=2))
 
+        # 获取完整的基础URL（包含协议和域名）
+        scheme = request.url.scheme
         host = request.url.netloc
+        base_url = f"{scheme}://{host}"
 
-        # 将urls中的url中的localhost替换为当前请求的host
+        # 将urls中的url中的localhost替换为当前请求的完整基础URL
         urls = data.get('urls', [])
         for key in urls:
-            key['url'] = key['url'].replace('localhost', host)
+            # 替换完整的localhost基础URL，例如 http://localhost:8000 或 https://localhost:8000
+            url = key['url']
+            if 'localhost' in url:
+                # 提取原始URL中的路径部分
+                if '://' in url:
+                    path = url.split('://', 1)[1]
+                    if '/' in path:
+                        path = path.split('/', 1)[1]
+                        new_url = f"{base_url}/{path}"
+                    else:
+                        new_url = base_url
+                else:
+                    new_url = url.replace('localhost', host)
+                key['url'] = new_url
+                # print(f"替换URL: {url} -> {new_url}")
 
         return data
     else:
