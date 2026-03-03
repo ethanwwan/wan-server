@@ -14,7 +14,7 @@ from api.base.response import not_found_response
 router = APIRouter(prefix="/iptv", tags=["IPTV"])
 
 # IPTV文件读取路由
-@router.get("/iptv/{file_name:path}")
+@router.get("/{file_name:path}")
 async def get_iptv_file(file_name: str):
     """获取IPTV M3U文件"""
     # 检查文件是否存在
