@@ -79,7 +79,7 @@ def parse_m3u(content: str) -> list:
                 }
                 if ch['url'] and ch['channel_name']:
                     channels.append(ch)
-        i += 2
+        i += 1
     return channels
 
 
