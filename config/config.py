@@ -146,10 +146,6 @@ class IptvConfig:
         self._config = config
     
     @property
-    def playlist_url(self) -> str:
-        return self._config.get('playlist_url', '')
-    
-    @property
     def migu_url(self) -> str:
         return self._config.get('migu_url', '')
     

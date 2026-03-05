@@ -12,11 +12,6 @@ from utils.ip_utils import get_server_ip, get_ip_location
 from utils.logger import get_logger
 from config.config import CONFIG
 import requests
-import urllib3
-
-
-# 禁用InsecureRequestWarning警告
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # 项目根目录和配置路径
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

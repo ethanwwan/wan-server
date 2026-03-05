@@ -1,6 +1,9 @@
 # 使用官方Python 3.12基础镜像，并通过--platform指定x86_64架构
 FROM python:3.12-slim
 
+# 安装 ffmpeg
+RUN apt-get update && apt-get install -y ffmpeg && rm -rf /var/lib/apt/lists/*
+
 # 设置工作目录
 WORKDIR /app
 

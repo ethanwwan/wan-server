@@ -5,7 +5,11 @@
 
 import logging
 import sys
+import os
+import urllib3
 
+# 禁用不安全的请求警告
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def configure_logging():
     """配置日志系统"""
