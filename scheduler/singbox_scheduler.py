@@ -9,7 +9,8 @@ import concurrent.futures
 from datetime import datetime
 from typing import Dict, Optional, Tuple
 from utils.ip_utils import get_server_ip, get_ip_location
-
+from utils.logger import get_logger
+from config.config import CONFIG
 import requests
 import urllib3
 
@@ -25,15 +26,18 @@ CONFIG_OLD_PATH = os.path.join(CONFIG_DIR, 'config_old.json')
 DOCKER_CONFIG_DIR = os.path.join(CONFIG_DIR, 'docker')
 DOCKER_CONFIG_PATH = os.path.join(DOCKER_CONFIG_DIR, 'config.json')
 
-# 配置常量
-SINGBOX_URL = os.getenv("SINGBOX_URL", "https://47.238.198.94/iv/verify_mode.htm?token=9a49f8e2abcce3a0d3fd12e072065cdd")
-SINGBOX_VERSION = "1.12.14"
-SINGBOX_OLD_VERSION = "1.11.15"
-GLOBAL_RULESET_URL = "https://gh-proxy.org/https://raw.githubusercontent.com/ethanwwan/sing-box-rules/refs/heads/main/rule_json/Global_All.json"
+# 从配置文件读取常量
+SINGBOX_URL = CONFIG.singbox.url
+SINGBOX_VERSION = CONFIG.singbox.version
+SINGBOX_OLD_VERSION = CONFIG.singbox.old_version
+GLOBAL_RULESET_URL = CONFIG.singbox.global_ruleset_url
 
 # 请求超时设置
 REQUEST_TIMEOUT = 20
 MAX_WORKERS = 10
+
+# 日志记录器
+logger = get_logger('SINGBOX')
 
 
 def singbox_scheduler():
@@ -45,16 +49,16 @@ def singbox_scheduler():
     - 保存到本地配置文件
     - 处理配置，添加国家信息到节点标签
     """
-    print(f"[Singbox] 开始更新配置，时间: {datetime.now().isoformat()}")
+    logger.info(f"开始更新配置，时间: {datetime.now().isoformat()}")
     
     try:
         # 更新最新版本配置
         update_config(is_latest=True)
         # 更新旧版本配置
         update_config(is_latest=False)
-        print(f"[Singbox] 配置更新成功完成，时间: {datetime.now().isoformat()}")
+        logger.info(f"配置更新成功完成，时间: {datetime.now().isoformat()}")
     except Exception as e:
-        print(f"[Singbox] 调度器执行错误: {e}")
+        logger.error(f"调度器执行错误: {e}")
 
 
 def update_config(is_latest: bool = True) -> bool:
@@ -74,7 +78,7 @@ def update_config(is_latest: bool = True) -> bool:
     
     # 验证SINGBOX_URL是否配置
     if not SINGBOX_URL:
-        print("[Singbox] 错误: SINGBOX_URL 未配置")
+        logger.error("SINGBOX_URL 未配置")
         return False
     
     try:
@@ -83,18 +87,18 @@ def update_config(is_latest: bool = True) -> bool:
         
         # 检查响应状态
         if response.status_code != 200:
-            print(f"[Singbox] 请求失败: 状态码 {response.status_code}")
+            logger.error(f"请求失败: 状态码 {response.status_code}")
             return False
         
         # 检查响应内容
         if not response.text.strip():
-            print("[Singbox] 请求失败: 内容为空")
+            logger.error("请求失败: 内容为空")
             return False
         
         # 解析配置
         config = json.loads(response.text.strip())
         if not isinstance(config, dict):
-            print("[Singbox] 配置解析错误: 配置不是有效的JSON对象")
+            logger.error("配置解析错误: 配置不是有效的JSON对象")
             return False
         
         # 处理配置
@@ -113,13 +117,13 @@ def update_config(is_latest: bool = True) -> bool:
         return True
         
     except json.JSONDecodeError as e:
-        print(f"[Singbox] 配置解析错误: {e}")
+        logger.error(f"配置解析错误: {e}")
         return False
     except requests.RequestException as e:
-        print(f"[Singbox] 网络请求错误: {e}")
+        logger.error(f"网络请求错误: {e}")
         return False
     except Exception as e:
-        print(f"[Singbox] 配置处理错误: {e}")
+        logger.error(f"配置处理错误: {e}")
         return False
 
 
@@ -147,7 +151,7 @@ def generate_docker_config(config: Dict) -> None:
             json.dump(docker_config, f, ensure_ascii=False, indent=4)
         
     except Exception as e:
-        print(f"[Singbox] 生成Docker配置失败: {e}")
+        logger.error(f"生成Docker配置失败: {e}")
 
 
 def process_config(config: Dict) -> Dict:
@@ -261,7 +265,7 @@ def process_outbounds(config: Dict) -> Dict:
                         tag_map[old_tag] = new_tag
                 except Exception as e:
                     processed_nodes += 1
-                    print(f"[Singbox] 处理节点失败 ({processed_nodes}/{total_nodes}): {e}")
+                    logger.error(f"处理节点失败 ({processed_nodes}/{total_nodes}): {e}")
         
     
     # 更新selector和urltest类型的出站配置
@@ -327,9 +331,9 @@ def get_config_json(is_latest: bool = True) -> Dict:
             with open(target_config_path, 'r', encoding='utf-8') as f:
                 config_data = json.load(f)
     except json.JSONDecodeError as e:
-        print(f"[Singbox] 配置文件解析错误: {e}")
+        logger.error(f"配置文件解析错误: {e}")
     except Exception as e:
-        print(f"[Singbox] 获取配置信息错误: {e}")
+        logger.error(f"获取配置信息错误: {e}")
     finally:
         return config_data
 

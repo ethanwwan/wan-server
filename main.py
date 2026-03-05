@@ -1,61 +1,84 @@
+import logging
+import sys
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.triggers.interval import IntervalTrigger
-from scheduler.singbox_scheduler import singbox_scheduler
-from scheduler.tvbox_scheduler import tvbox_scheduler
-from scheduler.iptv_scheduler import iptv_scheduler
+from apscheduler.triggers.cron import CronTrigger
+from apscheduler.executors.pool import ThreadPoolExecutor as APSchedulerThreadPoolExecutor
 from api.base.routes import api_router
-from api.base.response import success_response
-from dotenv import load_dotenv
-import os
+from config.config import CONFIG
+from utils.logger import get_logger
 import atexit
 import uvicorn
 
-load_dotenv()
+
+logger = get_logger('APP')
+
 app = FastAPI(title="Wan API Server")
 app.include_router(api_router)
+
 
 @app.get("/")
 async def root():
     return RedirectResponse(url="/docs")
 
 
-scheduler = BackgroundScheduler()
-scheduler.start()
+def setup_scheduler(run_now: bool = False):
+    """根据配置初始化调度任务
+    
+    Args:
+        run_now: 是否立即执行一次任务
+    """
+    executors = {
+        'default': APSchedulerThreadPoolExecutor(max_workers=10)
+    }
+    job_defaults = {
+        'coalesce': False,
+        'max_instances': 1,
+        'misfire_grace_time': 300
+    }
+    scheduler = BackgroundScheduler(executors=executors, job_defaults=job_defaults)
+    
+    for job in CONFIG.scheduler:
+        func = job.get_func()
+        if func:
+            scheduler.add_job(
+                func,
+                trigger=CronTrigger(hour=job.hour, minute=job.minute),
+                id=job.id,
+                name=job.name,
+                replace_existing=True
+            )
+            if run_now:
+                func()
+    
+    scheduler.start()
+    return scheduler
 
-scheduler.add_job(
-    singbox_scheduler,
-    trigger=IntervalTrigger(hours=8),
-    id="singbox_job",
-    name="Singbox configuration update",
-    replace_existing=True
-)
+def start_server():
 
-# 添加TVBox配置更新任务
-scheduler.add_job(
-    tvbox_scheduler,
-    trigger=IntervalTrigger(hours=8),
-    id="tvbox_job",
-    name="TVBox configuration update",
-    replace_existing=True
-)
+    logger.info("服务启动中...")
+    logger.info(f"主机: {CONFIG.server.host}")
+    logger.info(f"端口: {CONFIG.server.port}")
+    logger.info(f"环境: {CONFIG.app.env}")
+    logger.info(f"调试模式: {CONFIG.app.debug}")
+    logger.info("服务启动完成")
 
-# 添加IPTV配置更新任务
-scheduler.add_job(
-    iptv_scheduler,
-    trigger=IntervalTrigger(hours=8),
-    id="iptv_job",
-    name="IPTV configuration update",
-    replace_existing=True
-)
 
-atexit.register(lambda: scheduler.shutdown())
-
-if __name__ == "__main__":
+    scheduler = setup_scheduler(run_now=True)
+    def shutdown_handler():
+        scheduler.shutdown()
+        logger.info("服务已关闭")
+    atexit.register(shutdown_handler)
+    
     uvicorn.run(
         "main:app", 
-        host="0.0.0.0",
-        port=8016,
-        reload=os.getenv("APP_ENV") == "dev"
+        host=CONFIG.server.host,
+        port=CONFIG.server.port,
+        reload=False,
+        log_level="warning"
     )
+
+
+if __name__ == "__main__":
+    start_server()
