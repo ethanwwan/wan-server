@@ -7,15 +7,19 @@ import logging
 import sys
 import os
 import urllib3
+from config.config import CONFIG
 
 # 禁用不安全的请求警告
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def configure_logging():
     """配置日志系统"""
+
+    log_level = logging.DEBUG if CONFIG.app.debug else logging.INFO
+
     # 配置根日志记录器
     root_logger = logging.getLogger()
-    root_logger.setLevel(logging.INFO)
+    root_logger.setLevel(log_level)
     
     # 清除现有的处理器
     for handler in root_logger.handlers[:]:
@@ -23,7 +27,7 @@ def configure_logging():
     
     # 创建控制台处理器
     console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setLevel(logging.INFO)
+    console_handler.setLevel(log_level)
     
     # 设置日志格式
     formatter = logging.Formatter(

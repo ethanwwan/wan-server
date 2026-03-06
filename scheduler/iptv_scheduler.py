@@ -1,13 +1,16 @@
 """
-IPTV配置定时更新模块
+IPTV 配置定时更新模块
+
+功能：
+- 从多个源获取 IPTV 播放列表
+- 检测频道可用性和流畅度
+- 合并并保存为 M3U 格式
 """
 
 import os
 import re
 import shutil
 import subprocess
-
-FFMPEG_AVAILABLE = shutil.which('ffmpeg') is not None
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
@@ -20,43 +23,65 @@ sys.path.insert(0, project_root)
 from config.config import CONFIG
 from utils.logger import get_logger
 
+# ==================== 常量配置 ====================
+
 IPTV_DIR = os.path.join(project_root, 'public', 'iptv')
 IPTV_URLS_FILE = os.path.join(project_root, 'config', 'iptv_urls.txt')
+
 MIGU_URL = CONFIG.iptv.migu_url
 OTT_URL = CONFIG.iptv.ott_url
 
 MAX_WORKERS = 30
-USER_AGENT = (
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-    "AppleWebKit/537.36 (KHTML, like Gecko) "
-    "Chrome/120.0.0.0 Safari/537.36"
-)
-FPS_MIN = 24
+FPS_MIN = 20
+
+FFMPEG_AVAILABLE = shutil.which('ffmpeg') is not None
+
 os.makedirs(IPTV_DIR, exist_ok=True)
 
 logger = get_logger('IPTV')
 
 
+# ==================== 数据获取 ====================
+
 def fetch_url(url: str, timeout: int = 20) -> str:
+    """
+    从 URL 获取内容
+
+    Args:
+        url: 请求 URL
+        timeout: 超时时间（秒）
+
+    Returns:
+        响应内容，失败返回空字符串
+    """
     try:
         resp = requests.get(url, timeout=timeout, verify=False)
         resp.raise_for_status()
-        content = resp.text.strip()
-        # if len(content) < 10:
-        #     logger.warning(f"内容过短，可能是空列表: {url}")
-        return content
+        return resp.text.strip()
     except Exception as e:
-        logger.error(f"请求失败: {url}, 错误: {e}")
+        logger.error(f"请求失败：{url}, 错误：{e}")
         return ""
 
 
+# ==================== 解析函数 ====================
+
 def parse_m3u(content: str) -> list:
+    """
+    解析 M3U 格式内容
+
+    Args:
+        content: M3U 文件内容
+
+    Returns:
+        频道列表
+    """
     if not content:
         return []
 
     channels = []
     lines = content.split('\n')
     i = 0
+
     while i < len(lines):
         line = lines[i].strip()
         if line.startswith('#EXTINF:') and i + 1 < len(lines):
@@ -77,13 +102,24 @@ def parse_m3u(content: str) -> list:
                     'channel_name': (comma.group(1).strip() if comma else "") or (tvg_name.group(1).strip() if tvg_name else ""),
                     'url': url
                 }
+
                 if ch['url'] and ch['channel_name']:
                     channels.append(ch)
         i += 1
+
     return channels
 
 
 def parse_txt(content: str) -> list:
+    """
+    解析 TXT 格式内容（频道名，URL）
+
+    Args:
+        content: TXT 文件内容
+
+    Returns:
+        频道列表
+    """
     if not content:
         return []
 
@@ -92,156 +128,237 @@ def parse_txt(content: str) -> list:
         line = line.strip()
         if not line or line.startswith('#'):
             continue
+
         parts = line.split(',')
         if len(parts) >= 2:
             name, url = parts[0].strip(), parts[1].strip()
-            if url.startswith('http://') or url.startswith('https://'):
+            if url.startswith(('http://', 'https://')):
                 channels.append({
-                    'tvg_id': "", 'tvg_name': "", 'tvg_logo': "",
-                    'group_title': "", 'channel_name': name, 'url': url
+                    'tvg_id': "",
+                    'tvg_name': "",
+                    'tvg_logo': "",
+                    'group_title': "",
+                    'channel_name': name,
+                    'url': url
                 })
+
     return channels
 
 
 def parse_url(url: str, content: str) -> list:
+    """
+    根据 URL 扩展名选择解析器
+
+    Args:
+        url: 源 URL
+        content: 文件内容
+
+    Returns:
+        频道列表
+    """
     return parse_txt(content) if url.endswith('.txt') else parse_m3u(content)
+
+
+# ==================== 频道检测 ====================
+
+def _build_ffmpeg_cmd(url: str, mode: str, duration: str) -> list:
+    """
+    构建 ffmpeg 检测命令
+
+    Args:
+        url: 检测 URL
+        mode: 日志模式 
+        duration: 检测时长（秒）
+
+    Returns:
+        ffmpeg 命令列表
+    """
+    return [
+        'ffmpeg',
+        '-i', url,
+        '-t', duration,
+        '-f', 'null', '-',
+        '-probesize', '32',   
+        '-v', mode,
+        '-hide_banner'
+    ]
+
+
+def _check_ffmpeg_error(stderr: str) -> bool:
+    """
+    检查 ffmpeg 错误日志
+
+    Args:
+        stderr: ffmpeg 错误输出
+
+    Returns:
+        是否包含严重错误
+    """
+    error_log = stderr.lower()
+    keywords = [
+        '404', 'not found', 'file not found',
+        'connection refused',
+        'connection timeout', 'connection timed out',
+        'unable to open', 'server returned 403 forbidden',
+        'invalid data found when processing input'
+    ]
+    return any(keyword in error_log for keyword in keywords)
 
 
 def check_url_available(url: str, timeout: int = 10) -> bool:
     """
-    检测流媒体URL的基础可用性（是否能访问、是否为有效流）
+    检查 URL 是否可用（基础检测）
+
+    Args:
+        url: 检测 URL
+        timeout: 超时时间（秒）
+
+    Returns:
+        是否可用
     """
-    logger.debug(f"[检测] 基础可用性: {url[:50]}...")
-    
-    cmd = [
-        'ffmpeg',
-        '-i', url,
-        '-timeout', str(timeout * 1000000),
-        '-http_seekable', '0',
-        '-headers', f"User-Agent: {USER_AGENT}",
-        '-t', '5',
-        '-f', 'null', '-',
-        '-v', 'error',
-        '-hide_banner'
-    ]
+    logger.debug(f"[基础检测] timeout={timeout}s: {url[:50]}...")
+
+    cmd = _build_ffmpeg_cmd(url, 'error', '3')
 
     try:
-        result = subprocess.run(cmd, capture_output=True, timeout=timeout + 2, text=True)
-        error_log = result.stderr.lower()
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
-        unavailable_keywords = [
+        try:
+            _, stderr = process.communicate(timeout=timeout)
+        except subprocess.TimeoutExpired:
+            process.kill()
+            process.wait()
+            logger.debug(f"[超时] {url[:50]}...")
+            return False
+
+        logger.debug(f"returncode={process.returncode}, stderr={len(stderr)} chars")
+
+        if _check_ffmpeg_error(stderr):
+            logger.debug(f"[失败] 命中错误关键词")
+            return False
+
+        logger.debug(f"[通过] returncode={process.returncode}")
+        return True
+
+    except Exception as e:
+        logger.debug(f"[异常] {e}")
+        return False
+
+
+def check_url_fluent(url: str, timeout: int = 20) -> bool:
+    """
+    检查 URL 是否流畅（流畅度检测）
+
+    Args:
+        url: 检测 URL
+        timeout: 超时时间（秒）
+
+    Returns:
+        是否流畅
+    """
+    logger.debug(f"[流畅检测] timeout={timeout}s: {url[:50]}...")
+
+    cmd = _build_ffmpeg_cmd(url, 'verbose', '6')
+
+    try:
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
+        try:
+            _, stderr = process.communicate(timeout=timeout)
+        except subprocess.TimeoutExpired:
+            process.kill()
+            process.wait()
+            logger.debug(f"[超时] {url[:50]}...")
+            return False
+
+        logger.debug(f"returncode={process.returncode}, stderr={len(stderr)} chars")
+        error_log = stderr.lower()
+
+        # 检查是否有帧输出
+        if 'frame=' in error_log and 'fps=' in error_log:
+            stream_fps_matches = re.findall(r'video:.*?(\d+)\s+fps', error_log, re.IGNORECASE)
+
+            if stream_fps_matches:
+                fps = float(stream_fps_matches[0])
+                logger.debug(f"[视频] fps={fps:.2f}, min={FPS_MIN}")
+
+                if fps > 0 and fps < FPS_MIN:
+                    logger.debug(f"[失败] 帧率低于阈值")
+                    return False
+            else:
+                proc_fps_matches = re.findall(r'frame=\s*\d+\s+fps=(\d+\.?\d*)', error_log)
+                if proc_fps_matches:
+                    logger.debug(f"[视频] 无法获取源视频帧率，仅检测到处理速度")
+                else:
+                    logger.debug(f"[视频] 无法提取 fps")
+
+            logger.debug(f"[通过] 检测到正常播放帧")
+            return True
+
+        # 检查错误
+        keywords = [
             '404', 'not found', 'file not found',
             'connection refused',
             'connection timeout', 'connection timed out',
-            'unable to open', 'server returned 403 forbidden',
-            'invalid data found when processing input'
+            'unable to open', 'server returned 403',
+            'invalid data', 'option not found'
         ]
 
-        if any(keyword in error_log for keyword in unavailable_keywords):
+        if any(keyword in error_log for keyword in keywords):
+            logger.debug(f"[失败] 命中错误关键词")
             return False
 
-        if result.returncode != 0 and not any(keyword in error_log for keyword in unavailable_keywords):
+        if process.returncode == 0:
+            logger.debug(f"[通过] returncode=0")
             return True
 
-        return True
-
-    except subprocess.TimeoutExpired:
-        return False
-    except Exception:
+        logger.debug(f"[失败] 未获取到有效信息")
         return False
 
-
-def check_url_fluent(url: str, timeout: int = 15) -> bool:
-    """
-    检测流媒体URL的流畅性（基于可用性，额外校验帧率/音视频流/无卡顿）
-    """
-    logger.debug(f"[检测] 流畅度: {url[:50]}...")
-    
-    cmd = [
-        'ffmpeg',
-        '-i', url,
-        '-timeout', str(timeout * 1000000),
-        '-http_seekable', '0',
-        '-headers', f"User-Agent: {USER_AGENT}",
-        '-t', '10',
-        '-v', 'quiet',
-        '-print_format', 'json',
-        '-show_streams',
-        '-hide_banner',
-        '-'
-    ]
-
-    try:
-        result = subprocess.run(cmd, capture_output=True, timeout=timeout + 2, text=True)
-
-        if result.returncode != 0:
-            error_log = result.stderr.lower()
-            if any(keyword in error_log for keyword in [
-                'packet loss',
-                'network is unreachable',
-                'frame drop',
-                'buffer underflow'
-            ]):
-                return False
-
-        import json
-        try:
-            stream_info = json.loads(result.stdout.strip()) if result.stdout.strip() else {}
-        except json.JSONDecodeError:
-            return False
-
-        has_video = False
-        has_audio = False
-        video_stream = None
-        for stream in stream_info.get('streams', []):
-            codec_type = stream.get('codec_type')
-            if codec_type == 'video':
-                has_video = True
-                video_stream = stream
-            elif codec_type == 'audio':
-                has_audio = True
-
-        if not has_video and not has_audio:
-            return False
-
-        if has_video and video_stream:
-            fps_str = video_stream.get('r_frame_rate', '0/1')
-            try:
-                num, den = map(int, fps_str.split('/'))
-                fps = num / den if den > 0 else 0.0
-                if fps > 0 and fps < FPS_MIN:
-                    return False
-            except (ValueError, ZeroDivisionError):
-                pass
-
-        return True
-
-    except subprocess.TimeoutExpired:
-        return False
-    except Exception:
+    except Exception as e:
+        logger.debug(f"[异常] {e}")
         return False
 
 
 def check_channel(ch: dict) -> dict:
+    """
+    检测单个频道
+
+    Args:
+        ch: 频道信息字典
+
+    Returns:
+        通过检测的频道信息，失败返回 None
+    """
     url = ch.get('url', '')
-    if not url:
+    channel_name = ch.get('channel_name', '')
+
+    if not url or not channel_name:
         return None
-    
-    channel_name = ch.get('channel_name', 'Unknown')
-    
+
     if not check_url_available(url, 10):
         logger.debug(f"[不可用] {channel_name}: 基础可用性检测失败")
         return None
-    
-    if not check_url_fluent(url, 15):
+
+    if not check_url_fluent(url, 20):
         logger.debug(f"[不流畅] {channel_name}: 流畅度检测失败")
         return None
-    
+
     logger.debug(f"[通过] {channel_name}: 可用且流畅")
     return ch
 
 
 def check_channels(channels: list) -> list:
+    """
+    批量检测频道
+
+    Args:
+        channels: 频道列表
+
+    Returns:
+        通过检测的频道列表
+    """
+    # 去重
     channels = list({ch['url']: ch for ch in channels}.values())
 
     if not FFMPEG_AVAILABLE:
@@ -253,15 +370,25 @@ def check_channels(channels: list) -> list:
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         results = [r for r in executor.map(check_channel, channels) if r]
 
-    logger.info(f"频道有效性检测完成，有效: {len(results)}/{len(channels)}")
+    logger.info(f"频道有效性检测完成，有效：{len(results)}/{len(channels)}")
     return results
 
 
+# ==================== M3U 生成 ====================
+
 def build_m3u(channels: list) -> str:
+    """
+    构建 M3U 格式内容
+
+    Args:
+        channels: 频道列表
+
+    Returns:
+        M3U 格式字符串
+    """
     if not channels:
         return ""
 
-    channels = check_channels(channels)
     lines = ['#EXTM3U']
     seen = set()
 
@@ -271,10 +398,14 @@ def build_m3u(channels: list) -> str:
         seen.add(ch['url'])
 
         parts = []
-        if ch['tvg_id']: parts.append(f'tvg-id="{ch["tvg_id"]}"')
-        if ch['tvg_name']: parts.append(f'tvg-name="{ch["tvg_name"]}"')
-        if ch['tvg_logo']: parts.append(f'tvg-logo="{ch["tvg_logo"]}"')
-        if ch['group_title']: parts.append(f'group-title="{ch["group_title"]}"')
+        if ch['tvg_id']:
+            parts.append(f'tvg-id="{ch["tvg_id"]}"')
+        if ch['tvg_name']:
+            parts.append(f'tvg-name="{ch["tvg_name"]}"')
+        if ch['tvg_logo']:
+            parts.append(f'tvg-logo="{ch["tvg_logo"]}"')
+        if ch['group_title']:
+            parts.append(f'group-title="{ch["group_title"]}"')
 
         lines.append(f'#EXTINF:-1 {" ".join(parts)},{ch["channel_name"]}')
         lines.append(ch['url'])
@@ -283,7 +414,17 @@ def build_m3u(channels: list) -> str:
 
 
 def merge_channels(urls: list) -> str:
+    """
+    合并多个 URL 的频道
+
+    Args:
+        urls: URL 列表
+
+    Returns:
+        合并后的 M3U 内容
+    """
     all_channels = []
+
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         future_to_url = {executor.submit(fetch_url, url): url for url in urls}
         for future in as_completed(future_to_url):
@@ -291,68 +432,112 @@ def merge_channels(urls: list) -> str:
             content = future.result()
             if content:
                 all_channels.extend(parse_url(url, content))
+
     return build_m3u(all_channels)
 
 
+# ==================== 文件操作 ====================
+
 def save_file(filename: str, content: str) -> bool:
+    """
+    保存文件
+
+    Args:
+        filename: 文件名
+        content: 文件内容
+
+    Returns:
+        是否保存成功
+    """
     if not content:
         return False
+
     path = os.path.join(IPTV_DIR, filename)
     with open(path, 'w', encoding='utf-8') as f:
         f.write(content)
+
     logger.info(f"{filename} 已保存到 {path}")
     return True
 
 
+# ==================== 主功能函数 ====================
+
 def fetch_playlist():
+    """从配置文件获取并合并播放列表"""
     if not os.path.exists(IPTV_URLS_FILE):
-        logger.error(f"URL配置文件不存在: {IPTV_URLS_FILE}")
+        logger.error(f"URL 配置文件不存在：{IPTV_URLS_FILE}")
         return
 
     with open(IPTV_URLS_FILE, 'r', encoding='utf-8') as f:
         urls = [line.strip() for line in f if line.strip() and not line.startswith('#')]
 
     if not urls:
-        logger.error("URL配置文件为空")
+        logger.error("URL 配置文件为空")
         return
 
-    logger.info(f"从配置文件读取到 {len(urls)} 个URL")
+    logger.info(f"正在从配置文件获取播放列表，读取到 {len(urls)} 个 URL...")
     content = merge_channels(urls)
     save_file('playlist.m3u', content)
 
 
 def fetch_migu():
+    """获取咪咕播放列表"""
     if not MIGU_URL:
-        logger.info("Migu URL未配置，跳过")
+        logger.warning("Migu URL 未配置，跳过")
         return
-    logger.info("正在获取Migu播放列表...")
+
+    logger.info("正在获取 Migu 播放列表...")
     save_file('migu.m3u', fetch_url(MIGU_URL))
 
 
 def fetch_ott():
+    """获取 OTT 播放列表"""
     if not OTT_URL:
-        logger.info("OTT URL未配置，跳过")
+        logger.warning("OTT URL 未配置，跳过")
         return
-    logger.info("正在获取OTT播放列表...")
+
+    logger.info("正在获取 OTT 播放列表...")
     save_file('ott.m3u', fetch_url(OTT_URL))
 
 
 def iptv_scheduler():
-    logger.info(f"开始更新配置，时间: {datetime.now().isoformat()}")
+    """IPTV 配置更新调度器"""
+    logger.info(f"开始更新配置，时间：{datetime.now().isoformat()}")
+
     fetch_migu()
     fetch_ott()
     fetch_playlist()
-    logger.info(f"配置更新完成，时间: {datetime.now().isoformat()}")
+
+    logger.info(f"配置更新完成，时间：{datetime.now().isoformat()}")
 
 
 def get_iptv_content(filename: str) -> str:
+    """
+    获取 IPTV 文件内容
+
+    Args:
+        filename: 文件名
+
+    Returns:
+        文件内容
+    """
     path = os.path.join(IPTV_DIR, filename)
     try:
         return open(path, 'r', encoding='utf-8').read() if os.path.exists(path) else ""
     except Exception as e:
-        logger.error(f"读取文件失败: {filename}, 错误: {e}")
+        logger.error(f"读取文件失败：{filename}, 错误：{e}")
         return ""
 
 
+# ==================== 命令行入口 ====================
+
 if __name__ == "__main__":
-    iptv_scheduler()
+    # 执行调度器
+    # iptv_scheduler()
+
+    # 测试代码（需要时取消注释）
+    content = get_iptv_content('ott.m3u')
+    channels = parse_m3u(content)
+    logger.debug(f"共找到 {len(channels)} 个频道")
+    check_channels(channels)
+    logger.debug("\n测试结束\n")
