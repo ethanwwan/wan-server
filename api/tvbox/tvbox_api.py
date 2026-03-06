@@ -49,7 +49,6 @@ async def get_tvbox_config_json(request: Request):
     data = get_tvbox_local_file("config.json")
 
     if data:
-        print("获取到的config.json数据: " + json.dumps(data, ensure_ascii=False, indent=2))
 
         # 获取完整的基础URL（包含协议和域名）
         scheme = request.url.scheme
