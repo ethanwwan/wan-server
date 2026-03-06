@@ -8,6 +8,7 @@ import logging
 import re
 import shutil
 import subprocess
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Optional, Dict, List, Union, Callable
 
@@ -29,9 +30,9 @@ class IPTVChecker:
         user_agent: str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         fps_min: int = 20,
         bitrate_min: int = 1000,  # 新增：最低码率阈值 (kbps)
-        timeout_basic: int = 10,
-        timeout_fluent: int = 20,
-        retry: int = 1  # 新增：重试次数
+        timeout_basic: int = 8,   # 优化：缩短基础检测超时
+        timeout_fluent: int = 15, # 优化：缩短流畅检测超时
+        max_workers: int = 30     # 优化：平衡并发数（CPU 友好型）
     ):
         """
         初始化检测器
@@ -43,6 +44,7 @@ class IPTVChecker:
             timeout_basic: 基础检测超时时间（秒）
             timeout_fluent: 流畅检测超时时间（秒）
             retry: 检测失败时的重试次数
+            max_workers: 默认最大并发数
         """
         self.user_agent = user_agent
         self.fps_min = fps_min
@@ -50,6 +52,7 @@ class IPTVChecker:
         self.timeout_basic = timeout_basic
         self.timeout_fluent = timeout_fluent
         self.retry = retry
+        self.max_workers = max_workers
 
     @classmethod
     def is_ffmpeg_available(cls) -> bool:
@@ -74,22 +77,23 @@ class IPTVChecker:
         Returns:
             ffmpeg 命令列表
         """
-        duration = '3' if mode == 'error' else '8'  # 延长检测时长，提升准确性
+        # 优化：缩短检测时长，提升速度
+        duration = '2' if mode == 'error' else '5'  # 从 3/8 秒缩短到 2/5 秒
         timeout_ms = (self.timeout_basic if mode == 'error' else self.timeout_fluent) * 1000000
         
         return [
             'ffmpeg',
             '-user_agent', self.user_agent,
             '-i', url,
-            '-timeout', str(timeout_ms),  # 新增：FFmpeg内置超时（微秒）
-            '-http_seekable', '0',        # 新增：禁用HTTP Seek，适配直播源
-            '-probesize', '512000',       # 新增：增大探测大小（512KB）
-            '-analyzeduration', '5000000',# 新增：分析时长5秒
+            '-timeout', str(timeout_ms),      # FFmpeg 内置超时（微秒）
+            '-http_seekable', '0',            # 禁用 HTTP Seek，适配直播源
+            '-probesize', '256000',           # 优化：减小探测大小（512KB->256KB）
+            '-analyzeduration', '3000000',    # 优化：缩短分析时长（5 秒->3 秒）
             '-t', duration,
             '-f', 'null', '-',
             '-v', mode,
             '-hide_banner',
-            '-loglevel', 'repeat+info'    # 新增：避免重复日志干扰
+            '-loglevel', 'repeat+info'        # 避免重复日志干扰
         ]
 
     def _check_ffmpeg_error(self, stderr: str) -> bool:
@@ -198,7 +202,7 @@ class IPTVChecker:
 
     def check_available(self, url: str) -> bool:
         """
-        检查 URL 是否可用（基础检测，带重试）
+        检查 URL 是否可用（基础检测，无重试）
 
         Args:
             url: 检测 URL
@@ -206,36 +210,35 @@ class IPTVChecker:
         Returns:
             是否可用
         """
-        for attempt in range(self.retry + 1):
-            cmd = self._build_ffmpeg_cmd(url, 'error')
+        cmd = self._build_ffmpeg_cmd(url, 'error')
+
+        try:
+            process = subprocess.Popen(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True
+            )
 
             try:
-                process = subprocess.Popen(
-                    cmd,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    text=True
-                )
+                # 总超时留 2 秒缓冲
+                _, stderr = process.communicate(timeout=self.timeout_basic + 2)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                process.wait()
+                return False
 
-                try:
-                    # 总超时留2秒缓冲
-                    _, stderr = process.communicate(timeout=self.timeout_basic + 2)
-                except subprocess.TimeoutExpired:
-                    process.kill()
-                    process.wait()
-                    continue  # 超时重试
+            # 检测严重错误
+            if self._check_ffmpeg_error(stderr):
+                return False
 
-                # 检测严重错误
-                if self._check_ffmpeg_error(stderr):
-                    continue  # 错误重试
+            # 兼容 FFmpeg 返回码 1（轻微警告但流有效）
+            if process.returncode in (0, 1):
+                return True
 
-                # 兼容FFmpeg返回码1（轻微警告但流有效）
-                if process.returncode in (0, 1):
-                    return True
-
-            except Exception:
-                continue  # 异常重试
-
+        except Exception:
+            return False
+        
         return False
 
     def check_fluent(self, url: str) -> dict:
@@ -462,7 +465,7 @@ class IPTVChecker:
     
     def check_channels(self, channels: List[Union[str, Dict, 'Channel']], 
                       logger: Optional[logging.Logger] = None,
-                      max_workers: int = 10,
+                      max_workers: int = None,  # 优化：默认使用实例的 max_workers
                       progress_callback: Optional[Callable[[int, int, any], None]] = None) -> List['Channel']:
         """
         批量检测频道（带并发和进度可视化）
@@ -470,12 +473,15 @@ class IPTVChecker:
         Args:
             channels: 频道列表（URL 字符串、字典或 Channel 对象）
             logger: 日志记录器（可选）
-            max_workers: 最大并发数
+            max_workers: 最大并发数（默认使用实例的 max_workers 属性）
             progress_callback: 进度回调函数 callback(current, total, result)
         
         Returns:
             通过检测的 Channel 对象列表
         """
+        # 使用实例的默认并发数
+        if max_workers is None:
+            max_workers = self.max_workers
         # 检查 ffmpeg 可用性
         if not self.is_ffmpeg_available():
             if logger:
@@ -487,6 +493,9 @@ class IPTVChecker:
         
         if logger:
             logger.info(f"开始检测频道有效性，共 {len(channels)} 个")
+        
+        # 记录开始时间
+        start_time = time.time()
         
         valid_channels = []
         
@@ -507,12 +516,23 @@ class IPTVChecker:
                 if progress_callback:
                     progress_callback(idx, len(channels), valid_channels)
                 
-                # 定期输出进度
-                if logger and idx % 10 == 0:
+                # 定期输出进度（优化：减少日志输出频率，每 50 个输出一次）
+                if logger and idx % 50 == 0:
                     logger.info(f"检测进度：{idx}/{len(channels)}，已通过 {len(valid_channels)} 个")
         
+        # 计算总耗时
+        elapsed_time = time.time() - start_time
+        hours = int(elapsed_time // 3600)
+        minutes = int((elapsed_time % 3600) // 60)
+        seconds = int(elapsed_time % 60)
+        
         if logger:
-            logger.info(f"频道检测完成，有效：{len(valid_channels)}/{len(channels)}")
+            if hours > 0:
+                logger.info(f"频道检测完成，有效：{len(valid_channels)}/{len(channels)}，耗时：{hours}小时 {minutes}分钟 {seconds}秒")
+            elif minutes > 0:
+                logger.info(f"频道检测完成，有效：{len(valid_channels)}/{len(channels)}，耗时：{minutes}分钟 {seconds}秒")
+            else:
+                logger.info(f"频道检测完成，有效：{len(valid_channels)}/{len(channels)}，耗时：{seconds}秒")
         
         return valid_channels
 

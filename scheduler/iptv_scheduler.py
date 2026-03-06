@@ -27,7 +27,9 @@ from models.channel import Channel
 # ==================== 常量配置 ====================
 IPTV_DIR = os.path.join(project_root, 'output', 'iptv')
 IPTV_URLS_FILE = os.path.join(project_root, 'input', 'iptv_urls.txt')
-MAX_WORKERS = min(10, os.cpu_count() * 2) if os.cpu_count() else 10
+# 优化：平衡并发数（CPU 友好型）
+# 根据 CPU 核心数动态调整，避免 CPU 过载
+MAX_WORKERS = min(30, max(10, os.cpu_count() * 2)) if os.cpu_count() else 30
 
 # 创建全局检测器实例（使用优化后的参数）
 iptv_checker = IPTVChecker()
@@ -345,12 +347,12 @@ def get_iptv_content(filename: str) -> str:
 if __name__ == "__main__":
     # 执行调度器
     # iptv_scheduler()
-    fetch_playlist()
+    # fetch_playlist()
 
     # 测试代码（需要时取消注释）
-    # content = get_iptv_content('ott.m3u')
-    # channels = parse_m3u(content)
-    # logger.debug(f"共找到 {len(channels)} 个频道")
-    # valid_channels = iptv_checker.check_channels(channels, logger=logger, max_workers=MAX_WORKERS)
-    # logger.debug(f"有效频道数：{len(valid_channels)}")
-    # logger.debug("\n测试结束\n")
+    content = get_iptv_content('migu.m3u')
+    channels = parse_m3u(content)
+    logger.debug(f"共找到 {len(channels)} 个频道")
+    valid_channels = iptv_checker.check_channels(channels, logger=logger, max_workers=MAX_WORKERS)
+    logger.debug(f"有效频道数：{len(valid_channels)}")
+    logger.debug("\n测试结束\n")
