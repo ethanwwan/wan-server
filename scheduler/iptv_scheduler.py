@@ -19,7 +19,7 @@ import requests
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, project_root)
 
-from config.config import CONFIG
+from config import CONFIG
 from utils.logger import get_logger
 from utils.iptv_checker import IPTVChecker
 from models.channel import Channel
@@ -246,9 +246,15 @@ def merge_channels(urls: list) -> str:
     
     logger.info(f"合并完成，共 {len(all_channels)} 个唯一频道")
     
-    # 直接检测，无需再次去重
-    valid_channels = iptv_checker.check_channels(all_channels, logger=logger, max_workers=MAX_WORKERS)
-    return build_m3u(valid_channels)
+    # 根据配置决定是否检测频道
+    if CONFIG.iptv.is_check_channel:
+        logger.info("配置已启用频道检测，开始检测频道可用性...")
+        # 直接检测，无需再次去重
+        valid_channels = iptv_checker.check_channels(all_channels, logger=logger, max_workers=MAX_WORKERS)
+        return build_m3u(valid_channels)
+    else:
+        logger.info("配置已禁用频道检测，直接使用所有频道")
+        return build_m3u(all_channels)
 
 # ==================== 文件操作 ====================
 def save_file(filename: str, content: str) -> bool:

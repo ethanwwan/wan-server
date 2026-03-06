@@ -4,7 +4,7 @@ import requests
 import re
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from config.config import CONFIG
+from config import CONFIG
 from utils.logger import get_logger
 
 TVBOX_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'output', 'tvbox')

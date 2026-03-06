@@ -7,7 +7,7 @@ import logging
 import sys
 import os
 import urllib3
-from config.config import CONFIG
+from config import CONFIG
 
 # 禁用不安全的请求警告
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)

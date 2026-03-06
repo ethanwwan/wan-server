@@ -10,7 +10,7 @@ from datetime import datetime
 from typing import Dict, Optional, Tuple
 from utils.ip_utils import get_server_ip, get_ip_location
 from utils.logger import get_logger
-from config.config import CONFIG
+from config import CONFIG
 import requests
 
 # 项目根目录和配置路径

@@ -29,10 +29,10 @@ class IPTVChecker:
         self,
         user_agent: str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         fps_min: int = 20,
-        bitrate_min: int = 1000,  # 新增：最低码率阈值 (kbps)
-        timeout_basic: int = 8,   # 优化：缩短基础检测超时
-        timeout_fluent: int = 15, # 优化：缩短流畅检测超时
-        max_workers: int = 30     # 优化：平衡并发数（CPU 友好型）
+        bitrate_min: int = 1000,
+        timeout_basic: int = 8,
+        timeout_fluent: int = 15,
+        max_workers: int = 30
     ):
         """
         初始化检测器
@@ -43,7 +43,6 @@ class IPTVChecker:
             bitrate_min: 最小码率阈值 (kbps)
             timeout_basic: 基础检测超时时间（秒）
             timeout_fluent: 流畅检测超时时间（秒）
-            retry: 检测失败时的重试次数
             max_workers: 默认最大并发数
         """
         self.user_agent = user_agent
@@ -51,7 +50,6 @@ class IPTVChecker:
         self.bitrate_min = bitrate_min
         self.timeout_basic = timeout_basic
         self.timeout_fluent = timeout_fluent
-        self.retry = retry
         self.max_workers = max_workers
 
     @classmethod

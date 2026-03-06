@@ -5,7 +5,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from apscheduler.executors.pool import ThreadPoolExecutor as APSchedulerThreadPoolExecutor
 from api.base.routes import api_router
-from config.config import CONFIG
+from config import CONFIG
 from utils.logger import get_logger
 import atexit
 import uvicorn

@@ -146,6 +146,10 @@ class IptvConfig:
         self._config = config
     
     @property
+    def is_check_channel(self) -> bool:
+        return self._config.get('is_check_channel', True)
+    
+    @property
     def migu_url(self) -> str:
         return self._config.get('migu_url', '')
     
@@ -164,11 +168,11 @@ class Config:
         初始化配置类
         
         Args:
-            config_path: 配置文件路径，默认为项目根目录下的 config/config.yaml
+            config_path: 配置文件路径，默认为项目根目录下的 input/config.yaml
         """
         if config_path is None:
-            self.project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            self.config_path = os.path.join(self.project_root, 'config', 'config.yaml')
+            self.project_root = os.path.dirname(os.path.abspath(__file__))
+            self.config_path = os.path.join(self.project_root, 'input', 'config.yaml')
         else:
             self.config_path = config_path
         
@@ -183,7 +187,7 @@ class Config:
             Config: 返回自身以便链式调用
         """
         if not os.path.exists(self.config_path):
-            raise FileNotFoundError(f"配置文件不存在: {self.config_path}")
+            raise FileNotFoundError(f"配置文件不存在：{self.config_path}")
         
         with open(self.config_path, 'r', encoding='utf-8') as f:
             self._config = yaml.safe_load(f)
