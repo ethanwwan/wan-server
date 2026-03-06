@@ -168,28 +168,46 @@ def build_m3u(channels: list) -> str:
     """
     if not channels:
         return ""
-
-    lines = ['#EXTM3U']
+    
+    lines = ['#EXTM3U x-tvg-url="https://gh-proxy.org/https://raw.githubusercontent.com/fanmingming/live/refs/heads/main/e.xml"']
     seen = set()
-
+    
     for ch in channels:
-        if ch['url'] in seen:
+        # 支持 Channel 对象和字典两种格式
+        if hasattr(ch, 'url'):
+            # Channel 对象
+            url = ch.url
+            channel_name = ch.channel_name
+            tvg_id = ch.tvg_id
+            tvg_name = ch.tvg_name
+            tvg_logo = ch.tvg_logo
+            group_title = ch.group_title
+        else:
+            # 字典
+            url = ch.get('url', '')
+            channel_name = ch.get('channel_name', '')
+            tvg_id = ch.get('tvg_id', '')
+            tvg_name = ch.get('tvg_name', '')
+            tvg_logo = ch.get('tvg_logo', '')
+            group_title = ch.get('group_title', '')
+        
+        if url in seen:
             continue
-        seen.add(ch['url'])
-
+        seen.add(url)
+        
         parts = []
-        if ch['tvg_id']:
-            parts.append(f'tvg-id="{ch["tvg_id"]}"')
-        if ch['tvg_name']:
-            parts.append(f'tvg-name="{ch["tvg_name"]}"')
-        if ch['tvg_logo']:
-            parts.append(f'tvg-logo="{ch["tvg_logo"]}"')
-        if ch['group_title']:
-            parts.append(f'group-title="{ch["group_title"]}"')
-
-        lines.append(f'#EXTINF:-1 {" ".join(parts)},{ch["channel_name"]}')
-        lines.append(ch['url'])
-
+        if tvg_id:
+            parts.append(f'tvg-id="{tvg_id}"')
+        if tvg_name:
+            parts.append(f'tvg-name="{tvg_name}"')
+        if tvg_logo:
+            parts.append(f'tvg-logo="{tvg_logo}"')
+        if group_title:
+            parts.append(f'group-title="{group_title}"')
+        
+        lines.append(f'#EXTINF:-1 {" ".join(parts)},{channel_name}')
+        lines.append(url)
+    
     return '\n'.join(lines)
 
 def merge_channels(urls: list) -> str:
@@ -216,8 +234,10 @@ def merge_channels(urls: list) -> str:
                     channels = parse_url(url, content)
                     # 边解析边去重
                     for ch in channels:
-                        if ch['url'] not in seen_urls:
-                            seen_urls.add(ch['url'])
+                        # 支持 Channel 对象和字典两种格式
+                        ch_url = ch.url if hasattr(ch, 'url') else ch.get('url', '')
+                        if ch_url not in seen_urls:
+                            seen_urls.add(ch_url)
                             all_channels.append(ch)
             except Exception as e:
                 logger.error(f"解析 URL 失败 {url}: {e}")
@@ -281,17 +301,8 @@ def fetch_migu():
         logger.warning("Migu 播放列表获取失败，跳过")
         return
     
-    try:
-        channels = parse_m3u(content)
-        logger.info(f"Migu 播放列表解析完成，共 {len(channels)} 个频道")
-        
-        if channels:
-            valid_channels = iptv_checker.check_channels(channels, logger=logger, max_workers=MAX_WORKERS)
-            save_file('migu.m3u', build_m3u(valid_channels))
-        else:
-            logger.warning("Migu 播放列表解析结果为空")
-    except Exception as e:
-        logger.error(f"处理 Migu 播放列表失败：{e}")
+    save_file('migu.m3u', content)
+    logger.info("Migu 播放列表获取完成, 共 {} 个频道".format(len(parse_m3u(content))))
 
 def fetch_ott():
     """获取 OTT 播放列表"""
@@ -306,17 +317,8 @@ def fetch_ott():
         logger.warning("OTT 播放列表获取失败，跳过")
         return
     
-    try:
-        channels = parse_m3u(content)
-        logger.info(f"OTT 播放列表解析完成，共 {len(channels)} 个频道")
-        
-        if channels:
-            valid_channels = iptv_checker.check_channels(channels, logger=logger, max_workers=MAX_WORKERS)
-            save_file('ott.m3u', build_m3u(valid_channels))
-        else:
-            logger.warning("OTT 播放列表解析结果为空")
-    except Exception as e:
-        logger.error(f"处理 OTT 播放列表失败：{e}")
+    save_file('ott.m3u', content)
+    logger.info("OTT 播放列表获取完成, 共 {} 个频道".format(len(parse_m3u(content))))
 
 def iptv_scheduler():
     """IPTV 配置更新调度器"""
@@ -342,7 +344,8 @@ def get_iptv_content(filename: str) -> str:
 # ==================== 命令行入口 ====================
 if __name__ == "__main__":
     # 执行调度器
-    iptv_scheduler()
+    # iptv_scheduler()
+    fetch_playlist()
 
     # 测试代码（需要时取消注释）
     # content = get_iptv_content('ott.m3u')
