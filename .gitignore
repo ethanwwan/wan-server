@@ -47,8 +47,7 @@ coverage.xml
 Dockerfile.local
 
 # 本地配置文件
-/public/
-public/
+/output/
 
 # 临时文件
 *.tmp

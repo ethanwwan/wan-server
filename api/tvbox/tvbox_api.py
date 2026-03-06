@@ -15,7 +15,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 router = APIRouter(prefix="/tvbox", tags=["TVBox"])
 
 # TVBox配置目录
-TVBOX_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'public', 'tvbox')
+TVBOX_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'output', 'tvbox')
 
 def get_tvbox_local_file(file_name: str):
     """

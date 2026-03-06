@@ -7,7 +7,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from config.config import CONFIG
 from utils.logger import get_logger
 
-TVBOX_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'public', 'tvbox')
+TVBOX_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'output', 'tvbox')
 TVBOX_URL = CONFIG.tvbox.url
 headers = {"User-Agent": "okhttp/3.12.12", "Accept": "application/json"}
 os.makedirs(TVBOX_DIR, exist_ok=True)

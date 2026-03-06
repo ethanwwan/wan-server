@@ -7,10 +7,10 @@ import os
 import re
 
 # 从环境变量读取喜欢的频道列表，格式为逗号分隔的频道名称
-FAVORITE_CHANNELS = os.getenv("FAVORITE_CHANNELS", "CCTV1,CCTV3,江苏卫视,嵊州").split(",")  
+FAVORITE_CHANNELS = "CCTV1,CCTV3,江苏卫视,嵊州"
 
 # IPTV配置目录
-IPTV_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'public', 'iptv')
+IPTV_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'output', 'iptv')
 
 # 自动扫描IPTV配置目录，获取所有M3U文件
 def get_iptv_m3u_file_names():

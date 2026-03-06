@@ -25,8 +25,8 @@ from utils.iptv_checker import IPTVChecker
 from models.channel import Channel
 
 # ==================== 常量配置 ====================
-IPTV_DIR = os.path.join(project_root, 'public', 'iptv')
-IPTV_URLS_FILE = os.path.join(project_root, 'config', 'iptv_urls.txt')
+IPTV_DIR = os.path.join(project_root, 'output', 'iptv')
+IPTV_URLS_FILE = os.path.join(project_root, 'input', 'iptv_urls.txt')
 MAX_WORKERS = min(10, os.cpu_count() * 2) if os.cpu_count() else 10
 
 # 创建全局检测器实例（使用优化后的参数）

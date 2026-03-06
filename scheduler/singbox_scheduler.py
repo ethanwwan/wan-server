@@ -15,7 +15,7 @@ import requests
 
 # 项目根目录和配置路径
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-CONFIG_DIR = os.path.join(PROJECT_ROOT, 'public', 'singbox')
+CONFIG_DIR = os.path.join(PROJECT_ROOT, 'output', 'singbox')
 CONFIG_PATH = os.path.join(CONFIG_DIR, 'config.json')
 CONFIG_OLD_PATH = os.path.join(CONFIG_DIR, 'config_old.json')
 DOCKER_CONFIG_DIR = os.path.join(CONFIG_DIR, 'docker')

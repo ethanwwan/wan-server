@@ -6,7 +6,8 @@ services:
       - "8166:8166"
     
     volumes:
-      - ./public:/app/public
+      - ./input:/app/input
+      - ./output:/app/output
       - /root/.docker/config.json:/root/.docker/config.json
       
     environment:
