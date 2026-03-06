@@ -102,7 +102,7 @@ def start_server():
     logger.info("服务启动完成")
 
 
-    scheduler = setup_scheduler(run_now=False)
+    scheduler = setup_scheduler(run_now=True)
     def shutdown_handler():
         scheduler.shutdown()
         logger.info("服务已关闭")

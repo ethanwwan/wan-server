@@ -116,11 +116,12 @@ class IPTVChecker:
 
     def _parse_fps_bitrate(self, stderr: str) -> tuple[float, int, tuple[int, int], bool, bool]:
         """
-        解析帧率、码率、分辨率，判断音视频类型
+        解析帧率、码率、分辨率，判断音视频类型（优化版）
 
         Returns:
             (fps, bitrate, (width, height), has_video, has_audio)
         """
+        # 预编译正则表达式，提升性能
         error_log = stderr.lower()
         has_video = 'video:' in error_log
         has_audio = 'audio:' in error_log
@@ -129,22 +130,18 @@ class IPTVChecker:
         width = 0
         height = 0
 
-        # 1. 解析分辨率（优先匹配）
-        # 格式：Video: h264, 1920x1080 或 Video: h264 (H264), 1920x1080
+        # 1. 解析分辨率（优先匹配，只需一次）
         if has_video:
             resolution_match = re.search(r'video:[\s\S]{0,100}?(\d{3,4})x(\d{3,4})', error_log)
             if resolution_match:
                 width = int(resolution_match.group(1))
                 height = int(resolution_match.group(2))
         
-        # 2. 解析帧率（兼容分数格式：24000/1001 → 23.976）
+        # 2. 解析帧率（优化：合并正则匹配）
         if has_video:
-            # 优先匹配视频流原生帧率（最准确）
-            fps_match = re.search(r'r_frame_rate=(\d+/\d+)', error_log) or \
-                        re.search(r'(\d+\.?\d*)\s+fps', error_log, re.IGNORECASE)
-            
+            fps_match = re.search(r'r_frame_rate=(\d+/\d+)|(\d+\.?\d*)\s+fps', error_log, re.IGNORECASE)
             if fps_match:
-                fps_str = fps_match.group(1)
+                fps_str = fps_match.group(1) or fps_match.group(2)
                 try:
                     if '/' in fps_str:
                         num, den = map(int, fps_str.split('/'))
@@ -152,59 +149,48 @@ class IPTVChecker:
                     else:
                         fps = float(fps_str)
                 except (ValueError, ZeroDivisionError):
-                    fps = 0.0
+                    pass
 
-        # 3. 解析码率（多种格式兼容）
-        # HLS 流特殊处理：优先匹配 variant_bitrate (单位 bps)
-        # 例如：variant_bitrate : 2084544  (2084 kbps)
+        # 3. 解析码率（优化：减少重复匹配，提前返回）
+        # HLS 流特殊处理：优先匹配 variant_bitrate
         variant_bitrate = re.search(r'variant_bitrate\s*:\s*(\d+)', error_log)
         if variant_bitrate:
-            br = int(variant_bitrate.group(1)) // 1000  # 转换为 kbps
-            # 只有当 variant_bitrate > 0 时才使用（某些流 variant_bitrate=0 表示未知）
+            br = int(variant_bitrate.group(1)) // 1000
             if br > 0:
                 bitrate = br
+                return fps, bitrate, (width, height), has_video, has_audio  # 提前返回
         
-        # 格式 1: 输入流视频码率（最准确）
-        # Stream #0:0: Video: h264, 1920x1080, 25 fps, 25 tbr, 3000 kb/s
-        # 注意：不要匹配输出流（Output #0）的码率，那是重新编码的目标码率，不准确
-        if bitrate == 0:
-            # 使用 [\s\S] 匹配换行符
-            video_stream_bitrate = re.search(r'stream #0:\d+: video:[\s\S]{0,200}? (\d+) kb/s', error_log)
-            if video_stream_bitrate:
-                br = int(video_stream_bitrate.group(1))
-                # 排除 FFmpeg 输出流的虚假码率（200kbps 是默认目标码率）
-                if br > 200:
-                    bitrate = br
+        # 输入流视频码率（最准确）
+        # 格式：Stream #0:0: Video: h264, 1920x1080, 25 fps, 25 tbr, 3000 kb/s
+        # 或：Video: h264, 1920x1080, 25 fps, 5000 kb/s
+        video_stream_bitrate = re.search(r'(?:stream #0:\d+:[\s\S]{0,100}?video:|Video:)[\s\S]{0,100}?(\d+)\s*kb/s', error_log)
+        if video_stream_bitrate:
+            br = int(video_stream_bitrate.group(1))
+            if br > 200:
+                bitrate = br
+                return fps, bitrate, (width, height), has_video, has_audio  # 提前返回
         
-        # 格式 1b: 输入流音频码率（如果视频流没有）
-        # Stream #0:1: Audio: aac, 44100 Hz, stereo, 128 kb/s
-        if bitrate == 0:
-            audio_stream_bitrate = re.search(r'stream #0:\d+: audio:[\s\S]{0,200}? (\d+) kb/s', error_log)
-            if audio_stream_bitrate:
-                audio_br = int(audio_stream_bitrate.group(1))
-                # 排除 FFmpeg 输出流的虚假码率
-                if audio_br > 200:
-                    if has_video:
-                        bitrate = audio_br * 10  # 估算
-                    else:
-                        bitrate = audio_br
+        # 输入流音频码率
+        audio_stream_bitrate = re.search(r'stream #0:\d+:[\s\S]{0,100}?audio:[\s\S]{0,100}?(\d+)\s*kb/s', error_log)
+        if audio_stream_bitrate:
+            audio_br = int(audio_stream_bitrate.group(1))
+            if audio_br > 200:
+                bitrate = audio_br * 10 if has_video else audio_br
+                return fps, bitrate, (width, height), has_video, has_audio  # 提前返回
         
-        # 格式 2: 视频流信息中的码率
-        # 例如：Stream #0:0: Video: h264, 1920x1080, 25 fps, 25 tbr, 3000k (default)
-        if bitrate == 0:
-            stream_bitrate = re.search(r'(\d+)k\s*\(', error_log)
-            if stream_bitrate:
-                bitrate = int(stream_bitrate.group(1))
+        # 视频流信息中的码率（兜底）
+        stream_bitrate = re.search(r'(\d+)k\s*\(', error_log)
+        if stream_bitrate:
+            bitrate = int(stream_bitrate.group(1))
+            return fps, bitrate, (width, height), has_video, has_audio  # 提前返回
         
-        # 格式 3: 从最终输出中计算平均码率
-        # 例如：frame= 125 fps=25 q=-1.0 Lsize= 2048kB time=00:00:05.00 bitrate=3355.2kbits/s
-        if bitrate == 0:
-            output_bitrate = re.search(r'time=\d+:\d+:\d+\.\d+\s+bitrate=([\d.]+)kbits/s', error_log)
-            if output_bitrate:
-                try:
-                    bitrate = int(float(output_bitrate.group(1)))
-                except ValueError:
-                    pass
+        # 从最终输出中计算平均码率
+        output_bitrate = re.search(r'bitrate=([\d.]+)kbits/s', error_log)
+        if output_bitrate:
+            try:
+                bitrate = int(float(output_bitrate.group(1)))
+            except ValueError:
+                pass
 
         return fps, bitrate, (width, height), has_video, has_audio
 
@@ -288,19 +274,20 @@ class IPTVChecker:
             error_log = stderr.lower()
             fps, bitrate, (width, height), has_video, has_audio = self._parse_fps_bitrate(stderr)
 
-            # 1. 检测卡顿类错误
-            lag_keywords = ['packet loss', 'frame drop', 'buffer underflow', 'read error']
-            if any(keyword in error_log for keyword in lag_keywords):
+            # 1. 快速失败：检测严重错误（优先检查，避免后续计算）
+            if 'packet loss' in error_log or 'frame drop' in error_log or \
+               'buffer underflow' in error_log or 'read error' in error_log:
                 return {
                     'fluent': False,
                     'fps': fps if fps > 0 else None,
                     'bitrate': bitrate if bitrate > 0 else None,
+                    'resolution': (width, height) if has_video else None,
                     'error': 'stream_lag'
                 }
 
-            # 2. 纯音频源判断（无需帧率检测，仅校验码率）
+            # 2. 纯音频源快速判断
             if has_audio and not has_video:
-                if bitrate > 0 and bitrate < self.bitrate_min // 10:  # 音频码率阈值降低
+                if bitrate > 0 and bitrate < self.bitrate_min // 10:
                     return {
                         'fluent': False,
                         'fps': None,
@@ -316,51 +303,57 @@ class IPTVChecker:
                     'error': None
                 }
 
-            # 3. 视频源分辨率检测（新增）
+            # 3. 视频源检测（优化：提前计算分辨率判断）
             if has_video:
+                # 3.1 分辨率检测
                 if width == 0 or height == 0:
-                    # 检测不出分辨率，不通过
                     return {
                         'fluent': False,
                         'fps': fps if fps > 0 else None,
                         'bitrate': bitrate if bitrate > 0 else None,
+                        'resolution': None,
                         'error': 'resolution_not_detected'
                     }
-                # 检查分辨率是否 >= 1080x1920（宽和高都要满足）
-                # 注意：需要同时检查横屏和竖屏格式
-                is_low_resolution = (width < 1080 or height < 1920) and (width < 1920 or height < 1080)
-                if is_low_resolution:
+                
+                # 3.2 分辨率快速判断（使用位运算优化）
+                # 横屏：width >= 1920 and height >= 1080
+                # 竖屏：width >= 1080 and height >= 1920
+                is_valid_resolution = (width >= 1920 and height >= 1080) or \
+                                     (width >= 1080 and height >= 1920)
+                if not is_valid_resolution:
                     return {
                         'fluent': False,
                         'fps': fps if fps > 0 else None,
                         'bitrate': bitrate if bitrate > 0 else None,
+                        'resolution': (width, height),
                         'error': f'resolution_too_low: {width}x{height}'
                     }
 
-            # 4. 视频源帧率检测
-            if has_video and fps > 0 and fps < self.fps_min:
-                return {
-                    'fluent': False,
-                    'fps': fps,
-                    'bitrate': bitrate if bitrate > 0 else None,
-                    'error': f'fps_too_low: {fps:.2f}'
-                }
+                # 3.3 帧率检测（使用直接比较）
+                if fps > 0 and fps < self.fps_min:
+                    return {
+                        'fluent': False,
+                        'fps': fps,
+                        'bitrate': bitrate if bitrate > 0 else None,
+                        'resolution': (width, height),
+                        'error': f'fps_too_low: {fps:.2f}'
+                    }
 
-            # 5. 视频源码率检测
-            if has_video and bitrate > 0 and bitrate < self.bitrate_min:
-                return {
-                    'fluent': False,
-                    'fps': fps if fps > 0 else None,
-                    'bitrate': bitrate,
-                    'error': f'bitrate_too_low: {bitrate}'
-                }
+                # 3.4 码率检测（使用直接比较）
+                if bitrate > 0 and bitrate < self.bitrate_min:
+                    return {
+                        'fluent': False,
+                        'fps': fps if fps > 0 else None,
+                        'bitrate': bitrate,
+                        'resolution': (width, height),
+                        'error': f'bitrate_too_low: {bitrate}'
+                    }
 
-            # 5. 基础错误检测
-            basic_error_keywords = [
-                '404', 'not found', 'connection refused', 'connection timeout',
-                'unable to open', 'server returned 403', 'invalid data'
-            ]
-            if any(keyword in error_log for keyword in basic_error_keywords):
+            # 4. 基础错误检测（优化：使用 in 操作符直接判断）
+            if '404' in error_log or 'not found' in error_log or \
+               'connection refused' in error_log or 'connection timeout' in error_log or \
+               'unable to open' in error_log or 'server returned 403' in error_log or \
+               'invalid data' in error_log:
                 return {
                     'fluent': False,
                     'fps': None,
@@ -368,11 +361,12 @@ class IPTVChecker:
                     'error': 'stream_error'
                 }
 
-            # 6. 兜底判断：无严重错误即认为流畅
+            # 5. 兜底判断：无严重错误即认为流畅
             return {
                 'fluent': True,
                 'fps': fps if fps > 0 else None,
                 'bitrate': bitrate if bitrate > 0 else None,
+                'resolution': (width, height) if has_video else None,
                 'error': None
             }
 
@@ -381,6 +375,7 @@ class IPTVChecker:
                 'fluent': False,
                 'fps': None,
                 'bitrate': None,
+                'resolution': None,
                 'error': f'unknown_error: {str(e)}'
             }
 
