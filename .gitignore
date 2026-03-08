@@ -42,12 +42,9 @@ build/
 .coverage
 coverage.xml
 
-# Docker文件
+# Docker 文件
 .dockerignore
 Dockerfile.local
-
-# 本地配置文件
-/output/
 
 # 临时文件
 *.tmp
@@ -59,3 +56,9 @@ api-server.tar.gz
 
 
 test.py
+
+
+output/singbox/
+output/tvbox/
+output/iptv/ott.m3u
+output/iptv/migu.m3u

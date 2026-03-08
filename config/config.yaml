@@ -25,8 +25,8 @@ scheduler:
   - id: iptv_job
     name: IPTV 配置更新
     func: scheduler.iptv_scheduler.iptv_scheduler
-    hour: 0
-    minute: 10
+    hour: 6
+    minute: 0
 
 
 # Singbox 配置

@@ -328,15 +328,23 @@ def fetch_ott():
     save_file('ott.m3u', content)
     logger.info("OTT 播放列表获取完成, 共 {} 个频道".format(len(parse_m3u(content))))
 
+def iptv_scheduler_fetch_playlist():
+    """IPTV 使用github actions来执行检测"""
+    logger.info(f"开始更新配置，时间：{datetime.now().isoformat()}")
+
+    fetch_playlist()
+
+    logger.info(f"配置更新完成，时间：{datetime.now().isoformat()}")
+
 def iptv_scheduler():
     """IPTV 配置更新调度器"""
     logger.info(f"开始更新配置，时间：{datetime.now().isoformat()}")
 
     fetch_migu()
     fetch_ott()
-    fetch_playlist()
 
     logger.info(f"配置更新完成，时间：{datetime.now().isoformat()}")
+
 
 def get_iptv_content(filename: str) -> str:
     """
