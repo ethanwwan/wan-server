@@ -146,16 +146,16 @@ class IptvConfig:
         self._config = config
     
     @property
-    def is_check_channel(self) -> bool:
-        return self._config.get('is_check_channel', True)
-    
-    @property
     def migu_url(self) -> str:
         return self._config.get('migu_url', '')
     
     @property
     def ott_url(self) -> str:
         return self._config.get('ott_url', '')
+    
+    @property
+    def playlist_url(self) -> str:
+        return self._config.get('playlist_url', '')
 
 
 class Config:

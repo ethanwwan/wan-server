@@ -246,15 +246,9 @@ def merge_channels(urls: list) -> str:
     
     logger.info(f"合并完成，共 {len(all_channels)} 个唯一频道")
     
-    # 根据配置决定是否检测频道
-    if CONFIG.iptv.is_check_channel:
-        logger.info("配置已启用频道检测，开始检测频道可用性...")
-        # 直接检测，无需再次去重
-        valid_channels = iptv_checker.check_channels(all_channels, logger=logger, max_workers=MAX_WORKERS)
-        return build_m3u(valid_channels)
-    else:
-        logger.info("配置已禁用频道检测，直接使用所有频道")
-        return build_m3u(all_channels)
+    # 检测频道可用性（GitHub Actions 中始终执行）
+    valid_channels = iptv_checker.check_channels(all_channels, logger=logger, max_workers=MAX_WORKERS)
+    return build_m3u(valid_channels)
 
 # ==================== 文件操作 ====================
 def save_file(filename: str, content: str) -> bool:
@@ -328,22 +322,46 @@ def fetch_ott():
     save_file('ott.m3u', content)
     logger.info("OTT 播放列表获取完成, 共 {} 个频道".format(len(parse_m3u(content))))
 
+def fetch_github_playlist():
+    """获取 GitHub 上的播放列表"""
+    if not CONFIG.iptv.playlist_url:
+        logger.warning("GitHub 播放列表 URL 未配置，跳过")
+        return
+
+    logger.info("正在获取 GitHub 播放列表...")
+    content = fetch_url(CONFIG.iptv.playlist_url)
+    
+    if not content:
+        logger.warning("GitHub 播放列表获取失败，跳过")
+        return
+    
+    save_file('playlist.m3u', content)
+    logger.info("GitHub 播放列表获取完成, 共 {} 个频道".format(len(parse_m3u(content))))
+
+
 def iptv_scheduler_fetch_playlist():
     """IPTV 使用github actions来执行检测"""
-    logger.info(f"开始更新配置，时间：{datetime.now().isoformat()}")
+    start_time = datetime.now()
+    logger.info(f"开始更新配置，时间：{start_time.isoformat()}")
 
     fetch_playlist()
 
-    logger.info(f"配置更新完成，时间：{datetime.now().isoformat()}")
+    end_time = datetime.now()
+    duration = (end_time - start_time).total_seconds()
+    logger.info(f"配置更新完成，时间：{end_time.isoformat()}，耗时：{duration:.2f}秒")
 
 def iptv_scheduler():
     """IPTV 配置更新调度器"""
-    logger.info(f"开始更新配置，时间：{datetime.now().isoformat()}")
+    start_time = datetime.now()
+    logger.info(f"开始更新配置，时间：{start_time.isoformat()}")
 
     fetch_migu()
     fetch_ott()
+    fetch_github_playlist()
 
-    logger.info(f"配置更新完成，时间：{datetime.now().isoformat()}")
+    end_time = datetime.now()
+    duration = (end_time - start_time).total_seconds()
+    logger.info(f"配置更新完成，时间：{end_time.isoformat()}，耗时：{duration:.2f}秒")
 
 
 def get_iptv_content(filename: str) -> str:
@@ -360,13 +378,13 @@ def get_iptv_content(filename: str) -> str:
 # ==================== 命令行入口 ====================
 if __name__ == "__main__":
     # 执行调度器
-    # iptv_scheduler()
+    iptv_scheduler()
     # fetch_playlist()
 
     # 测试代码（需要时取消注释）
-    content = get_iptv_content('migu.m3u')
-    channels = parse_m3u(content)
-    logger.debug(f"共找到 {len(channels)} 个频道")
-    valid_channels = iptv_checker.check_channels(channels, logger=logger, max_workers=MAX_WORKERS)
-    logger.debug(f"有效频道数：{len(valid_channels)}")
-    logger.debug("\n测试结束\n")
+    # content = get_iptv_content('migu.m3u')
+    # channels = parse_m3u(content)
+    # logger.debug(f"共找到 {len(channels)} 个频道")
+    # valid_channels = iptv_checker.check_channels(channels, logger=logger, max_workers=MAX_WORKERS)
+    # logger.debug(f"有效频道数：{len(valid_channels)}")
+    # logger.debug("\n测试结束\n")
