@@ -29,7 +29,7 @@ IPTV_DIR = os.path.join(project_root, 'output', 'iptv')
 IPTV_URLS_FILE = os.path.join(project_root, 'input', 'iptv_urls.txt')
 # 优化：平衡并发数（CPU 友好型）
 # 根据 CPU 核心数动态调整，避免 CPU 过载
-MAX_WORKERS = min(30, max(10, os.cpu_count() * 2)) if os.cpu_count() else 30
+MAX_WORKERS = min(50, max(10, os.cpu_count() * 2)) if os.cpu_count() else 50
 
 # 创建全局检测器实例（使用优化后的参数）
 iptv_checker = IPTVChecker()
