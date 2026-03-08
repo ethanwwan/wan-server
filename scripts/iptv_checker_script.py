@@ -17,10 +17,8 @@ from utils.logger import get_logger
 
 logger = get_logger('IPTV_CHECKER')
 
-# 常量配置
 IPTV_DIR = os.path.join(project_root, 'output', 'iptv')
 IPTV_URLS_FILE = os.path.join(project_root, 'input', 'iptv_urls.txt')
-
 
 def iptv_checker_job() -> bool:
     """
@@ -68,20 +66,30 @@ def iptv_checker_job() -> bool:
     return True
 
 
-
-if __name__ == "__main__":
-    print("=" * 60)
-    print("开始执行 IPTV 配置更新任务")
-    print("=" * 60)
+def main():
+    """主入口函数"""
+    logger.info("=" * 60)
+    logger.info("开始执行 IPTV 配置更新任务")
+    logger.info("=" * 60)
     
     try:
-        iptv_checker_job()
-        print("\n" + "=" * 60)
-        print("IPTV 配置更新任务执行完成")
-        print("=" * 60)
-        sys.exit(0)
+        success = iptv_checker_job()
+        
+        logger.info("=" * 60)
+        if success:
+            logger.info("✅ IPTV 配置更新任务执行成功")
+        else:
+            logger.error("❌ IPTV 配置更新任务执行失败")
+        logger.info("=" * 60)
+        
+        sys.exit(0 if success else 1)
+        
     except Exception as e:
-        print(f"\n❌ 任务执行失败：{e}")
-        import traceback
-        traceback.print_exc()
+        logger.error("=" * 60)
+        logger.error(f"❌ 任务执行失败：{e}", exc_info=True)
+        logger.error("=" * 60)
         sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()

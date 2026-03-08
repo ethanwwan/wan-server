@@ -11,16 +11,14 @@ IPTV 工具类模块
 import os
 import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import List, Dict, Any, Optional
+from typing import List, Any
 
 import requests
-
 from models.channel import Channel
 from utils.iptv_checker import IPTVChecker
-from utils.logger import get_logger
+import logging
 
-# 日志记录器
-logger = get_logger('IPTV_UTILS')
+logger = logging.getLogger("IPTV_UTILS")
 
 # 最大并发数（CPU 友好型）
 MAX_WORKERS = min(50, max(10, os.cpu_count() * 2)) if os.cpu_count() else 50

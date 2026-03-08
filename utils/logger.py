@@ -7,15 +7,15 @@ import logging
 import sys
 import os
 import urllib3
-from config import CONFIG
+# from config import CONFIG
 
-# 禁用不安全的请求警告
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def configure_logging():
     """配置日志系统"""
 
-    log_level = logging.DEBUG if CONFIG.app.debug else logging.INFO
+    # log_level = logging.DEBUG if CONFIG.app.debug else logging.INFO
+    log_level = logging.INFO
 
     # 配置根日志记录器
     root_logger = logging.getLogger()
