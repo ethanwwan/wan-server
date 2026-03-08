@@ -207,7 +207,7 @@ def paginated_response(
 # 常用响应模板
 RESPONSE_TEMPLATES = {
     "health_check": lambda: success_response(
-        data={"status": "healthy", "service": "api-server"},
+        data={"status": "healthy", "service": "wan-server"},
         msg="服务运行正常"
     ),
     "ping": lambda: success_response(

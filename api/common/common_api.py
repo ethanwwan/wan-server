@@ -63,7 +63,7 @@ async def status(request: Request):
     return success_response(
         data={
             "status": "healthy",
-            "service": "api-server",
+            "service": "wan-server",
             "version": "1.0.0",
             "environment": "production",
             "timestamp": time_now,
