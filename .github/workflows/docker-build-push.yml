@@ -1,4 +1,4 @@
-name: api-server Docker Build and Push
+name: wan-server Docker Build and Push
 
 # 触发条件：只在创建标签时
 on:
@@ -8,7 +8,7 @@ on:
 
 # 环境变量
 env:
-  DOCKERHUB_REPOSITORY: ethanwwan/api-server
+  DOCKERHUB_REPOSITORY: ethanwwan/wan-server
 
 jobs:
   # 构建和推送Docker镜像
