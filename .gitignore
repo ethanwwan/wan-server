@@ -64,4 +64,4 @@ output/iptv/ott.m3u
 output/iptv/migu.m3u
 
 
-input/
+input/config.yaml
