@@ -25,10 +25,30 @@ jobs:
           python-version: '3.12'
           cache: 'pip'
       
+      - name: 缓存 FFmpeg
+        uses: actions/cache@v4
+        with:
+          path: /usr/bin/ffmpeg
+          key: ffmpeg-ubuntu-latest
+          restore-keys: |
+            ffmpeg-ubuntu-
+      
       - name: 安装 FFmpeg
         run: |
-          sudo apt-get update
-          sudo apt-get install -y ffmpeg
+          if ! command -v ffmpeg &> /dev/null; then
+            sudo apt-get update
+            sudo apt-get install -y ffmpeg
+          else
+            echo "FFmpeg 已从缓存恢复"
+          fi
+      
+      - name: 缓存 Python 依赖
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.pythonLocation }}/lib/python3.12/site-packages
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
       
       - name: 安装依赖
         run: |
@@ -37,7 +57,7 @@ jobs:
       
       - name: 执行 IPTV 调度任务
         run: |
-          python scripts/run_iptv_scheduler.py
+          python scripts/iptv_checker_script.py
         env:
           PYTHONPATH: ${{ github.workspace }}
       
