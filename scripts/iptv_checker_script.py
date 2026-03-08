@@ -12,7 +12,7 @@ from datetime import datetime
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, project_root)
 
-from utils.iptv_utils import save_file, parse_m3u, merge_channels
+from utils.iptv_utils import save_file, parse_m3u, fetch_iptv
 from utils.logger import get_logger
 
 logger = get_logger('IPTV_CHECKER')
@@ -49,9 +49,7 @@ def iptv_checker_job() -> bool:
     
     # 合并频道并检测可用性
     logger.info(f"正在从配置文件获取播放列表，读取到 {len(urls)} 个 URL...")
-    content = merge_channels(urls)
-    
-    # 保存结果
+    content = fetch_iptv(urls)
     if save_file('playlist.m3u', content):
         channel_count = len(parse_m3u(content))
         logger.info(f"播放列表合并完成，共保存 {channel_count} 个频道")

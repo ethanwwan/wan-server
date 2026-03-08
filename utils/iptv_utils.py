@@ -219,8 +219,22 @@ def build_m3u(channels: List[Any]) -> str:
     
     return '\n'.join(lines)
 
+def fetch_iptv(urls:List[str]) -> str:
+    """
+    从多个 URL 获取 IPTV 频道, 并合并去重, 检测可用性
+    
+    Args:
+        urls: 源 URL 列表
+    
+    Returns:
+        合并后的 M3U 内容
+    """
+    channels = fetch_channels(urls)
+    valid_channels = check_channel(channels)
+    return build_m3u(valid_channels)
 
-def merge_channels(urls: List[str], max_workers: int = None) -> str:
+
+def fetch_channels(urls: List[str], max_workers: int = MAX_WORKERS) -> str:
     """
     合并多个 URL 的频道（边解析边去重）
     
@@ -231,8 +245,6 @@ def merge_channels(urls: List[str], max_workers: int = None) -> str:
     Returns:
         合并后的 M3U 内容
     """
-    if max_workers is None:
-        max_workers = MAX_WORKERS
         
     all_channels = []
     seen_urls = set()  # URL 去重
@@ -260,8 +272,22 @@ def merge_channels(urls: List[str], max_workers: int = None) -> str:
     
     logger.info(f"合并完成，共 {len(all_channels)} 个唯一频道")
     
-    valid_channels = _iptv_checker.check_channels(all_channels, logger=logger, max_workers=max_workers)
-    return build_m3u(valid_channels)
+    return all_channels
+
+
+def check_channel(channels: List[Any], max_workers: int = MAX_WORKERS) -> List[Any]:
+    """
+    检测频道可用性
+    
+    Args:
+        channels: Channel 对象列表或字典列表
+        max_workers: 最大并发数，默认使用 MAX_WORKERS
+    
+    Returns:
+        可用的频道列表
+    """
+    return _iptv_checker.check_channels(channels, logger=logger, max_workers=max_workers)
+
 
 
 def save_file(filename: str, content: str, output_dir: str = None) -> bool:
