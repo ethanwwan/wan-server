@@ -9,6 +9,8 @@ import re
 import shutil
 import subprocess
 import time
+import requests
+from urllib.parse import urlparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Optional, Dict, List, Union, Callable
 
@@ -394,6 +396,17 @@ class IPTVChecker:
             - bitrate: 码率
             - error: 错误信息
         """
+        # 快速初步检查（第一重拦截）
+        quick_check = self.quick_check(url)
+        if not quick_check['available']:
+            return {
+                'available': False,
+                'fluent': False,
+                'fps': None,
+                'bitrate': None,
+                'error': quick_check['error']
+            }
+
         # 基础可用性检测
         available = self.check_available(url)
         if not available:
@@ -415,6 +428,103 @@ class IPTVChecker:
             'bitrate': fluent_result['bitrate'],
             'error': fluent_result['error']
         }
+
+    def quick_check(self, url: str) -> dict:
+        """
+        快速初步检查（第一重拦截）
+        用于快速筛选出明显失效的视频源，减少 FFmpeg 检测的负担
+
+        Args:
+            url: 检测 URL
+
+        Returns:
+            检查结果字典，包含：
+            - available: 是否通过快速检查
+            - error: 错误信息
+        """
+
+        try:
+            # 1. 域名解析检查
+            parsed = urlparse(url)
+            if not parsed.netloc:
+                return {
+                    'available': False,
+                    'error': 'invalid_url'
+                }
+
+            # 2. 快速 HEAD 请求（不下载内容）
+            response = requests.head(
+                url,
+                timeout=3,  # 3秒超时
+                allow_redirects=True,
+                verify=False
+            )
+
+            # 3. 状态码检查
+            if response.status_code != 200:
+                return {
+                    'available': False,
+                    'error': f'status_{response.status_code}'
+                }
+
+            # 4. 内容类型检查
+            content_type = response.headers.get('Content-Type', '').lower()
+            if content_type:
+                # 检查是否为视频相关的 MIME 类型
+                video_mime_types = [
+                    'video/',
+                    'application/vnd.apple.mpegurl',  # HLS
+                    'application/x-mpegURL',        # HLS
+                    'application/mp4',
+                    'application/streaming',
+                    'audio/'  # 音频流
+                ]
+                if not any(mime in content_type for mime in video_mime_types):
+                    # 不是视频相关的内容类型
+                    return {
+                        'available': False,
+                        'error': f'invalid_content_type_{content_type}'
+                    }
+
+            # 5. 内容长度检查（可选）
+            content_length = response.headers.get('Content-Length')
+            if content_length:
+                try:
+                    length = int(content_length)
+                    if length < 100:  # 内容太短，可能不是有效视频
+                        return {
+                            'available': False,
+                            'error': 'content_too_short'
+                        }
+                except:
+                    pass
+
+            # 所有检查通过
+            return {
+                'available': True,
+                'error': None
+            }
+
+        except requests.exceptions.Timeout:
+            return {
+                'available': False,
+                'error': 'timeout'
+            }
+        except requests.exceptions.ConnectionError:
+            return {
+                'available': False,
+                'error': 'connection_error'
+            }
+        except requests.exceptions.RequestException as e:
+            return {
+                'available': False,
+                'error': f'request_error_{str(e)[:20]}'
+            }
+        except Exception as e:
+            return {
+                'available': False,
+                'error': f'unknown_error_{str(e)[:20]}'
+            }
 
     def check_channel(self, channel_input: Union[str, Dict, 'Channel'], 
                      logger: Optional[logging.Logger] = None) -> Optional['Channel']:
