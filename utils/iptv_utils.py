@@ -21,7 +21,7 @@ import logging
 logger = logging.getLogger("IPTV_UTILS")
 
 # 最大并发数（CPU 友好型）
-MAX_WORKERS = min(50, max(10, os.cpu_count() * 2)) if os.cpu_count() else 50
+MAX_WORKERS = min(30, max(10, os.cpu_count() * 2)) if os.cpu_count() else 30
 
 # 全局 IPTV 检测器实例
 _iptv_checker = IPTVChecker()
@@ -101,8 +101,7 @@ def parse_m3u(content: str) -> List[Channel]:
                     tvg_id=tvg_id.group(1).strip() if tvg_id else "",
                     tvg_name=tvg_name.group(1).strip() if tvg_name else "",
                     tvg_logo=tvg_logo.group(1).strip() if tvg_logo else "",
-                    group_title=group.group(1).strip() if group else "",
-                    type="video"
+                    group_title=group.group(1).strip() if group else ""
                 )
 
                 if channel.is_valid():
@@ -141,8 +140,7 @@ def parse_txt(content: str) -> List[Channel]:
                     tvg_id="",
                     tvg_name="",
                     tvg_logo="",
-                    group_title="",
-                    type="video"
+                    group_title=""
                 )
                 
                 if channel.is_valid():

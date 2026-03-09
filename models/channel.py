@@ -9,19 +9,11 @@ from typing import Optional
 from enum import Enum
 
 
-class ChannelType(Enum):
-    """频道类型枚举"""
-    VIDEO = "video"
-    AUDIO = "audio"
-    UNKNOWN = "unknown"
-
-
 class ChannelQuality(Enum):
     """频道质量等级"""
     HD = "hd"      # 高清：fps >= 24, bitrate >= 2000
     SD = "sd"      # 标清：fps >= 20, bitrate >= 1000
     LOW = "low"    # 低清：其他
-    UNKNOWN = "unknown"
 
 
 @dataclass
@@ -36,7 +28,6 @@ class Channel:
         tvg_name: TVG 名称
         tvg_logo: 频道图标
         group_title: 分组名称
-        type: 频道类型（video/audio）
         quality: 频道质量（检测后填充）
         fps: 帧率（检测后填充）
         bitrate: 码率（检测后填充）
@@ -47,8 +38,7 @@ class Channel:
     tvg_name: str = ""
     tvg_logo: str = ""
     group_title: str = ""
-    type: str = "video"
-    quality: str = "unknown"
+    quality: str = ChannelQuality.LOW.value
     fps: Optional[float] = None
     bitrate: Optional[int] = None
     
@@ -139,7 +129,7 @@ class Channel:
     
     def __str__(self) -> str:
         """字符串表示"""
-        quality_str = self.quality.upper() if self.quality != "unknown" else "N/A"
+        quality_str = self.quality.upper() if self.quality else "N/A"
         fps_str = f"{self.fps:.2f}fps" if self.fps else "N/A"
         bitrate_str = f"{self.bitrate}kbps" if self.bitrate else "N/A"
         return f"{self.channel_name} [{quality_str}] fps={fps_str}, bitrate={bitrate_str}"
