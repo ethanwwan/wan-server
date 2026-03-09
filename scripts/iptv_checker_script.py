@@ -92,7 +92,7 @@ def fetch_and_check_channels(urls: List[str]) -> str:
         logger.warning("未获取到任何频道")
         return ''
     
-    logger.info(f"获取到 {len(all_channels)} 个频道，开始检测可用性...")
+    logger.info(f"开始检测 {len(all_channels)} 个频道的可用性...")
     
     # 2. 检测频道可用性
     valid_channels = []
@@ -119,10 +119,7 @@ def fetch_and_check_channels(urls: List[str]) -> str:
             channel, result = future.result()
             
             # 只有通过检测的频道才保留
-            if result.get('available') and result.get('fluent'):
-                # 添加 fps 和 bitrate 信息
-                channel['fps'] = result.get('fps')
-                channel['bitrate'] = result.get('bitrate')
+            if result.get('available'):
                 valid_channels.append(channel)
             
             checked_count += 1

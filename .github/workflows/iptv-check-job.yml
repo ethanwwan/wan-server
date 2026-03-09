@@ -65,6 +65,10 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
+          
+          # 先拉取远程最新代码（避免冲突）
+          git pull --rebase origin main
+          
           git add output/iptv/
           if git diff --staged --quiet; then
             echo "没有更改，跳过提交"
