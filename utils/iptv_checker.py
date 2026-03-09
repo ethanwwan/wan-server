@@ -4,26 +4,16 @@ IPTV 频道检测工具类
 提供单个 URL 的可用性和流畅度检测功能（优化版）
 """
 
-import logging
 import re
 import shutil
 import subprocess
 import sys
-import time
 import socket
 import requests
 from urllib.parse import urlparse
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Optional, Dict, List, Union, Callable
 from dataclasses import dataclass
+from typing import Optional
 import multiprocessing
-
-# 延迟导入避免循环依赖
-try:
-    from models.channel import Channel, CheckResult
-except ImportError:
-    Channel = None
-    CheckResult = None
 
 # 全局配置：优化网络和子进程参数
 socket.setdefaulttimeout(5)  # 全局 socket 超时
@@ -644,177 +634,6 @@ class IPTVChecker:
             'error': quality_check['error']
         }
   
-    
-
-    def check_channel(self, channel_input: Union[str, Dict, 'Channel'], 
-                     logger: Optional[logging.Logger] = None) -> Optional['Channel']:
-        """
-        检测单个频道（支持 URL、字典或 Channel 对象）
-        
-        Args:
-            channel_input: URL 字符串、频道字典或 Channel 对象
-            logger: 日志记录器（可选）
-        
-        Returns:
-            通过检测的 Channel 对象，失败返回 None
-        """
-        # 延迟导入检查
-        if Channel is None or CheckResult is None:
-            raise ImportError("Channel 或 CheckResult 未导入，请检查 models.channel 模块")
-        
-        # 转换为 Channel 对象
-        if isinstance(channel_input, str):
-            channel = Channel(channel_name="Unknown", url=channel_input)
-        elif isinstance(channel_input, dict):
-            channel = Channel.from_dict(channel_input)
-        elif isinstance(channel_input, Channel):
-            channel = channel_input
-        else:
-            if logger:
-                logger.warning(f"无效的频道输入类型：{type(channel_input)}")
-            return None
-        
-        # 验证频道信息
-        if not channel.is_valid():
-            if logger:
-                logger.warning(f"频道信息不完整：{channel.channel_name or 'Unknown'}")
-            return None
-        
-        # 使用基础检测方法
-        result = self.check(channel.url)
-        
-        # 转换为 CheckResult
-        check_result = CheckResult.from_iptv_checker_result(result, channel)
-        
-        # 不可用
-        if not check_result.available:
-            if logger:
-                logger.debug(f"[不可用] {channel.channel_name}: {check_result.error}")
-            return None
-        
-        # 不流畅
-        if not check_result.fluent:
-            error_msg = check_result.error or 'unknown'
-            
-            # 根据错误类型调整日志级别
-            if logger:
-                if error_msg == 'stream_lag':
-                    logger.debug(f"[卡顿] {channel.channel_name}: 检测到丢包或帧丢失")
-                elif error_msg.startswith('fps_too_low'):
-                    fps_str = f"{check_result.fps:.2f}" if check_result.fps else "N/A"
-                    logger.debug(f"[帧率低] {channel.channel_name}: fps={fps_str}")
-                elif error_msg.startswith('bitrate_too_low'):
-                    bitrate_str = f"{check_result.bitrate}" if check_result.bitrate else "N/A"
-                    logger.debug(f"[码率低] {channel.channel_name}: bitrate={bitrate_str}kbps")
-                else:
-                    logger.debug(f"[不流畅] {channel.channel_name}: {error_msg}")
-            
-            return None
-        
-        # 通过检测
-        if logger:
-            fps_str = f"{check_result.fps:.2f}" if check_result.fps else "N/A"
-            bitrate_str = f"{check_result.bitrate}" if check_result.bitrate else "N/A"
-            logger.debug(f"[通过] {channel.channel_name}: fps={fps_str}, bitrate={bitrate_str}kbps, quality={channel.quality}")
-        
-        return check_result.channel
-    
-    def check_channels(self, channels: List[Union[str, Dict, 'Channel']], 
-                      logger: Optional[logging.Logger] = None,
-                      max_workers: int = None,  # 优化：默认使用实例的 max_workers
-                      progress_callback: Optional[Callable[[int, int, any], None]] = None) -> List['Channel']:
-        """
-        批量检测频道（带并发和进度可视化）
-        
-        Args:
-            channels: 频道列表（URL 字符串、字典或 Channel 对象）
-            logger: 日志记录器（可选）
-            max_workers: 最大并发数（默认使用实例的 max_workers 属性）
-            progress_callback: 进度回调函数 callback(current, total, result)
-        
-        Returns:
-            通过检测的 Channel 对象列表
-        """
-        # 使用实例的默认并发数
-        if max_workers is None:
-            max_workers = self.max_workers
-        # 检查 ffmpeg 可用性
-        if not self.is_ffmpeg_available():
-            if logger:
-                logger.warning("ffmpeg 未安装，跳过频道有效性检测")
-            # 尝试转换为 Channel 对象返回
-            if Channel:
-                return [ch if isinstance(ch, Channel) else Channel.from_dict(ch) if isinstance(ch, dict) else Channel("Unknown", ch) for ch in channels]
-            return list(channels)
-        
-        total_channels = len(channels)
-        if logger:
-            logger.info(f"开始检测频道有效性，共 {total_channels} 个，并发数：{max_workers}")
-        
-        # 记录开始时间
-        start_time = time.time()
-        
-        valid_channels = []
-        processed = 0
-        
-        # 优化：分批处理（避免内存溢出，提升稳定性）
-        for batch_start in range(0, total_channels, CheckerConfig.BATCH_SIZE):
-            batch_end = min(batch_start + CheckerConfig.BATCH_SIZE, total_channels)
-            batch_channels = channels[batch_start:batch_end]
-            
-            if logger:
-                logger.info(f"处理批次 {batch_start//CheckerConfig.BATCH_SIZE + 1}：{batch_start+1}-{batch_end}/{total_channels}")
-            
-            # 使用线程池并发检测
-            with ThreadPoolExecutor(max_workers=max_workers) as executor:
-                # 优化：提前提交所有任务，减少调度开销
-                futures = {executor.submit(self.check_channel, ch, logger): ch for ch in batch_channels}
-                
-                for future in as_completed(futures):
-                    try:
-                        result = future.result()
-                        if result:
-                            valid_channels.append(result)
-                    except Exception as e:
-                        if logger:
-                            logger.error(f"检测频道失败：{e}")
-                    
-                    processed += 1
-                    
-                    # 调用进度回调
-                    if progress_callback:
-                        progress_callback(processed, total_channels, valid_channels)
-                    
-                    # 优化：降低日志输出频率（每 1000 个输出一次）
-                    if logger and processed % 1000 == 0:
-                        elapsed = time.time() - start_time
-                        speed = processed / elapsed
-                        remaining = (total_channels - processed) / speed if speed > 0 else 0
-                        logger.info(
-                            f"检测进度：{processed}/{total_channels} "
-                            f"({processed/total_channels*100:.1f}%) | "
-                            f"已通过 {len(valid_channels)} 个 | "
-                            f"速度：{speed:.1f}/秒 | "
-                            f"剩余：{int(remaining//60)}分{int(remaining%60)}秒"
-                        )
-        
-        # 计算总耗时
-        elapsed_time = time.time() - start_time
-        hours = int(elapsed_time // 3600)
-        minutes = int((elapsed_time % 3600) // 60)
-        seconds = int(elapsed_time % 60)
-        
-        if logger:
-            speed_avg = total_channels / elapsed_time
-            if hours > 0:
-                logger.info(f"频道检测完成，有效：{len(valid_channels)}/{total_channels}，耗时：{hours}小时 {minutes}分钟 {seconds}秒，平均速度：{speed_avg:.1f}/秒")
-            elif minutes > 0:
-                logger.info(f"频道检测完成，有效：{len(valid_channels)}/{total_channels}，耗时：{minutes}分钟 {seconds}秒，平均速度：{speed_avg:.1f}/秒")
-            else:
-                logger.info(f"频道检测完成，有效：{len(valid_channels)}/{total_channels}，耗时：{seconds}秒，平均速度：{speed_avg:.1f}/秒")
-        
-        return valid_channels
-
 
 if __name__ == "__main__":
     # 测试示例

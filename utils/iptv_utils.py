@@ -11,21 +11,12 @@ IPTV 工具类模块
 import os
 import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import List, Any
+from typing import List, Any, Dict
 
 import requests
-from models.channel import Channel
-from utils.iptv_checker import IPTVChecker
 import logging
 
 logger = logging.getLogger("IPTV_UTILS")
-
-# 最大并发数（CPU 友好型）
-MAX_WORKERS = min(30, max(10, os.cpu_count() * 2)) if os.cpu_count() else 30
-
-# 全局 IPTV 检测器实例
-_iptv_checker = IPTVChecker()
-
 
 def fetch_url(url: str, timeout: int = 20) -> str:
     """
@@ -66,7 +57,7 @@ def fetch_url(url: str, timeout: int = 20) -> str:
         return ""
 
 
-def parse_m3u(content: str) -> List[Channel]:
+def parse_m3u(content: str) -> List[Dict]:
     """
     解析 M3U 格式内容
     
@@ -74,7 +65,7 @@ def parse_m3u(content: str) -> List[Channel]:
         content: M3U 格式文本内容
     
     Returns:
-        Channel 对象列表
+        频道字典列表
     """
     if not content:
         return []
@@ -95,23 +86,23 @@ def parse_m3u(content: str) -> List[Channel]:
                 group = re.search(r'group-title="([^"]*)"', ext_info)
                 comma = re.search(r',(.+)$', ext_info)
 
-                channel = Channel(
-                    channel_name=(comma.group(1).strip() if comma else "") or (tvg_name.group(1).strip() if tvg_name else ""),
-                    url=url,
-                    tvg_id=tvg_id.group(1).strip() if tvg_id else "",
-                    tvg_name=tvg_name.group(1).strip() if tvg_name else "",
-                    tvg_logo=tvg_logo.group(1).strip() if tvg_logo else "",
-                    group_title=group.group(1).strip() if group else ""
-                )
+                channel = {
+                    'channel_name': (comma.group(1).strip() if comma else "") or (tvg_name.group(1).strip() if tvg_name else ""),
+                    'url': url,
+                    'tvg_id': tvg_id.group(1).strip() if tvg_id else "",
+                    'tvg_name': tvg_name.group(1).strip() if tvg_name else "",
+                    'tvg_logo': tvg_logo.group(1).strip() if tvg_logo else "",
+                    'group_title': group.group(1).strip() if group else ""
+                }
 
-                if channel.is_valid():
+                if channel.get('channel_name') and channel.get('url'):
                     channels.append(channel)
         i += 1
 
     return channels
 
 
-def parse_txt(content: str) -> List[Channel]:
+def parse_txt(content: str) -> List[Dict]:
     """
     解析 TXT 格式内容（频道名，URL）
     
@@ -119,7 +110,7 @@ def parse_txt(content: str) -> List[Channel]:
         content: TXT 格式文本内容（每行：频道名，URL）
     
     Returns:
-        Channel 对象列表
+        频道字典列表
     """
     if not content:
         return []
@@ -134,22 +125,22 @@ def parse_txt(content: str) -> List[Channel]:
         if len(parts) >= 2:
             name, url = parts[0].strip(), parts[1].strip()
             if url.startswith(('http://', 'https://')):
-                channel = Channel(
-                    channel_name=name,
-                    url=url,
-                    tvg_id="",
-                    tvg_name="",
-                    tvg_logo="",
-                    group_title=""
-                )
+                channel = {
+                    'channel_name': name,
+                    'url': url,
+                    'tvg_id': "",
+                    'tvg_name': "",
+                    'tvg_logo': "",
+                    'group_title': ""
+                }
                 
-                if channel.is_valid():
+                if channel.get('channel_name') and channel.get('url'):
                     channels.append(channel)
 
     return channels
 
 
-def parse_url(url: str, content: str) -> List[Channel]:
+def parse_url(url: str, content: str) -> List[Dict]:
     """
     根据 URL 扩展名选择解析器
     
@@ -158,7 +149,7 @@ def parse_url(url: str, content: str) -> List[Channel]:
         content: 文件内容
     
     Returns:
-        Channel 对象列表
+        频道字典列表
     """
     return parse_txt(content) if url.endswith('.txt') else parse_m3u(content)
 
@@ -180,23 +171,13 @@ def build_m3u(channels: List[Any]) -> str:
     seen = set()
     
     for ch in channels:
-        # 支持 Channel 对象和字典两种格式
-        if hasattr(ch, 'url'):
-            # Channel 对象
-            url = ch.url
-            channel_name = ch.channel_name
-            tvg_id = ch.tvg_id
-            tvg_name = ch.tvg_name
-            tvg_logo = ch.tvg_logo
-            group_title = ch.group_title
-        else:
-            # 字典
-            url = ch.get('url', '')
-            channel_name = ch.get('channel_name', '')
-            tvg_id = ch.get('tvg_id', '')
-            tvg_name = ch.get('tvg_name', '')
-            tvg_logo = ch.get('tvg_logo', '')
-            group_title = ch.get('group_title', '')
+        # 字典格式
+        url = ch.get('url', '')
+        channel_name = ch.get('channel_name', '')
+        tvg_id = ch.get('tvg_id', '')
+        tvg_name = ch.get('tvg_name', '')
+        tvg_logo = ch.get('tvg_logo', '')
+        group_title = ch.get('group_title', '')
         
         if url in seen:
             continue
@@ -217,22 +198,7 @@ def build_m3u(channels: List[Any]) -> str:
     
     return '\n'.join(lines)
 
-def fetch_iptv(urls:List[str]) -> str:
-    """
-    从多个 URL 获取 IPTV 频道, 并合并去重, 检测可用性
-    
-    Args:
-        urls: 源 URL 列表
-    
-    Returns:
-        合并后的 M3U 内容
-    """
-    channels = fetch_channels(urls)
-    valid_channels = check_channel(channels)
-    return build_m3u(valid_channels)
-
-
-def fetch_channels(urls: List[str], max_workers: int = MAX_WORKERS) -> str:
+def fetch_channels(urls: List[str], max_workers: int = 10) -> str:
     """
     合并多个 URL 的频道（边解析边去重）
     
@@ -271,21 +237,6 @@ def fetch_channels(urls: List[str], max_workers: int = MAX_WORKERS) -> str:
     logger.info(f"合并完成，共 {len(all_channels)} 个唯一频道")
     
     return all_channels
-
-
-def check_channel(channels: List[Any], max_workers: int = MAX_WORKERS) -> List[Any]:
-    """
-    检测频道可用性
-    
-    Args:
-        channels: Channel 对象列表或字典列表
-        max_workers: 最大并发数，默认使用 MAX_WORKERS
-    
-    Returns:
-        可用的频道列表
-    """
-    return _iptv_checker.check_channels(channels, logger=logger, max_workers=max_workers)
-
 
 
 def save_file(filename: str, content: str, output_dir: str = None) -> bool:
@@ -348,13 +299,3 @@ def get_file_content(filename: str, input_dir: str = None) -> str:
     except Exception as e:
         logger.error(f"读取文件失败：{filename}, 错误：{e}")
         return ""
-
-
-def is_ffmpeg_available() -> bool:
-    """
-    检查 FFmpeg 是否可用
-    
-    Returns:
-        FFmpeg 是否可用
-    """
-    return _iptv_checker.is_ffmpeg_available()
