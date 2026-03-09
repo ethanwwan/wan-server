@@ -66,8 +66,14 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           
-          # 先拉取远程最新代码（避免冲突）
+          # 先暂存本地更改
+          git stash push -m "auto-stash before pull"
+          
+          # 拉取远程最新代码（避免冲突）
           git pull --rebase origin main
+          
+          # 恢复暂存的更改
+          git stash pop
           
           git add output/iptv/
           if git diff --staged --quiet; then
