@@ -85,9 +85,20 @@ def parse_m3u(content: str) -> List[Dict]:
                 tvg_logo = re.search(r'tvg-logo="([^"]*)"', ext_info)
                 group = re.search(r'group-title="([^"]*)"', ext_info)
                 comma = re.search(r',(.+)$', ext_info)
+                
+                channel_name = ""
+                if tvg_name:
+                    channel_name = tvg_name.group(1).strip()
+                elif comma:
+                    raw_name = comma.group(1).strip()
+                    if '=' in raw_name:
+                        parts = raw_name.split(',')
+                        channel_name = parts[-1].strip() if parts else raw_name
+                    else:
+                        channel_name = raw_name
 
                 channel = {
-                    'channel_name': (comma.group(1).strip() if comma else "") or (tvg_name.group(1).strip() if tvg_name else ""),
+                    'channel_name': channel_name,
                     'url': url,
                     'tvg_id': tvg_id.group(1).strip() if tvg_id else "",
                     'tvg_name': tvg_name.group(1).strip() if tvg_name else "",
@@ -236,6 +247,10 @@ def fetch_channels(urls: List[str], max_workers: int = 10) -> str:
     
     logger.info(f"合并完成，共 {len(all_channels)} 个唯一频道")
     
+    all_channels = classify_channels(all_channels)
+    
+    logger.info(f"分类重组完成，剩余 {len(all_channels)} 个频道")
+    
     return all_channels
 
 
@@ -336,27 +351,26 @@ CHANNEL_MAPPING = {
 }
 
 
-def classify_channels(channels: List[Dict]) -> List[Dict]:
+def classify_channels(channels: List[Dict], keep_unmatched: bool = False) -> List[Dict]:
     """
     对频道进行分组优化
     
     匹配策略（按优先级）：
-    1. 使用 group_mapping 匹配 group-title
-    2. 未匹配的频道使用 channel_mapping 匹配 channel_name
-    3. 仍未匹配的直接丢弃
+    1. 使用 GROUP_MAPPING 匹配 group-title
+    2. 未匹配的频道使用 CHANNEL_MAPPING 匹配 channel_name
+    3. 仍未匹配的根据 keep_unmatched 参数决定保留或丢弃
     
     Args:
         channels: 频道列表 [{channel_name, url, group_title, ...}, ...]
+        keep_unmatched: 是否保留未匹配的频道，默认为 False（丢弃）
     
     Returns:
-        优化后的频道列表
+        优化后的频道列表（已排序）
     """
     group_mapping = GROUP_MAPPING
     channel_mapping = CHANNEL_MAPPING
     result = []
 
-    logger.info(f"开始分类重组 {len(channels)} 个频道")
-    
     for ch in channels:
         matched = False
         new_group = None
@@ -375,7 +389,7 @@ def classify_channels(channels: List[Dict]) -> List[Dict]:
         
         if not matched:
             name = ch.get('channel_name', '')
-            name_upper = name.upper()
+            name_upper = _clean_channel_name(name).upper()
             for category, keywords in channel_mapping.items():
                 for keyword in keywords:
                     if keyword.upper() in name_upper or name_upper in keyword.upper():
@@ -387,8 +401,83 @@ def classify_channels(channels: List[Dict]) -> List[Dict]:
         
         if matched and new_group:
             ch['group_title'] = new_group
+            ch['channel_name'] = _clean_channel_name(ch.get('channel_name', ''))
+            result.append(ch)
+        elif keep_unmatched:
+            ch['group_title'] = '其他'
+            ch['channel_name'] = _clean_channel_name(ch.get('channel_name', ''))
             result.append(ch)
     
-    logger.info(f"分类重组完成，共 {len(result)} 个频道")
+    return _sort_channels(result)
 
-    return result
+
+def _clean_channel_name(name: str) -> str:
+    """
+    清理频道名中的特殊字符
+    
+    处理规则：
+    1. 去除 () 及内容，比如 (1080p)、(国)
+    2. 去除 [] 及内容，比如 [Not 24/7]
+    3. 去除 - 后面非数字的内容，比如 CCTV-高清 -> CCTV，但保留 CCTV-1
+    4. 去除 HD/4K/SD 后缀
+    5. 去除开头的国家/地区旗帜 emoji
+    
+    Args:
+        name: 原始频道名
+    
+    Returns:
+        清理后的频道名
+    """
+
+    cleaned = name
+    
+    cleaned = re.sub(r'\([^)]*\)', '', cleaned)
+    
+    cleaned = re.sub(r'\[[^\]]*\]', '', cleaned)
+    
+    cleaned = re.sub(r'-(\D+)$', '', cleaned)
+    
+    cleaned = re.sub(r'(HD|4K|SD)$', '', cleaned, flags=re.IGNORECASE)
+    
+    flag_pattern = re.compile(r"^[\U0001F1E0-\U0001F1FF]+")
+    cleaned = flag_pattern.sub('', cleaned)
+    
+    return cleaned.strip()
+
+
+def _sort_channels(channels: List[Dict]) -> List[Dict]:
+    """
+    对频道列表进行排序
+    
+    排序规则：
+    - 先按 group_title 排序（按 GROUP_MAPPING 的 key 顺序）
+    - 分组内按 channel_name 排序：
+      - 央视频道：按 CCTV 后的数字排序（CCTV1, CCTV2, CCTV3...）
+      - 其他分组：按频道名的首字母排序
+    
+    Args:
+        channels: 频道列表
+    
+    Returns:
+        排序后的频道列表
+    """
+    group_order = {key: idx for idx, key in enumerate(GROUP_MAPPING.keys())}
+    
+    def get_sort_key(ch: Dict) -> tuple:
+        name = ch.get('channel_name', '')
+        group = ch.get('group_title', '')
+        
+        group_idx = group_order.get(group, 999)
+        
+        if group == '央视频道':
+            match = re.search(r'CCTV[-]?(\d+)', name.upper())
+            if match:
+                name_sort = int(match.group(1))
+            else:
+                name_sort = 9999
+        else:
+            name_sort = name
+        
+        return (group_idx, name_sort, name)
+    
+    return sorted(channels, key=get_sort_key)

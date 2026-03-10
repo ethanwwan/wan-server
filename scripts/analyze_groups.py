@@ -11,7 +11,8 @@ IPTV 分组分析脚本
 
 import os
 import sys
-from collections import defaultdict
+import re
+from collections import defaultdict, Counter
 
 # 添加项目根目录到 Python 路径
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -27,7 +28,7 @@ def main():
     print("=" * 80)
     
     # 读取 playlist.m3u 文件
-    m3u_file = os.path.join(project_root, 'output', 'iptv', 'playlist.m3u')
+    m3u_file = os.path.join(project_root, 'output', 'iptv', 'playlist_original.m3u')
     if not os.path.exists(m3u_file):
         print(f"❌ M3U 文件不存在：{m3u_file}")
         sys.exit(1)
@@ -48,7 +49,7 @@ def main():
     print(f"\n📊 读取到 {len(channels)} 个频道，开始分析...\n")
     
     # 对频道进行分组优化
-    optimized_channels = classify_channels(channels)
+    optimized_channels = classify_channels(channels, keep_unmatched=False)
     
     # 统计分类结果
     total_channels = len(channels)
@@ -70,14 +71,49 @@ def main():
     print(f"   分类后分组数：{len(groups)} 个")
     
     print(f"\n{'=' * 80}")
-    print("📋 分类后的分组结果（按频道数排序）")
+    print("📋 分类后的分组结果")
     print(f"{'=' * 80}")
     
-    sorted_groups = sorted(groups.items(), key=lambda x: len(x[1]), reverse=True)
-    for i, (category, chs) in enumerate(sorted_groups, 1):
-        print(f"{i:3d}. {category:50s} {len(chs):4d} 个频道")
-        print()
+    # 打印所有分组及其频道（去重）
+    for category, chs in groups.items():
+        print(f"\n{category} ({len(chs)} 个频道)")
+        print("-" * 40)
+        seen_names = set()
+        for ch in chs:
+            name = ch.get('channel_name', 'Unknown')
+            if name not in seen_names:
+                seen_names.add(name)
+                print(f"  - {name}")
     
+    # 保存到文件
+    report_file = os.path.join(project_root, 'output', 'iptv', 'group_analysis_report.txt')
+    os.makedirs(os.path.dirname(report_file), exist_ok=True)
+    
+    with open(report_file, 'w', encoding='utf-8') as f:
+        f.write("IPTV 分组分析报告\n")
+        f.write("=" * 80 + "\n\n")
+        
+        f.write("📊 分组统计结果\n")
+        f.write("=" * 80 + "\n")
+        f.write(f"   总频道数：{total_channels} 个\n")
+        f.write(f"   过滤掉的频道：{filtered_count} 个\n")
+        f.write(f"   有效频道数：{valid_channels} 个\n")
+        f.write(f"   分类后分组数：{len(groups)} 个\n")
+        
+        f.write("\n\n📋 分类后的分组结果\n")
+        f.write("=" * 80 + "\n")
+        
+        for category, chs in groups.items():
+            f.write(f"\n{category} ({len(chs)} 个频道)\n")
+            f.write("-" * 40 + "\n")
+            seen_names = set()
+            for ch in chs:
+                name = ch.get('channel_name', 'Unknown')
+                if name not in seen_names:
+                    seen_names.add(name)
+                    f.write(f"  - {name}\n")
+    
+    print(f"\n✅ 报告已保存到：{report_file}")
     print(f"\n✅ 分组优化完成，保留 {valid_channels} 个频道")
     print(f"{'=' * 80}\n")
 
