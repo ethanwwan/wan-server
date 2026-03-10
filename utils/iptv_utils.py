@@ -18,7 +18,7 @@ import logging
 
 logger = logging.getLogger("IPTV_UTILS")
 
-def fetch_url(url: str, timeout: int = 30) -> str:
+def fetch_url(url: str, timeout: int = 20) -> str:
     """
     从 URL 获取内容
     
@@ -30,10 +30,15 @@ def fetch_url(url: str, timeout: int = 30) -> str:
         响应内容，失败返回空字符串
     """
     try:
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        }
+        
         resp = requests.get(
             url, 
             timeout=timeout, 
-            verify=False
+            verify=False,
+            headers=headers
         )
         resp.raise_for_status()
         content = resp.text.strip()
