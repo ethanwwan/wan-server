@@ -299,3 +299,96 @@ def get_file_content(filename: str, input_dir: str = None) -> str:
     except Exception as e:
         logger.error(f"读取文件失败：{filename}, 错误：{e}")
         return ""
+
+
+GROUP_MAPPING = {
+    '央视频道': ['央视'],
+    '卫视频道': ['卫视'],
+    '地方频道': ['地方', '浙江频道', '江苏频道', '广东频道', '湖南频道', '湖北频道', '四川频道', '河南频道', '河北频道', '山东频道', '山西频道', '陕西频道', '安徽频道', '福建频道', '江西频道', '辽宁频道', '吉林频道', '黑龙江频道', '北京频道', '上海频道', '天津频道', '重庆频道', '云南频道', '贵州频道', '广西频道', '海南频道', '甘肃频道', '青海频道', '内蒙古频道', '宁夏频道', '新疆频道', '西藏频道'],
+    '电影电视': ['电影', '埋堆堆', '电视剧', '剧场', '影视'],
+    '体育赛事': ['体育', '咪咕赛事'],
+    '少儿教育': ['少儿', '动漫', '儿童', '动画'],
+    '综艺娱乐': ['综艺', '音乐'],
+    '纪录纪实': ['纪录', '直播中国', '纪实'],
+    '国际全球': ['国际', '全球', '外语'],
+    '港澳台': ['港·澳·台', '港澳', '港台'],
+    '咪视界': ['咪视界', '咪视通'],
+    'NewTV': ['NewTV'],
+    'iHOT': ['IHOT'],
+    'iPanda': ['ipanda']
+}
+
+CHANNEL_MAPPING = {
+    '央视频道': ['CCTV', '央视', 'CGTN'],
+    '卫视频道': ['卫视', '苏州4K'],
+    '地方频道': ['北京', '上海', '广东', '浙江', '江苏', '湖南', '湖北', '四川', '重庆', '天津', '河北', '河南', '山东', '山西', '陕西', '江西', '福建', '安徽', '贵州', '云南', '广西', '海南', '黑龙江', '吉林', '辽宁', '内蒙古', '宁夏', '新疆', '青海', '甘肃', '西藏', '地方', '广州', '佛山', '江门', '汕头', '深圳', '珠海', '东莞', '中山', '惠州', '肇庆', '清远', '韶关', '河源', '梅州', '汕尾', '揭阳', '阳江', '茂名', '湛江', '潮州', '云浮', '南宁', '南京', '宁波', '杭州', '余杭', '上虞', '湖州', '松阳', '庆元', '民视', '余姚', '开化', '南国', '邢台', '绍兴', '嵊州', '新昌', '福州', '萧山', '钱江', '财经', '新闻综合'],
+    '电影电视': ['电影'],
+    '体育赛事': ['体育', '足球'],
+    '少儿教育': ['少儿', '动画', '卡通', '动漫'],
+    '综艺娱乐': ['综艺', '娱乐', '音乐'],
+    '国际全球': ['国际','UK', '美亚'],
+    '纪录纪实': ['纪录','人文', '历史', '地理', '自然', '生物', '纪实', '睛彩'],
+    '港澳台': ['台湾', 'Taiwan', 'TVB', 'ATV', '公视', '华视', '台视', '中视', '东森', '中天', '凤凰', '澳亚', 'CHANNEL', 'CH5', 'CH8', '频道', 'VIUTV', 'RTHK', '明珠台', 'HOY', 'ASTRO', '欢喜台', 'AOD', 'AEC', 'QJ', '港·澳·台', '港澳', '港台'],
+    '咪视界': ['咪视界', '咪视通'],
+    'NewTV': ['NewTV'],
+    'iHOT': ['IHOT'],
+    'iPanda': ['ipanda']
+}
+
+
+def classify_channels(channels: List[Dict]) -> List[Dict]:
+    """
+    对频道进行分组优化
+    
+    匹配策略（按优先级）：
+    1. 使用 group_mapping 匹配 group-title
+    2. 未匹配的频道使用 channel_mapping 匹配 channel_name
+    3. 仍未匹配的直接丢弃
+    
+    Args:
+        channels: 频道列表 [{channel_name, url, group_title, ...}, ...]
+    
+    Returns:
+        优化后的频道列表
+    """
+    group_mapping = GROUP_MAPPING
+    channel_mapping = CHANNEL_MAPPING
+    result = []
+
+    logger.info(f"开始分类重组 {len(channels)} 个频道")
+    
+    for ch in channels:
+        matched = False
+        new_group = None
+        
+        group = ch.get('group_title', '')
+        
+        if group and '央卫视' not in group:
+            for category, variants in group_mapping.items():
+                for variant in variants:
+                    if variant in group or group in variant:
+                        new_group = category
+                        matched = True
+                        break
+                if matched:
+                    break
+        
+        if not matched:
+            name = ch.get('channel_name', '')
+            name_upper = name.upper()
+            for category, keywords in channel_mapping.items():
+                for keyword in keywords:
+                    if keyword.upper() in name_upper or name_upper in keyword.upper():
+                        new_group = category
+                        matched = True
+                        break
+                if matched:
+                    break
+        
+        if matched and new_group:
+            ch['group_title'] = new_group
+            result.append(ch)
+    
+    logger.info(f"分类重组完成，共 {len(result)} 个频道")
+
+    return result

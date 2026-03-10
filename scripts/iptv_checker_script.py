@@ -14,7 +14,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, project_root)
 
-from utils.iptv_utils import save_file, parse_m3u, fetch_channels, build_m3u
+from utils.iptv_utils import save_file, parse_m3u, fetch_channels, build_m3u, classify_channels
 from utils.iptv_checker import IPTVChecker
 from utils.logger import get_logger
 
@@ -24,8 +24,8 @@ IPTV_DIR = os.path.join(project_root, 'output', 'iptv')
 IPTV_URLS_FILE = os.path.join(project_root, 'input', 'iptv_urls.txt')
 
 # 最大并发数（CPU 友好型）
-MAX_WORKERS = min(30, max(10, os.cpu_count() * 2)) if os.cpu_count() else 30
-
+# MAX_WORKERS = min(30, max(10, os.cpu_count() * 2)) if os.cpu_count() else 30
+MAX_WORKERS = 50
 # 全局 IPTV 检测器实例
 _iptv_checker = IPTVChecker()
 
@@ -131,7 +131,8 @@ def fetch_and_check_channels(urls: List[str]) -> str:
     
     logger.info(f"检测完成，可用频道: {len(valid_channels)}/{total_count}")
     
-    # 3. 构建 M3U 内容
+    # 3. 重组并构建 M3U 内容
+    valid_channels = classify_channels(valid_channels)
     return build_m3u(valid_channels)
 
 def main():

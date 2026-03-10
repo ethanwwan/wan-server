@@ -1,6 +1,5 @@
 https://raw.githubusercontent.com/YueChan/Live/refs/heads/main/GNTV.m3u
 https://raw.githubusercontent.com/YueChan/Live/refs/heads/main/Global.m3u
-https://raw.githubusercontent.com/cymz6/AutoIPTV-Hotel/main/lives.m3u
 https://raw.githubusercontent.com/suxuang/myIPTV/refs/heads/main/ipv4.m3u
 https://raw.githubusercontent.com/iptv-org/iptv/refs/heads/master/streams/cn.m3u
 https://raw.githubusercontent.com/Jsnzkpg/Jsnzkpg/refs/heads/Jsnzkpg/Jsnzkpg1.m3u
