@@ -14,7 +14,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, project_root)
 
-from utils.iptv_utils import save_file, parse_m3u, fetch_channels, build_m3u, classify_channels
+from utils.iptv_utils import save_file, parse_m3u, fetch_channels, build_m3u, sort_channels
 from utils.iptv_checker import IPTVChecker
 from utils.logger import get_logger
 
@@ -131,6 +131,9 @@ def fetch_and_check_channels(urls: List[str]) -> str:
                 progress = checked_count / total_count * 100
                 logger.info(f"检测进度: {checked_count}/{total_count} ({progress:.1f}%) - 可用: {len(valid_channels)}")
     
+    # 排序优化
+    valid_channels = sort_channels(valid_channels)
+
     logger.info(f"检测完成，可用频道: {len(valid_channels)}/{total_count}")
     
     return build_m3u(valid_channels)

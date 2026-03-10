@@ -18,7 +18,7 @@ import logging
 
 logger = logging.getLogger("IPTV_UTILS")
 
-def fetch_url(url: str, timeout: int = 20) -> str:
+def fetch_url(url: str, timeout: int = 30) -> str:
     """
     从 URL 获取内容
     
@@ -408,7 +408,7 @@ def classify_channels(channels: List[Dict], keep_unmatched: bool = False) -> Lis
             ch['channel_name'] = _clean_channel_name(ch.get('channel_name', ''))
             result.append(ch)
     
-    return _sort_channels(result)
+    return result
 
 
 def _clean_channel_name(name: str) -> str:
@@ -445,7 +445,7 @@ def _clean_channel_name(name: str) -> str:
     return cleaned.strip()
 
 
-def _sort_channels(channels: List[Dict]) -> List[Dict]:
+def sort_channels(channels: List[Dict]) -> List[Dict]:
     """
     对频道列表进行排序
     
