@@ -1,4 +1,4 @@
-name: wan-server Docker Build and Push
+name: Docker Build and Push JOB
 
 # 触发条件：只在创建标签时
 on:

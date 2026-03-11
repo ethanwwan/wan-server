@@ -1,4 +1,4 @@
-name: IPTV Scheduler
+name: IPTV Scheduler JOB
 
 on:
   schedule:
