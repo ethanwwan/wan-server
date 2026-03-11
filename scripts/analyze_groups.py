@@ -18,7 +18,7 @@ from collections import defaultdict, Counter
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, project_root)
 
-from utils.iptv_utils import parse_m3u, classify_channels
+from utils.iptv_utils import parse_m3u, classify_channels, sort_channels
 
 
 def main():
@@ -28,7 +28,7 @@ def main():
     print("=" * 80)
     
     # 读取 playlist.m3u 文件
-    m3u_file = os.path.join(project_root, 'output', 'iptv', 'playlist_original.m3u')
+    m3u_file = os.path.join(project_root, 'output', 'iptv', 'playlist.m3u')
     if not os.path.exists(m3u_file):
         print(f"❌ M3U 文件不存在：{m3u_file}")
         sys.exit(1)
@@ -50,18 +50,24 @@ def main():
     
     # 对频道进行分组优化
     optimized_channels = classify_channels(channels, keep_unmatched=False)
+    optimized_channels = sort_channels(optimized_channels)
     
     # 统计分类结果
     total_channels = len(channels)
     valid_channels = len(optimized_channels)
     filtered_count = total_channels - valid_channels
     
-    # 按 group_title 分组统计
+    # 按 group_title 分组统计（保持原始顺序）
     groups = defaultdict(list)
+    seen_groups = []
     for ch in optimized_channels:
         group = ch.get('group_title', '')
         groups[group].append(ch)
+        if group not in seen_groups:
+            seen_groups.append(group)
     
+    print(seen_groups)
+
     print(f"\n{'=' * 80}")
     print("📊 分组统计结果")
     print(f"{'=' * 80}")
@@ -74,8 +80,9 @@ def main():
     print("📋 分类后的分组结果")
     print(f"{'=' * 80}")
     
-    # 打印所有分组及其频道（去重）
-    for category, chs in groups.items():
+    # 打印所有分组及其频道（去重，按原始顺序）
+    for category in seen_groups:
+        chs = groups[category]
         print(f"\n{category} ({len(chs)} 个频道)")
         print("-" * 40)
         seen_names = set()
@@ -103,7 +110,8 @@ def main():
         f.write("\n\n📋 分类后的分组结果\n")
         f.write("=" * 80 + "\n")
         
-        for category, chs in groups.items():
+        for category in seen_groups:
+            chs = groups[category]
             f.write(f"\n{category} ({len(chs)} 个频道)\n")
             f.write("-" * 40 + "\n")
             seen_names = set()

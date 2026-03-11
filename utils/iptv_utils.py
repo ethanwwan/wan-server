@@ -214,7 +214,7 @@ def build_m3u(channels: List[Any]) -> str:
     
     return '\n'.join(lines)
 
-def fetch_channels(urls: List[str], max_workers: int = 10) -> str:
+def fetch_channels(urls: List[str], max_workers: int = 10) -> List[Dict]:
     """
     合并多个 URL 的频道（边解析边去重）
     
@@ -223,7 +223,7 @@ def fetch_channels(urls: List[str], max_workers: int = 10) -> str:
         max_workers: 最大并发数，默认使用 MAX_WORKERS
     
     Returns:
-        合并后的 M3U 内容
+        合并后的频道列表
     """
         
     all_channels = []
@@ -339,9 +339,9 @@ GROUP_MAPPING = {
 }
 
 CHANNEL_MAPPING = {
-    '央视频道': ['CCTV', '央视', 'CGTN'],
-    '卫视频道': ['卫视', '苏州4K'],
-    '地方频道': ['北京', '上海', '广东', '浙江', '江苏', '湖南', '湖北', '四川', '重庆', '天津', '河北', '河南', '山东', '山西', '陕西', '江西', '福建', '安徽', '贵州', '云南', '广西', '海南', '黑龙江', '吉林', '辽宁', '内蒙古', '宁夏', '新疆', '青海', '甘肃', '西藏', '地方', '广州', '佛山', '江门', '汕头', '深圳', '珠海', '东莞', '中山', '惠州', '肇庆', '清远', '韶关', '河源', '梅州', '汕尾', '揭阳', '阳江', '茂名', '湛江', '潮州', '云浮', '南宁', '南京', '宁波', '杭州', '余杭', '上虞', '湖州', '松阳', '庆元', '民视', '余姚', '开化', '南国', '邢台', '绍兴', '嵊州', '新昌', '福州', '萧山', '钱江', '财经', '新闻综合'],
+    '央视频道': ['CCTV', 'CGTN'],
+    '卫视频道': ['湖南卫视', '江苏卫视', '浙江卫视', '东方卫视', '北京卫视', '广东卫视', '安徽卫视', '山东卫视', '河南卫视', '河北卫视', '湖北卫视', '四川卫视', '重庆卫视', '天津卫视', '江西卫视', '云南卫视', '贵州卫视', '广西卫视', '苏州4K'],
+    '地方频道': ['重庆', '天津', '山东', '山西', '陕西', '福建', '安徽', '贵州', '云南', '广西', '海南', '黑龙江', '吉林', '辽宁', '内蒙古', '宁夏', '新疆', '青海', '甘肃', '西藏', '地方', '广州', '佛山', '江门', '汕头', '深圳', '珠海', '东莞', '中山', '惠州', '肇庆', '清远', '韶关', '河源', '梅州', '汕尾', '揭阳', '阳江', '茂名', '湛江', '潮州', '云浮', '南宁', '南京', '宁波', '杭州', '余杭', '上虞', '湖州', '松阳', '庆元', '民视', '余姚', '开化', '南国', '邢台', '绍兴', '嵊州', '新昌', '福州', '萧山', '钱江', '财经', '新闻综合'],
     '电影电视': ['电影'],
     '体育赛事': ['体育', '足球'],
     '少儿教育': ['少儿', '动画', '卡通', '动漫'],
@@ -360,59 +360,107 @@ def classify_channels(channels: List[Dict], keep_unmatched: bool = False) -> Lis
     """
     对频道进行分组优化
     
-    匹配策略（按优先级）：
-    1. 使用 GROUP_MAPPING 匹配 group-title
-    2. 未匹配的频道使用 CHANNEL_MAPPING 匹配 channel_name
-    3. 仍未匹配的根据 keep_unmatched 参数决定保留或丢弃
+    匹配策略：
+    1. 首先使用 GROUP_MAPPING 匹配 group-title，没有匹配到的全部归类为"其他"，得到 channels_by_group
+    2. 然后使用 CHANNEL_MAPPING 对 channels_by_group 再次进行分组，根据 keep_unmatched 决定是否保留"其他"分组
     
     Args:
         channels: 频道列表 [{channel_name, url, group_title, ...}, ...]
         keep_unmatched: 是否保留未匹配的频道，默认为 False（丢弃）
     
     Returns:
-        优化后的频道列表（已排序）
+        优化后的频道列表（保持原始顺序）
     """
     group_mapping = GROUP_MAPPING
     channel_mapping = CHANNEL_MAPPING
     result = []
 
+    # 第一步：使用 group_title 分组，未匹配的归类为"其他"
+    channels_by_group = []
     for ch in channels:
-        matched = False
-        new_group = None
-        
         group = ch.get('group_title', '')
+        new_group = '其他'
         
-        if group and '央卫视' not in group:
+        if group:
             for category, variants in group_mapping.items():
                 for variant in variants:
                     if variant in group or group in variant:
                         new_group = category
-                        matched = True
                         break
-                if matched:
+                if new_group != '其他':
                     break
         
-        if not matched:
-            name = ch.get('channel_name', '')
-            name_upper = _clean_channel_name(name).upper()
-            for category, keywords in channel_mapping.items():
+        ch_copy = ch.copy()
+        ch_copy['group_title'] = new_group
+        channels_by_group.append(ch_copy)
+    
+    # 第二步：使用 channel_name 对 channels_by_group 再次分组（对所有分组都进行匹配）
+    for ch in channels_by_group:
+        current_group = ch.get('group_title', '')
+        name = ch.get('channel_name', '')
+        # 先清理频道名称
+        cleaned_name = _clean_channel_name(name)
+        new_group = current_group
+        
+        # 对所有分组都使用清理后的 channel_name 进行二次分组
+        name_upper = cleaned_name.upper()
+        
+        # 标记是否已经匹配到卫视频道或央视频道
+        matched_satellite_or_cctv = False
+        
+        # 优先匹配卫视频道和央视频道
+        for category in ['卫视频道', '央视频道']:
+            if category in channel_mapping:
+                keywords = channel_mapping[category]
                 for keyword in keywords:
                     if keyword.upper() in name_upper or name_upper in keyword.upper():
                         new_group = category
-                        matched = True
+                        matched_satellite_or_cctv = True
                         break
-                if matched:
+                if matched_satellite_or_cctv:
                     break
         
-        if matched and new_group:
-            ch['group_title'] = new_group
-            ch['channel_name'] = _clean_channel_name(ch.get('channel_name', ''))
-            result.append(ch)
-        elif keep_unmatched:
-            ch['group_title'] = '其他'
-            ch['channel_name'] = _clean_channel_name(ch.get('channel_name', ''))
-            result.append(ch)
+        # 如果没有匹配到卫视频道或央视频道，再匹配其他分组
+        if not matched_satellite_or_cctv:
+            for category, keywords in channel_mapping.items():
+                if category not in ['卫视频道', '央视频道']:
+                    for keyword in keywords:
+                        if keyword.upper() in name_upper or name_upper in keyword.upper():
+                            new_group = category
+                            break
+                    if new_group != current_group:
+                        break
+        
+        # 处理匹配结果
+        ch['group_title'] = new_group
+        ch['channel_name'] = cleaned_name
+        
+        # 对央视频道和卫视频道单独处理，只保留 CHANNEL_MAPPING 中匹配上的频道
+        if new_group == '央视频道':
+            # 央视频道只保留包含 CCTV、CGTN 关键字的频道
+            name_upper = ch['channel_name'].upper()
+            cctv_match = any(keyword.upper() in name_upper for keyword in CHANNEL_MAPPING.get('央视频道', []))
+            if cctv_match:
+                result.append(ch)
+        elif new_group == '卫视频道':
+            # 卫视频道只保留 CHANNEL_MAPPING 中匹配上的频道
+            name_upper = ch['channel_name'].upper()
+            satellite_match = any(keyword.upper() in name_upper for keyword in CHANNEL_MAPPING.get('卫视频道', []))
+            if satellite_match:
+                result.append(ch)
+        else:
+            # 地方频道：过滤掉无效的频道名
+            if new_group == '地方频道':
+                filtered_keywords = ['6', 'AYXTV', 'PVA', 'XXTV']
+                if ch['channel_name'] in filtered_keywords:
+                    pass  # 过滤掉
+                else:
+                    result.append(ch)
+            elif new_group != '其他' or keep_unmatched:
+                result.append(ch)
     
+
+
     return result
 
 
@@ -423,9 +471,10 @@ def _clean_channel_name(name: str) -> str:
     处理规则：
     1. 去除 () 及内容，比如 (1080p)、(国)
     2. 去除 [] 及内容，比如 [Not 24/7]
-    3. 去除 - 后面非数字的内容，比如 CCTV-高清 -> CCTV，但保留 CCTV-1
-    4. 去除 HD/4K/SD 后缀
-    5. 去除开头的国家/地区旗帜 emoji
+    3. CCTV+数字+汉字：去除汉字，只保留CCTV+数字
+    4. CCTV+汉字：全部保留
+    5. 卫视频道：去除 4K、HD、4K超 等后缀
+    6. 去除开头的国家/地区旗帜 emoji
     
     Args:
         name: 原始频道名
@@ -440,9 +489,19 @@ def _clean_channel_name(name: str) -> str:
     
     cleaned = re.sub(r'\[[^\]]*\]', '', cleaned)
     
-    cleaned = re.sub(r'-(\D+)$', '', cleaned)
+    cleaned = re.sub(r'-([^\d]+)$', '', cleaned)
+    cleaned = re.sub(r'(\w+)-(\d+)', r'\1\2', cleaned)
+
+    # 去除 4K、HD、4K超 等后缀
+    cleaned = re.sub(r'4K超$', '', cleaned)
+    cleaned = re.sub(r'4K$', '', cleaned)
+    cleaned = re.sub(r'HD$', '', cleaned)
     
-    cleaned = re.sub(r'(HD|4K|SD)$', '', cleaned, flags=re.IGNORECASE)
+    # 去除常见汉字后缀
+    cleaned = re.sub(r'(综合|财经|新闻|体育|综艺|娱乐|少儿|电影|纪录|纪实|国际|全球|外语|国防军事|戏曲|社会与法|科教|电视剧|音乐|奥林匹克|8K|Documentary|体育赛事|4K超高清|8K超高清|农业农村)$', '', cleaned)
+    
+    # 去除常见前缀（如 BRTV → 去掉）
+    cleaned = re.sub(r'^(BRTV|CTV)\s+', '', cleaned)
     
     flag_pattern = re.compile(r"^[\U0001F1E0-\U0001F1FF]+")
     cleaned = flag_pattern.sub('', cleaned)
