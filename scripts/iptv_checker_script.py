@@ -29,7 +29,7 @@ MAX_WORKERS = min(30, max(10, os.cpu_count() * 2)) if os.cpu_count() else 30
 # 全局 IPTV 检测器实例
 _iptv_checker = IPTVChecker()
 
-def iptv_checker_job() -> bool:
+def iptv_checker_job(limit: int = None) -> bool:
     """
     IPTV 频道检测任务（使用 GitHub Actions 执行）
     
@@ -60,7 +60,7 @@ def iptv_checker_job() -> bool:
     logger.info(f"正在从配置文件获取播放列表，读取到 {len(urls)} 个 URL...")
 
     # 使用多线程对channels进行检测
-    content = fetch_and_check_channels(urls)
+    content = fetch_and_check_channels(urls, limit)
 
     if save_file('playlist.m3u', content):
         channel_count = len(parse_m3u(content))
@@ -75,7 +75,7 @@ def iptv_checker_job() -> bool:
     
     return True
 
-def fetch_and_check_channels(urls: List[str]) -> str:
+def fetch_and_check_channels(urls: List[str], limit: int = None) -> str:
     """
     从 URL 列表获取并检查频道可用性
     
@@ -86,7 +86,7 @@ def fetch_and_check_channels(urls: List[str]) -> str:
         可用的 M3U 频道列表
     """
     # 1. 获取所有频道
-    all_channels = fetch_channels(urls, max_workers=MAX_WORKERS)
+    all_channels = fetch_channels(urls, max_workers=MAX_WORKERS, limit=limit)
     
     # save_file('playlist_original.m3u', build_m3u(all_channels))
 

@@ -214,13 +214,14 @@ def build_m3u(channels: List[Any]) -> str:
     
     return '\n'.join(lines)
 
-def fetch_channels(urls: List[str], max_workers: int = 10) -> List[Dict]:
+def fetch_channels(urls: List[str], max_workers: int = 10, limit: int = None) -> List[Dict]:
     """
     合并多个 URL 的频道（边解析边去重）
     
     Args:
         urls: 源 URL 列表
         max_workers: 最大并发数，默认使用 MAX_WORKERS
+        limit: 需要获取的频道数量，None 表示获取所有
     
     Returns:
         合并后的频道列表
@@ -247,8 +248,15 @@ def fetch_channels(urls: List[str], max_workers: int = 10) -> List[Dict]:
                         if ch_url not in seen_urls:
                             seen_urls.add(ch_url)
                             all_channels.append(ch)
+                            # 如果设置了 limit，且已达到数量限制，则停止获取
+                            if limit and len(all_channels) >= limit:
+                                break
             except Exception as e:
                 logger.error(f"解析 URL 失败 {url}: {e}")
+            
+            # 如果已达到 limit，停止获取
+            if limit and len(all_channels) >= limit:
+                break
     
     logger.info(f"合并完成，共 {len(all_channels)} 个唯一频道")
     
@@ -361,28 +369,28 @@ def classify_channels(channels: List[Dict], keep_unmatched: bool = False) -> Lis
     对频道进行分组优化
     
     匹配策略：
-    1. 首先使用 GROUP_MAPPING 匹配 group-title，没有匹配到的全部归类为"其他"，得到 channels_by_group
-    2. 然后使用 CHANNEL_MAPPING 对 channels_by_group 再次进行分组，根据 keep_unmatched 决定是否保留"其他"分组
+    1. 首先使用 GROUP_MAPPING 匹配 group-title，没有匹配到的全部归类为"其他"
+    2. 然后使用 CHANNEL_MAPPING 对剩余频道进行二次分组
     
     Args:
-        channels: 频道列表 [{channel_name, url, group_title, ...}, ...]
-        keep_unmatched: 是否保留未匹配的频道，默认为 False（丢弃）
+        channels: 频道列表
+        keep_unmatched: 是否保留未匹配的频道
     
     Returns:
-        优化后的频道列表（保持原始顺序）
+        优化后的频道列表
     """
-    group_mapping = GROUP_MAPPING
-    channel_mapping = CHANNEL_MAPPING
     result = []
-
-    # 第一步：使用 group_title 分组，未匹配的归类为"其他"
-    channels_by_group = []
+    
     for ch in channels:
+        name = ch.get('channel_name', '')
         group = ch.get('group_title', '')
-        new_group = '其他'
+        cleaned_name = _clean_channel_name(name)
+        name_upper = cleaned_name.upper()
         
+        # 第一步：使用 group_title 匹配
+        new_group = '其他'
         if group:
-            for category, variants in group_mapping.items():
+            for category, variants in GROUP_MAPPING.items():
                 for variant in variants:
                     if variant in group or group in variant:
                         new_group = category
@@ -390,77 +398,51 @@ def classify_channels(channels: List[Dict], keep_unmatched: bool = False) -> Lis
                 if new_group != '其他':
                     break
         
-        ch_copy = ch.copy()
-        ch_copy['group_title'] = new_group
-        channels_by_group.append(ch_copy)
-    
-    # 第二步：使用 channel_name 对 channels_by_group 再次分组（对所有分组都进行匹配）
-    for ch in channels_by_group:
-        current_group = ch.get('group_title', '')
-        name = ch.get('channel_name', '')
-        # 先清理频道名称
-        cleaned_name = _clean_channel_name(name)
-        new_group = current_group
-        
-        # 对所有分组都使用清理后的 channel_name 进行二次分组
-        name_upper = cleaned_name.upper()
-        
-        # 标记是否已经匹配到卫视频道或央视频道
-        matched_satellite_or_cctv = False
-        
-        # 优先匹配卫视频道和央视频道
+        # 第二步：使用 channel_name 二次匹配（优先匹配央视频道和卫视频道）
+        matched = False
         for category in ['卫视频道', '央视频道']:
-            if category in channel_mapping:
-                keywords = channel_mapping[category]
-                for keyword in keywords:
-                    if keyword.upper() in name_upper or name_upper in keyword.upper():
-                        new_group = category
-                        matched_satellite_or_cctv = True
-                        break
-                if matched_satellite_or_cctv:
+            for keyword in CHANNEL_MAPPING.get(category, []):
+                if keyword.upper() in name_upper or name_upper in keyword.upper():
+                    new_group = category
+                    matched = True
                     break
+            if matched:
+                break
         
-        # 如果没有匹配到卫视频道或央视频道，再匹配其他分组
-        if not matched_satellite_or_cctv:
-            for category, keywords in channel_mapping.items():
+        if not matched:
+            for category, keywords in CHANNEL_MAPPING.items():
                 if category not in ['卫视频道', '央视频道']:
                     for keyword in keywords:
                         if keyword.upper() in name_upper or name_upper in keyword.upper():
                             new_group = category
                             break
-                    if new_group != current_group:
+                    if new_group != '其他':
                         break
         
-        # 处理匹配结果
-        ch['group_title'] = new_group
-        ch['channel_name'] = cleaned_name
+        # 构建新频道
+        new_ch = ch.copy()
+        new_ch['group_title'] = new_group
+        new_ch['channel_name'] = cleaned_name
+        if not new_ch['tvg_id']:
+            new_ch['tvg_id'] = cleaned_name
+        if not new_ch['tvg_name']:
+            new_ch['tvg_name'] = cleaned_name
+        if not new_ch['tvg_logo']:
+            new_ch['tvg_logo'] = f"https://gh-proxy.org/https://raw.githubusercontent.com/fanmingming/live/refs/heads/main/tv/{cleaned_name}.png"
         
-        # 对央视频道和卫视频道单独处理，只保留 CHANNEL_MAPPING 中匹配上的频道
+        # 过滤逻辑
         if new_group == '央视频道':
-            # 央视频道只保留包含 CCTV、CGTN 关键字的频道
-            name_upper = ch['channel_name'].upper()
-            cctv_match = any(keyword.upper() in name_upper for keyword in CHANNEL_MAPPING.get('央视频道', []))
-            if cctv_match:
-                result.append(ch)
+            if any(kw.upper() in name_upper for kw in CHANNEL_MAPPING.get('央视频道', [])):
+                result.append(new_ch)
         elif new_group == '卫视频道':
-            # 卫视频道只保留 CHANNEL_MAPPING 中匹配上的频道
-            name_upper = ch['channel_name'].upper()
-            satellite_match = any(keyword.upper() in name_upper for keyword in CHANNEL_MAPPING.get('卫视频道', []))
-            if satellite_match:
-                result.append(ch)
-        else:
-            # 地方频道：过滤掉无效的频道名
-            if new_group == '地方频道':
-                filtered_keywords = ['6', 'AYXTV', 'PVA', 'XXTV']
-                if ch['channel_name'] in filtered_keywords:
-                    pass  # 过滤掉
-                else:
-                    result.append(ch)
-            elif new_group != '其他' or keep_unmatched:
-                result.append(ch)
+            if any(kw.upper() in name_upper for kw in CHANNEL_MAPPING.get('卫视频道', [])):
+                result.append(new_ch)
+        elif new_group == '地方频道':
+            if cleaned_name not in ['6', 'AYXTV', 'PVA', 'XXTV']:
+                result.append(new_ch)
+        elif new_group != '其他' or keep_unmatched:
+            result.append(new_ch)
     
-
-
     return result
 
 
