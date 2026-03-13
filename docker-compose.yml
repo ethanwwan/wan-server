@@ -1,15 +1,17 @@
 services:
   wan-server:
-    image: docker.io/ethanwwan/wan-server:latest
+    image: ethanwwan/wan-server:latest
     container_name: wan-server
     ports:
-      - "8166:8166"
+      - "8166:8016"
     
     volumes:
-      - ./input:/app/input
       - ./output:/app/output
-      - /root/.docker/config.json:/root/.docker/config.json
-
+      - ./input:/app/input
+    
+    environment:
+      - TZ=Asia/Shanghai
+    
     restart: always
     networks:
       - web_network
