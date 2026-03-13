@@ -2,8 +2,8 @@ name: IPTV Scheduler JOB
 
 on:
   schedule:
-    # 每天 0 点执行 (UTC 时间 16:00 = 北京时间 00:00)
-    - cron: '0 16 * * *'
+    # 每天 22 点执行 (UTC 时间 14:00 = 北京时间 22:00)
+    - cron: '0 14 * * *'
   workflow_dispatch:  # 允许手动触发
 
 permissions:
@@ -23,32 +23,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-          cache: 'pip'
-      
-      - name: 缓存 FFmpeg
-        uses: actions/cache@v4
-        with:
-          path: /usr/bin/ffmpeg
-          key: ffmpeg-ubuntu-latest
-          restore-keys: |
-            ffmpeg-ubuntu-
-      
-      - name: 安装 FFmpeg
-        run: |
-          if ! command -v ffmpeg &> /dev/null; then
-            sudo apt-get update
-            sudo apt-get install -y ffmpeg
-          else
-            echo "FFmpeg 已从缓存恢复"
-          fi
-      
-      - name: 缓存 Python 依赖
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.pythonLocation }}/lib/python3.12/site-packages
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
       
       - name: 安装依赖
         run: |
@@ -79,7 +53,7 @@ jobs:
           if git diff --staged --quiet; then
             echo "没有更改，跳过提交"
           else
-            git commit -m "chore: 自动更新 IPTV 配置 $(date '+%Y-%m-%d %H:%M:%S')"
+            git commit -m "chore: 自动更新 IPTV 配置 $(TZ=Asia/Shanghai date '+%Y-%m-%d %H:%M:%S')"
             git push
           fi
         env:
