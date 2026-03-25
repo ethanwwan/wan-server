@@ -200,6 +200,21 @@ def add_route_rules(config: Dict) -> Dict:
     if 'rules' not in route:
         route['rules'] = []
     
+    # ====================== 域名规则（最高优先级） ======================
+    route['rules'].append({
+        "domain_suffix": [
+            ".cdn77.org",
+            ".91selfie.com",
+            ".rmhfrtnd.com",
+            ".btc620.com",
+            ".jads.co",
+            ".kwai.net",
+            ".killcovid2021.com"
+        ],
+        "outbound": "🚀 节点选择"
+    })
+
+    # ====================== 原有 Global 规则（放在后面） ======================
     route['rules'].append({
         "rule_set": "Global",
         "outbound": "🚀 节点选择"
