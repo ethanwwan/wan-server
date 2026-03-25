@@ -4,17 +4,22 @@ Singbox配置定时更新模块
 """
 
 import os
+import sys
 import json
 import concurrent.futures
 from datetime import datetime
 from typing import Dict, Optional, Tuple
+
+# 添加项目根目录到Python路径
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, PROJECT_ROOT)
+
 from utils.ip_utils import get_server_ip, get_ip_location
 from utils.logger import get_logger
 from config import CONFIG
 import requests
 
 # 项目根目录和配置路径
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CONFIG_DIR = os.path.join(PROJECT_ROOT, 'output', 'singbox')
 CONFIG_PATH = os.path.join(CONFIG_DIR, 'config.json')
 CONFIG_OLD_PATH = os.path.join(CONFIG_DIR, 'config_old.json')
@@ -25,7 +30,9 @@ DOCKER_CONFIG_PATH = os.path.join(DOCKER_CONFIG_DIR, 'config.json')
 SINGBOX_URL = CONFIG.singbox.url
 SINGBOX_VERSION = CONFIG.singbox.version
 SINGBOX_OLD_VERSION = CONFIG.singbox.old_version
-GLOBAL_RULESET_URL = CONFIG.singbox.global_ruleset_url
+GLOBAL_RULESET_URL = CONFIG.singbox.ruleset_global
+GEOIP_CN_URL = CONFIG.singbox.ruleset_geoip_cn
+GEOSITE_CN_URL = CONFIG.singbox.ruleset_geosite_cn
 
 # 请求超时设置
 REQUEST_TIMEOUT = 20
@@ -77,8 +84,10 @@ def update_config(is_latest: bool = True) -> bool:
         return False
     
     try:
-        # 获取远程配置
-        response = requests.get(SINGBOX_URL, headers=headers, verify=False, timeout=REQUEST_TIMEOUT)
+        # 获取远程配置，尝试使用自定义session处理SSL兼容性问题
+        session = requests.Session()
+        session.verify = False
+        response = session.get(SINGBOX_URL, headers=headers, timeout=REQUEST_TIMEOUT)
         
         # 检查响应状态
         if response.status_code != 200:
@@ -188,6 +197,29 @@ def add_route_rules(config: Dict) -> Dict:
     if 'rule_set' not in route:
         route['rule_set'] = []
     
+    # 先移除旧的 geoip-cn 和 geosite-cn（防止重复 tag）
+    route['rule_set'] = [rs for rs in route['rule_set'] 
+                        if rs.get("tag") not in ["geoip-cn", "geosite-cn"]]
+
+    # 添加官方源（通过 gh-proxy 加速）
+    route['rule_set'].extend([
+        {
+            "type": "remote",
+            "tag": "geoip-cn",
+            "format": "binary",
+            "url": GEOIP_CN_URL,
+            "download_detour": "direct"
+        },
+        {
+            "type": "remote",
+            "tag": "geosite-cn",
+            "format": "binary",
+            "url": GEOSITE_CN_URL,
+            "download_detour": "direct"
+        }
+    ])
+
+
     route['rule_set'].append({
         "tag": "Global",
         "type": "remote",
@@ -353,9 +385,9 @@ if __name__ == "__main__":
     print("=== Singbox 调度器测试 ===")
     
     # 显示当前配置信息
-    print("\n--- 当前配置信息 ---")
-    config = get_config_json()
-    print(f"配置文件大小: {len(json.dumps(config))} 字节")
+    # print("\n--- 当前配置信息 ---")
+    # config = get_config_json()
+    # print(f"配置文件大小: {len(json.dumps(config))} 字节")
     
     # 执行配置更新
     print("\n--- 正在更新配置 ---")

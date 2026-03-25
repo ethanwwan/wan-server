@@ -124,6 +124,18 @@ class SingboxConfig:
     @property
     def global_ruleset_url(self) -> str:
         return self._config.get('global_ruleset_url', '')
+    
+    @property
+    def ruleset_global(self) -> str:
+        return self._config.get('ruleset_global', '')
+    
+    @property
+    def ruleset_geoip_cn(self) -> str:
+        return self._config.get('ruleset_geoip_cn', '')
+    
+    @property
+    def ruleset_geosite_cn(self) -> str:
+        return self._config.get('ruleset_geosite_cn', '')
 
 
 class TvboxConfig:

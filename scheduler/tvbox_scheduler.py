@@ -1,13 +1,19 @@
 import os
+import sys
 import json
 import requests
 import re
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
+
+# 添加项目根目录到Python路径
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, PROJECT_ROOT)
+
 from config import CONFIG
 from utils.logger import get_logger
 
-TVBOX_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'output', 'tvbox')
+TVBOX_DIR = os.path.join(PROJECT_ROOT, 'output', 'tvbox')
 TVBOX_URL = CONFIG.tvbox.url
 headers = {"User-Agent": "okhttp/3.12.12", "Accept": "application/json"}
 os.makedirs(TVBOX_DIR, exist_ok=True)
