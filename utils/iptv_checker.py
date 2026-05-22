@@ -25,9 +25,9 @@ class CheckerConfig:
     # 网络层优化
     CONNECTIONS_PER_HOST: int = 5  # 单主机最大连接数
     # FFmpeg 优化
-    FFMPEG_PROCESS_TIMEOUT: int = 5  # ffmpeg 进程硬超时（秒）- 增加到 5 秒
-    FFMPEG_PROBESIZE: str = '128000'  # 进一步减小探测大小（128KB）
-    FFMPEG_ANALYZEDURATION: str = '1000000'  # 进一步缩短分析时长（1 秒）
+    FFMPEG_PROCESS_TIMEOUT: int = 15  # ffmpeg 进程硬超时（秒）- 增加到 15 秒以支持慢响应服务器
+    FFMPEG_PROBESIZE: str = '256000'  # 探测大小（256KB）
+    FFMPEG_ANALYZEDURATION: str = '2000000'  # 分析时长（2 秒）
     # 并发优化
     MAX_WORKERS_RATIO: float = 1.5  # 基于 CPU 核心数的并发系数
     BATCH_SIZE: int = 500  # 批量处理大小
@@ -615,15 +615,11 @@ class IPTVChecker:
         # 特点：需要 FFmpeg，耗时中等（~3-5 秒）
         availability_check = self._stream_availability_check(url)
         if not availability_check.get('available', False):
-            # 降级处理：如果 FFmpeg 检测失败但 HTTP 检查通过，标记为可用但不流畅
-            # 这是为了兼容某些特殊的流媒体服务器
-            return {
-                'available': True,
-                'fluent': False,
-                'fps': None,
-                'bitrate': None,
-                'error': availability_check.get('error', 'ffmpeg_check_failed')
-            }
+            return self._build_error_result(
+                available=False,
+                fluent=False,
+                error=availability_check.get('error', 'invalid_stream_format')
+            )
         
         # ========== 第三重：FFmpeg 流畅度检查 ==========
         # 目的：分析视频质量（帧率、码率、卡顿情况）
