@@ -615,11 +615,15 @@ class IPTVChecker:
         # 特点：需要 FFmpeg，耗时中等（~3-5 秒）
         availability_check = self._stream_availability_check(url)
         if not availability_check.get('available', False):
-            return self._build_error_result(
-                available=False,
-                fluent=False,
-                error=availability_check.get('error', 'invalid_stream_format')
-            )
+            # 降级处理：如果 FFmpeg 检测失败但 HTTP 检查通过，标记为可用但不流畅
+            # 这是为了兼容某些特殊的流媒体服务器
+            return {
+                'available': True,
+                'fluent': False,
+                'fps': None,
+                'bitrate': None,
+                'error': availability_check.get('error', 'ffmpeg_check_failed')
+            }
         
         # ========== 第三重：FFmpeg 流畅度检查 ==========
         # 目的：分析视频质量（帧率、码率、卡顿情况）
