@@ -81,13 +81,22 @@ def iptv_scheduler():
     start_time = datetime.now()
     logger.info(f"开始更新配置，时间：{start_time.isoformat()}")
     
-    fetch_migu()
-    fetch_ott()
-    fetch_playlist_from_github()
-    
-    end_time = datetime.now()
-    duration = (end_time - start_time).total_seconds()
-    logger.info(f"配置更新完成，时间：{end_time.isoformat()}，耗时：{duration:.2f}秒")
+    try:
+        migu_success = fetch_migu()
+        ott_success = fetch_ott()
+        github_success = fetch_playlist_from_github()
+        
+        if migu_success or ott_success or github_success:
+            end_time = datetime.now()
+            duration = (end_time - start_time).total_seconds()
+            logger.info(f"配置更新完成，时间：{end_time.isoformat()}，耗时：{duration:.2f}秒")
+        else:
+            logger.error("所有播放列表获取失败")
+            raise Exception("所有播放列表获取失败")
+            
+    except Exception as e:
+        logger.error(f"调度器执行错误: {e}")
+        raise
 
 
 # ==================== 命令行入口 ====================

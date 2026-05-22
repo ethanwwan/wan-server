@@ -73,7 +73,7 @@ def tvbox_scheduler():
         data = response.json()
         if data is None or 'urls' not in data:
             logger.error("主接口返回数据格式错误")
-            return
+            raise Exception("主接口返回数据格式错误")
         
         urls = data.get('urls', [])
         # logger.info(f"成功获取 {len(urls)} 个配置URL")
@@ -94,6 +94,7 @@ def tvbox_scheduler():
         
     except Exception as e:
         logger.error(f"更新失败: {str(e)}")
+        raise
 
 
 def format_response_content(content):

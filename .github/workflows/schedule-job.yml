@@ -1,4 +1,4 @@
-name: IPTV Scheduler JOB
+name: Scheduler JOB
 
 on:
   schedule:
@@ -10,7 +10,7 @@ permissions:
   contents: write  # 允许推送更改到仓库
 
 jobs:
-  update-iptv:
+  update-configs:
     runs-on: ubuntu-latest
     
     steps:
@@ -29,9 +29,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       
-      - name: 执行 IPTV 调度任务
+      - name: 执行统一调度任务
         run: |
-          python scripts/iptv_checker_script.py
+          python scripts/run_all_schedulers.py
         env:
           PYTHONPATH: ${{ github.workspace }}
       
@@ -40,20 +40,15 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           
-          # 先暂存本地更改
           git stash push -m "auto-stash before pull"
-          
-          # 拉取远程最新代码（避免冲突）
           git pull --rebase origin main
-          
-          # 恢复暂存的更改
           git stash pop
           
-          git add output/iptv/
+          git add output/
           if git diff --staged --quiet; then
             echo "没有更改，跳过提交"
           else
-            git commit -m "chore: 自动更新 IPTV 配置 $(TZ=Asia/Shanghai date '+%Y-%m-%d %H:%M:%S')"
+            git commit -m "chore: 自动更新配置 $(TZ=Asia/Shanghai date '+%Y-%m-%d %H:%M:%S')"
             git push
           fi
         env:

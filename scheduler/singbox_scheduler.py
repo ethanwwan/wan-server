@@ -55,12 +55,19 @@ def singbox_scheduler():
     
     try:
         # 更新最新版本配置
-        update_config(is_latest=True)
+        latest_success = update_config(is_latest=True)
         # 更新旧版本配置
-        update_config(is_latest=False)
-        logger.info(f"配置更新成功完成，时间: {datetime.now().isoformat()}")
+        old_success = update_config(is_latest=False)
+        
+        if latest_success or old_success:
+            logger.info(f"配置更新成功完成，时间: {datetime.now().isoformat()}")
+        else:
+            logger.error(f"配置更新失败，时间: {datetime.now().isoformat()}")
+            raise Exception("配置更新失败")
+            
     except Exception as e:
         logger.error(f"调度器执行错误: {e}")
+        raise
 
 
 def update_config(is_latest: bool = True) -> bool:
