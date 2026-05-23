@@ -45,11 +45,15 @@ def fetch_and_check_channels(urls: List[str], limit: Optional[int] = None) -> st
         return ''
     
     logger.info(f"开始检测 {len(all_channels)} 个频道的可用性...")
+    logger.info(f"并发数: {MAX_WORKERS}，FFmpeg超时: {5}秒")
     
     valid_channels = []
     total_count = len(all_channels)
     checked_count = 0
     start_time = datetime.now()
+    
+    # 失败原因统计
+    failure_reasons = {}
     
     # 指数加权平均参数
     alpha = 0.1  # 平滑系数，越小越平滑
@@ -72,6 +76,10 @@ def fetch_and_check_channels(urls: List[str], limit: Optional[int] = None) -> st
             channel, result = future.result()
             if result.get('available'):
                 valid_channels.append(channel)
+            else:
+                # 统计失败原因
+                error = result.get('error', 'unknown')
+                failure_reasons[error] = failure_reasons.get(error, 0) + 1
             
             checked_count += 1
             
@@ -104,6 +112,16 @@ def fetch_and_check_channels(urls: List[str], limit: Optional[int] = None) -> st
                     remaining_str = f"{hours}小时{minutes}分"
                 
                 logger.info(f"检测进度: {checked_count}/{total_count} ({progress:.1f}%) - 可用: {len(valid_channels)} - 预计剩余: {remaining_str}")
+    
+    # 输出失败原因统计
+    if failure_reasons:
+        logger.info("=" * 60)
+        logger.info("检测失败原因统计:")
+        total_failed = sum(failure_reasons.values())
+        for reason, count in sorted(failure_reasons.items(), key=lambda x: x[1], reverse=True):
+            percentage = count / total_failed * 100
+            logger.info(f"  {reason}: {count} 次 ({percentage:.1f}%)")
+        logger.info("=" * 60)
     
     valid_channels = sort_channels(valid_channels)
     total_time = (datetime.now() - start_time).total_seconds()
