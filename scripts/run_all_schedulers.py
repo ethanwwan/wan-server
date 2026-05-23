@@ -107,7 +107,13 @@ def fetch_and_check_channels(urls: List[str], limit: Optional[int] = None) -> st
     
     valid_channels = sort_channels(valid_channels)
     total_time = (datetime.now() - start_time).total_seconds()
-    logger.info(f"检测完成，可用频道: {len(valid_channels)}/{total_count}，总耗时: {total_time:.2f}秒")
+    
+    # 格式化耗时为 x分x秒
+    minutes = int(total_time // 60)
+    seconds = int(total_time % 60)
+    time_str = f"{minutes}分{seconds}秒"
+    
+    logger.info(f"检测完成，可用频道: {len(valid_channels)}/{total_count}，总耗时: {time_str}")
     
     return build_m3u(valid_channels)
 
