@@ -67,7 +67,7 @@ def _fetch_and_save(name: str, url: str, filename: str) -> bool:
     return False
 
 
-def fetch_and_check_channels(urls: List[str], limit: Optional[int] = None) -> str:
+def _fetch_and_check_channels(urls: List[str], limit: Optional[int] = None) -> str:
     """
     从 URL 列表获取并检查频道可用性
     """
@@ -165,16 +165,9 @@ def fetch_ott() -> bool:
     return _fetch_and_save("OTT", CONFIG.iptv.ott_url, 'ott.m3u')
 
 
-def fetch_playlist() -> bool:
-    """获取 GitHub 上的播放列表"""
-    return _fetch_and_save("GitHub", CONFIG.iptv.playlist_url, 'playlist.m3u')
-
-
-# ==================== 调度器 ====================
-
-def iptv_scheduler(limit: Optional[int] = None) -> bool:
+def fetch_playlist(limit: Optional[int] = None) -> bool:
     """
-    IPTV 配置更新调度器
+    获取播放列表并检测频道可用性
     
     执行流程：
     1. 从配置文件读取 URL 列表
@@ -203,7 +196,7 @@ def iptv_scheduler(limit: Optional[int] = None) -> bool:
             return False
         
         logger.info(f"正在从配置文件获取播放列表，读取到 {len(urls)} 个 URL...")
-        content = fetch_and_check_channels(urls, limit)
+        content = _fetch_and_check_channels(urls, limit)
         
         if content:
             if save_file('playlist.m3u', content):
@@ -218,6 +211,46 @@ def iptv_scheduler(limit: Optional[int] = None) -> bool:
         
     except Exception as e:
         logger.error(f"IPTV 频道检测失败: {e}", exc_info=True)
+        return False
+
+
+# ==================== 调度器 ====================
+
+def iptv_scheduler(limit: Optional[int] = None) -> bool:
+    """
+    IPTV 配置更新调度器
+    
+    执行流程：
+    1. 获取 OTT 播放列表
+    2. 获取播放列表并检测频道可用性
+    
+    Args:
+        limit: 限制获取的频道数量（可选）
+    
+    Returns:
+        bool: 是否成功
+    """
+    start_time = datetime.now()
+    logger.info(f"开始更新配置，时间：{start_time.isoformat()}")
+    
+    try:
+        ott_success = fetch_ott()
+        playlist_success = fetch_playlist(limit)
+        
+        if ott_success or playlist_success:
+            end_time = datetime.now()
+            duration = (end_time - start_time).total_seconds()
+            minutes = int(duration // 60)
+            seconds = int(duration % 60)
+            time_str = f"{minutes}分{seconds}秒" if minutes > 0 else f"{duration:.2f}秒"
+            logger.info(f"配置更新完成，时间：{end_time.isoformat()}，耗时：{time_str}")
+            return True
+        else:
+            logger.error("所有播放列表获取失败")
+            return False
+            
+    except Exception as e:
+        logger.error(f"调度器执行错误: {e}")
         return False
 
 
