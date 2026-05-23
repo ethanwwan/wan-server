@@ -234,19 +234,32 @@ def iptv_scheduler(limit: Optional[int] = None) -> bool:
     logger.info(f"开始更新配置，时间：{start_time.isoformat()}")
     
     try:
+        # 执行 OTT 播放列表获取
         ott_success = fetch_ott()
+        if ott_success:
+            logger.info("OTT 播放列表获取成功")
+        else:
+            logger.warning("OTT 播放列表获取失败")
+        
+        # 执行播放列表获取和检测
         playlist_success = fetch_playlist(limit)
+        if playlist_success:
+            logger.info("播放列表获取和检测成功")
+        else:
+            logger.warning("播放列表获取和检测失败")
+        
+        # 汇总结果
+        end_time = datetime.now()
+        duration = (end_time - start_time).total_seconds()
+        minutes = int(duration // 60)
+        seconds = int(duration % 60)
+        time_str = f"{minutes}分{seconds}秒" if minutes > 0 else f"{duration:.2f}秒"
         
         if ott_success or playlist_success:
-            end_time = datetime.now()
-            duration = (end_time - start_time).total_seconds()
-            minutes = int(duration // 60)
-            seconds = int(duration % 60)
-            time_str = f"{minutes}分{seconds}秒" if minutes > 0 else f"{duration:.2f}秒"
             logger.info(f"配置更新完成，时间：{end_time.isoformat()}，耗时：{time_str}")
             return True
         else:
-            logger.error("所有播放列表获取失败")
+            logger.error(f"所有播放列表获取失败，时间：{end_time.isoformat()}，耗时：{time_str}")
             return False
             
     except Exception as e:
