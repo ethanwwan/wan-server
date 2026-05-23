@@ -66,8 +66,12 @@ def fetch_and_check_channels(urls: List[str], limit: Optional[int] = None) -> st
             result = _iptv_checker.check(url)
             return (channel, result)
         except Exception as e:
-            logger.error(f"检测异常 [{name}]: {e}")
-            return (channel, {'available': False, 'fluent': False, 'error': str(e)})
+            # 获取异常类型和详细信息
+            error_type = type(e).__name__
+            error_msg = str(e)[:50]  # 只取前50个字符
+            error_key = f"exception_{error_type}"
+            logger.error(f"检测异常 [{name}]: {error_type}: {error_msg}")
+            return (channel, {'available': False, 'fluent': False, 'error': error_key})
     
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         future_to_channel = {executor.submit(check_single_channel, ch): ch for ch in all_channels}
