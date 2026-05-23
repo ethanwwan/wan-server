@@ -369,7 +369,8 @@ class IPTVChecker:
             return {'available': False, 'error': f'ffmpeg_returncode_{process.returncode}', 'detail': f'FFmpeg 返回码: {process.returncode}'}
 
         except Exception as e:
-            return {'available': False, 'error': 'exception', 'detail': str(e)[:50]}
+            error_type = type(e).__name__
+            return {'available': False, 'error': f'exception_{error_type}', 'detail': str(e)[:50]}
         
         return {'available': False, 'error': 'unknown', 'detail': '未知错误'}
 
