@@ -25,9 +25,9 @@ class CheckerConfig:
     # 网络层优化
     CONNECTIONS_PER_HOST: int = 5  # 单主机最大连接数
     # FFmpeg 优化
-    FFMPEG_PROCESS_TIMEOUT: int = 15  # ffmpeg 进程硬超时（秒）- 增加到 15 秒以支持慢响应服务器
-    FFMPEG_PROBESIZE: str = '256000'  # 探测大小（256KB）
-    FFMPEG_ANALYZEDURATION: str = '2000000'  # 分析时长（2 秒）
+    FFMPEG_PROCESS_TIMEOUT: int = 5  # ffmpeg 进程硬超时（秒）
+    FFMPEG_PROBESIZE: str = '128000'  # 探测大小（128KB）
+    FFMPEG_ANALYZEDURATION: str = '1000000'  # 分析时长（1 秒）
     # 并发优化
     MAX_WORKERS_RATIO: float = 1.5  # 基于 CPU 核心数的并发系数
     BATCH_SIZE: int = 500  # 批量处理大小
