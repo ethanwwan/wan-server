@@ -40,10 +40,24 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           
-          git stash push -m "auto-stash before pull"
-          git pull --rebase origin main
-          git stash pop
+          # 检查是否有未暂存的更改
+          if ! git diff --quiet; then
+            echo "检测到未暂存更改，先暂存"
+            git stash push -m "auto-stash before pull"
+            HAS_STASH=true
+          else
+            HAS_STASH=false
+          fi
           
+          # 拉取远程最新代码
+          git pull --rebase origin main
+          
+          # 如果之前有暂存，恢复暂存的更改
+          if [ "$HAS_STASH" = true ]; then
+            git stash pop || echo "恢复暂存失败，可能没有stash"
+          fi
+          
+          # 添加并提交更改
           git add output/
           if git diff --staged --quiet; then
             echo "没有更改，跳过提交"
