@@ -129,12 +129,17 @@ def iptv_checker_job(limit: Optional[int] = None) -> bool:
         logger.info(f"正在从配置文件获取播放列表，读取到 {len(urls)} 个 URL...")
         content = fetch_and_check_channels(urls, limit)
         
-        if save_file('playlist.m3u', content):
-            channel_count = len(parse_m3u(content))
-            logger.info(f"播放列表合并完成，共保存 {channel_count} 个频道")
+        if content:
+            if save_file('playlist.m3u', content):
+                channel_count = len(parse_m3u(content))
+                logger.info(f"播放列表合并完成，共保存 {channel_count} 个频道")
+                return True
+            logger.error("保存播放列表失败")
+            return False
+        else:
+            # 降级处理：检测结果为0，保留上次的播放列表
+            logger.warning("本次检测未发现可用频道，保留上次的播放列表")
             return True
-        logger.error("保存播放列表失败")
-        return False
         
     except Exception as e:
         logger.error(f"IPTV 频道检测失败: {e}", exc_info=True)
