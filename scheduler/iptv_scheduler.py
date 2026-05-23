@@ -137,15 +137,6 @@ def _fetch_and_check_channels(urls: List[str], limit: Optional[int] = None) -> s
                 
                 logger.info(f"检测进度: {checked_count}/{total_count} ({progress:.1f}%) - 可用: {len(valid_channels)} - 预计剩余: {remaining_str}")
     
-    if failure_reasons:
-        logger.info("=" * 60)
-        logger.info("检测失败原因统计:")
-        total_failed = sum(failure_reasons.values())
-        for reason, count in sorted(failure_reasons.items(), key=lambda x: x[1], reverse=True):
-            percentage = count / total_failed * 100
-            logger.info(f"  {reason}: {count} 次 ({percentage:.1f}%)")
-        logger.info("=" * 60)
-    
     valid_channels = sort_channels(valid_channels)
     total_time = (datetime.now() - start_time).total_seconds()
     
@@ -180,9 +171,6 @@ def fetch_playlist(limit: Optional[int] = None) -> bool:
     Returns:
         bool: 是否成功
     """
-    start_time = datetime.now()
-    logger.info(f"开始更新配置，时间：{start_time.isoformat()}")
-    
     try:
         if not os.path.exists(IPTV_URLS_FILE):
             logger.error(f"URL 配置文件不存在：{IPTV_URLS_FILE}")
@@ -244,9 +232,9 @@ def iptv_scheduler(limit: Optional[int] = None) -> bool:
         # 执行播放列表获取和检测
         playlist_success = fetch_playlist(limit)
         if playlist_success:
-            logger.info("播放列表获取和检测成功")
+            logger.info("Playlist 播放列表获取和检测成功")
         else:
-            logger.warning("播放列表获取和检测失败")
+            logger.warning("Playlist 播放列表获取和检测失败")
         
         # 汇总结果
         end_time = datetime.now()

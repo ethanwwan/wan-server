@@ -114,8 +114,7 @@ def main():
         status = "✅ 成功" if success else "❌ 失败"
         logger.info(f"   {name}: {status}")
     
-    logger.info(f"\n   总任务数: {total_count}")
-    logger.info(f"   成功数: {success_count}")
+    logger.info(f"\n   成功数: {success_count}")
     logger.info(f"   失败数: {total_count - success_count}")
     logger.info(f"   总耗时: {total_time_str}")
     logger.info(f"   结束时间: {end_time.isoformat()}")
