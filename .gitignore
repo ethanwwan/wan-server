@@ -52,7 +52,7 @@ Dockerfile.local
 .cache/
 
 output/singbox/
-output/tvbox/
+output/tvbox/*.tmp
 output/iptv/ott.m3u
 output/iptv/migu.m3u
 
