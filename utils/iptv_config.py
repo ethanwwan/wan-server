@@ -99,7 +99,7 @@ class ErrorPatterns:
     
     # 临时性错误（需要重试）
     TEMPORARY_ERRORS: Tuple[str, ...] = (
-        'timeout',
+        'http_timeout',
         'connection_error',
         'connection_timeout',
         'connection_refused',

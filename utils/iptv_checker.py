@@ -287,7 +287,7 @@ class IPTVChecker:
 
         except requests.exceptions.Timeout:
             # 超时：记录具体错误
-            return {'available': False, 'error': 'timeout'}
+            return {'available': False, 'error': 'http_timeout'}
         except requests.exceptions.ConnectionError:
             return {'available': False, 'error': 'connection_error'}
         except requests.exceptions.TooManyRedirects:
