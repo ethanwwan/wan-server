@@ -264,40 +264,46 @@ def filter_channels(channels: List[Dict]) -> List[Dict]:
     return filtered
 
 
+def _get_cache_path() -> str:
+    """获取缓存文件路径（存储到 output 目录，支持跨运行共享）"""
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(project_root, 'output', 'iptv', 'cache', 'fail_cache.json')
+
+
 def _load_fail_cache() -> dict:
-    """加载历史失败记录缓存"""
+    """加载历史失败记录缓存（从 output 目录读取，支持跨运行共享）"""
     cache = {}
     try:
-        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        cache_path = os.path.join(project_root, 'cache', 'fail_cache.json')
+        cache_path = _get_cache_path()
         if os.path.exists(cache_path):
             with open(cache_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
                 for url, timestamp in data.items():
                     cache[url] = datetime.fromisoformat(timestamp)
+        logger.debug(f"成功加载失败缓存，共 {len(cache)} 条记录")
     except Exception as e:
         logger.debug(f"加载失败缓存失败: {e}")
     return cache
 
 
 def _save_fail_cache(url: str):
-    """保存失败记录到缓存"""
+    """保存失败记录到缓存（存储到 output 目录，支持跨运行共享）"""
     try:
-        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        cache_dir = os.path.join(project_root, 'cache')
+        cache_path = _get_cache_path()
+        cache_dir = os.path.dirname(cache_path)
         os.makedirs(cache_dir, exist_ok=True)
-        cache_path = os.path.join(cache_dir, 'fail_cache.json')
         
         # 加载现有缓存
         cache = _load_fail_cache()
         cache[url] = datetime.now().isoformat()
         
-        # 清理过期记录（超过 24 小时）
+        # 清理过期记录（超过 7 天，因为每天只执行一次）
         now = datetime.now()
-        cache = {k: v for k, v in cache.items() if (now - datetime.fromisoformat(v)).total_seconds() < 86400}
+        cache = {k: v for k, v in cache.items() if (now - datetime.fromisoformat(v)).total_seconds() < 7 * 24 * 3600}
         
         with open(cache_path, 'w', encoding='utf-8') as f:
             json.dump(cache, f, ensure_ascii=False, indent=2)
+        logger.debug(f"成功保存失败记录: {url}")
     except Exception as e:
         logger.debug(f"保存失败缓存失败: {e}")
 

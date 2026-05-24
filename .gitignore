@@ -51,5 +51,9 @@ Dockerfile.local
 *.temp
 .cache/
 
+# 允许提交缓存目录（用于跨运行共享失败记录）
+!output/iptv/cache/
+!output/iptv/cache/*
+
 test/
 input/config.yaml
