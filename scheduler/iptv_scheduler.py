@@ -31,9 +31,10 @@ from utils.iptv_checker import IPTVChecker
 logger = get_logger('IPTV')
 _iptv_checker = IPTVChecker()
 
-# 方案三优化：调大并发参数
-MAX_WORKERS = min(100, max(10, os.cpu_count() * 4)) if os.cpu_count() else 50
-BATCH_SIZE = 1000  # 分批处理大小
+# 方案三优化：调大并发参数（GitHub Actions 环境使用保守值）
+# GitHub Actions runner 通常为 2-4 核，并发数设置为 CPU 核心数的 2-3 倍
+MAX_WORKERS = min(30, max(10, os.cpu_count() * 2)) if os.cpu_count() else 20
+BATCH_SIZE = 500  # 分批处理大小
 IPTV_URLS_FILE = os.path.join(project_root, 'input', 'iptv_urls.txt')
 
 
