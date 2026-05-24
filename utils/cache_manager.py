@@ -100,24 +100,52 @@ class CacheManager:
         
         # 添加失败的 URL
         added_count = 0
+        newly_added_count = 0
+        
         for url, error in failures:
-            if url not in self._cache:
-                self._cache[url] = {
-                    'fail_count': 0,
-                    'last_fail_time': '',
-                    'fail_type': 'unknown',
-                    'is_permanent': False
-                }
+            is_permanent = self._is_permanent_error(error)
             
-            record = self._cache[url]
-            record['fail_count'] += 1
-            record['last_fail_time'] = datetime.now().isoformat()
-            record['fail_type'] = error
-            record['is_permanent'] = self._is_permanent_error(error)
+            if url not in self._cache:
+                # 新建记录
+                if is_permanent:
+                    # 确定性错误：立即加入缓存
+                    self._cache[url] = {
+                        'fail_count': 1,
+                        'last_fail_time': datetime.now().isoformat(),
+                        'fail_type': error,
+                        'is_permanent': True
+                    }
+                    newly_added_count += 1
+                else:
+                    # 不确定性错误：先创建临时记录
+                    self._cache[url] = {
+                        'fail_count': 1,
+                        'last_fail_time': datetime.now().isoformat(),
+                        'fail_type': error,
+                        'is_permanent': False,
+                        'is_temp': True  # 标记为临时记录
+                    }
+            else:
+                record = self._cache[url]
+                record['fail_count'] += 1
+                record['last_fail_time'] = datetime.now().isoformat()
+                record['fail_type'] = error
+                record['is_permanent'] = is_permanent
+                
+                # 不确定性错误连续失败3次，升级为正式缓存
+                if not is_permanent and record.get('is_temp', False) and record['fail_count'] >= 3:
+                    record['is_temp'] = False
+                    newly_added_count += 1
+            
             added_count += 1
         
-        if added_count > 0:
-            logger.info(f"[缓存策略] 批量更新 {added_count} 条失败记录")
+        # 清理临时记录（失败次数不足3次的不确定性错误）
+        temp_keys = [url for url, record in self._cache.items() if record.get('is_temp', False)]
+        for key in temp_keys:
+            del self._cache[key]
+        
+        if newly_added_count > 0:
+            logger.info(f"[缓存策略] 批量更新 {newly_added_count} 条失败记录")
     
     def clear_all(self):
         """清空所有缓存（周日清理时使用）"""
