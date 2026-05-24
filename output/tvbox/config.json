@@ -2,91 +2,91 @@
   "urls": [
     {
       "name": "🚀万家┃饭太硬",
-      "url": "https://localhost/api/tvbox/fty.json"
-    },
-    {
-      "name": "🚀万家┃多多",
-      "url": "https://localhost/api/tvbox/duo.json"
-    },
-    {
-      "name": "🚀万家┃南风",
-      "url": "https://localhost/api/tvbox/nf.json"
-    },
-    {
-      "name": "🚀万家┃小米",
-      "url": "https://localhost/api/tvbox/xiaomi.json"
-    },
-    {
-      "name": "🚀万家┃真心",
-      "url": "https://localhost/api/tvbox/zx.json"
-    },
-    {
-      "name": "🚀万家┃PG",
-      "url": "https://localhost/api/tvbox/pg.json"
+      "url": "https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/tvbox_fty.json"
     },
     {
       "name": "🚀万家┃王二小",
-      "url": "https://localhost/api/tvbox/wex.json"
+      "url": "https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/tvbox_wex.json"
     },
     {
-      "name": "🚀万家┃王二小(新)",
-      "url": "https://localhost/api/tvbox/newwex.json"
+      "name": "🚀万家┃小米",
+      "url": "https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/tvbox_xiaomi.json"
+    },
+    {
+      "name": "🚀万家┃多多",
+      "url": "https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/tvbox_duo.json"
     },
     {
       "name": "🚀万家┃东篱",
-      "url": "https://localhost/api/tvbox/dongli.json"
-    },
-    {
-      "name": "🚀万家┃香雅情",
-      "url": "https://localhost/api/tvbox/xyq.json"
-    },
-    {
-      "name": "🚀万家┃肥猫",
-      "url": "https://localhost/api/tvbox/fm.json"
+      "url": "https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/tvbox_dongli.json"
     },
     {
       "name": "🚀万家┃哈基米",
-      "url": "https://localhost/api/tvbox/hjm.json"
-    },
-    {
-      "name": "🚀万家┃菜妮丝",
-      "url": "https://localhost/api/tvbox/lns.json"
-    },
-    {
-      "name": "😹万家┃余生",
-      "url": "https://localhost/api/tvbox/ys.json"
+      "url": "https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/tvbox_hjm.json"
     },
     {
       "name": "🚀万家┃摸鱼",
-      "url": "https://localhost/api/tvbox/my.json"
+      "url": "https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/tvbox_my.json"
     },
     {
-      "name": "👼万家┃儿童专属",
-      "url": "https://localhost/api/tvbox/et.json"
+      "name": "🚀万家┃王二小(新)",
+      "url": "https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/tvbox_newwex.json"
     },
     {
       "name": "🚀万家┃D佬",
-      "url": "https://localhost/api/tvbox/dl.json"
+      "url": "https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/tvbox_dl.json"
     },
     {
-      "name": "🎥万家┃短剧",
-      "url": "https://localhost/api/tvbox/dj.json"
+      "name": "🚀万家┃肥猫",
+      "url": "https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/tvbox_fm.json"
     },
     {
-      "name": "🚀万家┃驸马",
-      "url": "https://localhost/api/tvbox/fuma.json"
+      "name": "🚀万家┃香雅情",
+      "url": "https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/tvbox_xyq.json"
     },
     {
-      "name": "🚀万家┃高天流云",
-      "url": "https://localhost/api/tvbox/gtly.json"
+      "name": "🚀万家┃真心",
+      "url": "https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/tvbox_zx.json"
     },
     {
-      "name": "🚀万家┃L佬",
-      "url": "https://localhost/api/tvbox/llao.json"
+      "name": "😹万家┃余生",
+      "url": "https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/tvbox_ys.json"
     },
     {
       "name": "🚀万家┃牛播一",
-      "url": "https://localhost/api/tvbox/nb.json"
+      "url": "https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/tvbox_nb.json"
+    },
+    {
+      "name": "🎥万家┃短剧",
+      "url": "https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/tvbox_dj.json"
+    },
+    {
+      "name": "👼万家┃儿童专属",
+      "url": "https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/tvbox_et.json"
+    },
+    {
+      "name": "🚀万家┃南风",
+      "url": "https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/tvbox_nf.json"
+    },
+    {
+      "name": "🚀万家┃菜妮丝",
+      "url": "https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/tvbox_lns.json"
+    },
+    {
+      "name": "🚀万家┃高天流云",
+      "url": "https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/tvbox_gtly.json"
+    },
+    {
+      "name": "🚀万家┃L佬",
+      "url": "https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/tvbox_llao.json"
+    },
+    {
+      "name": "🎨万家┃动漫城",
+      "url": "https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/tvbox_dmc.json"
+    },
+    {
+      "name": "🚀万家┃PG",
+      "url": "https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/tvbox_pg.json"
     }
   ]
 }
