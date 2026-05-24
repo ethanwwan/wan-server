@@ -1,6 +1,8 @@
 """
 同步 output 目录到 GitHub Gist
 
+注意：Gist 不支持目录结构，所以会将目录平铺
+
 使用方法：
 python scripts/sync_to_gist.py --gist-id <gist_id> --token <github_token>
 
@@ -31,18 +33,13 @@ def sync_to_gist(gist_id: str, token: str, output_dir: str = "output"):
         print(f"错误：目录不存在: {output_path}")
         return False
     
-    # Gist 的 git URL（使用 token 认证）
     gist_url = f"https://{token}@gist.github.com/{gist_id}.git"
-    
-    # 临时目录用于克隆和同步
     temp_dir = os.path.join(project_root, "temp_gist_sync")
     
     try:
-        # 清理临时目录
         if os.path.exists(temp_dir):
             subprocess.run(["rm", "-rf", temp_dir], check=True)
         
-        # 克隆 Gist
         print(f"正在克隆 Gist: {gist_id}")
         subprocess.run(
             ["git", "clone", gist_url, temp_dir],
@@ -50,7 +47,6 @@ def sync_to_gist(gist_id: str, token: str, output_dir: str = "output"):
             capture_output=True
         )
         
-        # 清理 Gist 中的旧文件
         print("清理 Gist 中的旧文件...")
         for item in os.listdir(temp_dir):
             item_path = os.path.join(temp_dir, item)
@@ -60,18 +56,24 @@ def sync_to_gist(gist_id: str, token: str, output_dir: str = "output"):
                 else:
                     os.remove(item_path)
         
-        # 复制 output 目录内容到 Gist
-        print(f"复制 {output_dir} 目录内容...")
-        for item in os.listdir(output_path):
-            src_path = os.path.join(output_path, item)
-            dst_path = os.path.join(temp_dir, item)
-            
-            if os.path.isdir(src_path):
-                subprocess.run(["cp", "-r", src_path, dst_path], check=True)
-            else:
+        print(f"复制 {output_dir} 目录内容（平铺目录结构）...")
+        for root, dirs, files in os.walk(output_path):
+            for filename in files:
+                # 跳过隐藏文件和缓存文件
+                if filename.startswith('.') or filename.endswith('~'):
+                    continue
+                
+                src_path = os.path.join(root, filename)
+                
+                # 计算相对路径并转换为下划线格式
+                rel_path = os.path.relpath(src_path, output_path)
+                # 将路径分隔符替换为下划线
+                flat_name = rel_path.replace(os.sep, '_')
+                
+                dst_path = os.path.join(temp_dir, flat_name)
                 subprocess.run(["cp", src_path, dst_path], check=True)
+                print(f"  {rel_path} → {flat_name}")
         
-        # 配置 git
         subprocess.run(
             ["git", "config", "user.email", "github-actions[bot]@users.noreply.github.com"],
             cwd=temp_dir,
@@ -83,7 +85,6 @@ def sync_to_gist(gist_id: str, token: str, output_dir: str = "output"):
             check=True
         )
         
-        # 检查是否有更改
         result = subprocess.run(
             ["git", "diff", "--quiet"],
             cwd=temp_dir,
@@ -94,7 +95,6 @@ def sync_to_gist(gist_id: str, token: str, output_dir: str = "output"):
             print("没有更改，跳过提交")
             return True
         
-        # 添加并提交
         subprocess.run(["git", "add", "."], cwd=temp_dir, check=True)
         subprocess.run(
             ["git", "commit", "-m", f"Sync output directory - {os.popen('date').read().strip()}"],
@@ -102,9 +102,8 @@ def sync_to_gist(gist_id: str, token: str, output_dir: str = "output"):
             check=True
         )
         
-        # 推送
         print("推送更改到 Gist...")
-        subprocess.run(["git", "push", "origin", "master"], cwd=temp_dir, check=True)
+        subprocess.run(["git", "push", "origin", "main"], cwd=temp_dir, check=True)
         
         print("同步完成！")
         return True
@@ -113,7 +112,6 @@ def sync_to_gist(gist_id: str, token: str, output_dir: str = "output"):
         print(f"命令执行失败: {e}")
         return False
     finally:
-        # 清理临时目录
         if os.path.exists(temp_dir):
             subprocess.run(["rm", "-rf", temp_dir], capture_output=True)
 
