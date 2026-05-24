@@ -6,19 +6,22 @@ IPTV 工具类模块
 - M3U/TXT 格式解析
 - M3U 文件生成
 - 频道合并与去重
+- 频道分类
 """
 
 import os
 import re
-import json
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import List, Any, Dict
-
-import requests
+from typing import List, Dict
 import logging
 
+import requests
+
+from .iptv_config import get_project_root, get_output_dir, IPTVConfig
+
 logger = logging.getLogger("IPTV_UTILS")
+
 
 def fetch_url(url: str, timeout: int = 20) -> str:
     """
@@ -172,12 +175,12 @@ def parse_url(url: str, content: str) -> List[Dict]:
     return parse_txt(content) if url.endswith('.txt') else parse_m3u(content)
 
 
-def build_m3u(channels: List[Any]) -> str:
+def build_m3u(channels: List[Dict]) -> str:
     """
     构建 M3U 格式内容
     
     Args:
-        channels: Channel 对象列表或字典列表
+        channels: 频道字典列表
     
     Returns:
         M3U 格式文本
@@ -189,7 +192,6 @@ def build_m3u(channels: List[Any]) -> str:
     seen = set()
     
     for ch in channels:
-        # 字典格式
         url = ch.get('url', '')
         channel_name = ch.get('channel_name', '')
         tvg_id = ch.get('tvg_id', '')
@@ -216,9 +218,10 @@ def build_m3u(channels: List[Any]) -> str:
     
     return '\n'.join(lines)
 
+
 def filter_channels(channels: List[Dict]) -> List[Dict]:
     """
-    快速过滤无效频道（方案一优化）
+    过滤无效频道
     
     过滤规则：
     1. 重复 URL 过滤
@@ -231,11 +234,14 @@ def filter_channels(channels: List[Dict]) -> List[Dict]:
     Returns:
         过滤后的频道列表
     """
+    from .cache_manager import get_cache_manager
+    
     seen_urls = set()
     filtered = []
+    skipped_cache = 0
     
-    # 加载历史失败记录
-    fail_cache = _load_fail_cache()
+    cache_manager = get_cache_manager()
+    fail_cache = cache_manager.get_cache()
     
     for ch in channels:
         url = ch.get('url', '')
@@ -251,130 +257,58 @@ def filter_channels(channels: List[Dict]) -> List[Dict]:
             continue
         seen_urls.add(url)
         
-        # 3. 历史失败记录过滤（已确认失败的频道跳过 1 小时）
-        if url in fail_cache:
-            record = fail_cache[url]
-            fail_time = datetime.fromisoformat(record['last_fail_time'])
-            # 确定性错误跳过 24 小时，不确定性错误跳过 1 小时
-            skip_seconds = 24 * 3600 if record.get('is_permanent', False) else 3600
-            if (datetime.now() - fail_time).total_seconds() < skip_seconds:
-                logger.debug(f"跳过历史失败 URL: {url} (失败次数: {record.get('fail_count', 0)})")
-                continue
+        # 3. 历史失败记录过滤
+        if url in fail_cache and not cache_manager.is_expired(url):
+            skipped_cache += 1
+            logger.debug(f"跳过历史失败 URL: {url} (失败次数: {fail_cache[url].get('fail_count', 0)})")
+            continue
         
         filtered.append(ch)
     
-    logger.info(f"过滤完成: 原始 {len(channels)} 个频道，过滤后 {len(filtered)} 个频道")
+    logger.info(f"[缓存策略] 过滤完成: 原始 {len(channels)} 个频道，跳过 {skipped_cache} 个缓存失败频道，保留 {len(filtered)} 个待检测频道")
     return filtered
 
 
-def _get_cache_path() -> str:
-    """获取缓存文件路径（存储到 output 目录，支持跨运行共享）"""
-    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    return os.path.join(project_root, 'output', 'iptv', 'cache', 'fail_cache.json')
-
-
-def _is_permanent_error(error: str) -> bool:
-    """判断是否为确定性错误（永久性错误）"""
-    permanent_patterns = [
-        'invalid_url',
-        'status_404', 'status_403',
-        'ffmpeg_error_not_found_404', 'ffmpeg_error_forbidden_403',
-        'ffmpeg_error_file_not_found', 'ffmpeg_error_protocol_not_found',
-        '_404', '_403', '_not_found', '_protocol_not_found'
-    ]
-    return any(pattern in error for pattern in permanent_patterns)
-
-
-def _load_fail_cache() -> dict:
-    """加载历史失败记录缓存（从 output 目录读取，支持跨运行共享）"""
-    cache = {}
-    try:
-        cache_path = _get_cache_path()
-        if os.path.exists(cache_path):
-            with open(cache_path, 'r', encoding='utf-8') as f:
-                cache = json.load(f)
-        logger.debug(f"成功加载失败缓存，共 {len(cache)} 条记录")
-    except Exception as e:
-        logger.debug(f"加载失败缓存失败: {e}")
-    return cache
-
-
-def _save_fail_cache(url: str, error: str = 'unknown') -> bool:
+def classify_channels(channels: List[Dict], keep_unmatched: bool = False) -> List[Dict]:
     """
-    保存失败记录到缓存（存储到 output 目录，支持跨运行共享）
+    频道分类重组
     
-    错误分级策略：
-    - 确定性错误：直接加入缓存（如 404、403、无效URL等）
-    - 不确定性错误：需要连续失败3次才加入缓存（如超时、连接错误等）
+    Args:
+        channels: 原始频道列表
+        keep_unmatched: 是否保留未匹配的频道（归类为"其他"）
     
     Returns:
-        bool: 是否成功加入缓存
+        分类后的频道列表
     """
-    try:
-        cache_path = _get_cache_path()
-        cache_dir = os.path.dirname(cache_path)
-        os.makedirs(cache_dir, exist_ok=True)
+    config = IPTVConfig.build()
+    group_mapping = config.GROUP_MAPPING
+    channel_mapping = config.CHANNEL_MAPPING
+    
+    result = []
+    
+    for ch in channels:
+        name = ch.get('channel_name', '').upper()
+        group_title = ch.get('group_title', '').upper()
+        new_group = '其他'
+        cleaned_name = name.replace('【', '').replace('】', '').replace('[', '').replace(']', '').strip()
         
-        # 加载现有缓存
-        cache = _load_fail_cache()
+        for group, keywords in group_mapping.items():
+            if any(kw.upper() in group_title for kw in keywords):
+                new_group = group
+                break
         
-        # 获取当前记录
-        if url not in cache:
-            cache[url] = {
-                'fail_count': 0,
-                'last_fail_time': '',
-                'fail_type': 'unknown',
-                'is_permanent': False
-            }
+        if new_group == '其他':
+            for group, keywords in channel_mapping.items():
+                if any(kw.upper() in name for kw in keywords):
+                    new_group = group
+                    break
         
-        record = cache[url]
-        record['fail_count'] += 1
-        record['last_fail_time'] = datetime.now().isoformat()
-        record['fail_type'] = error
-        record['is_permanent'] = _is_permanent_error(error)
+        ch['group_title'] = new_group
         
-        # 判断是否应该加入缓存
-        should_cache = False
-        if record['is_permanent']:
-            # 确定性错误：直接缓存
-            should_cache = True
-            logger.debug(f"确定性错误，直接缓存: {url} (error={error})")
-        else:
-            # 不确定性错误：需要连续失败3次
-            if record['fail_count'] >= 3:
-                should_cache = True
-                logger.debug(f"连续失败 {record['fail_count']} 次，加入缓存: {url} (error={error})")
-        
-        # 清理过期记录（超过 7 天）
-        now = datetime.now()
-        cache = {
-            k: v for k, v in cache.items()
-            if (now - datetime.fromisoformat(v['last_fail_time'])).total_seconds() < 7 * 24 * 3600
-        }
-        
-        with open(cache_path, 'w', encoding='utf-8') as f:
-            json.dump(cache, f, ensure_ascii=False, indent=2)
-        
-        return should_cache
-        
-    except Exception as e:
-        logger.debug(f"保存失败缓存失败: {e}")
-        return False
-
-
-def _remove_from_cache(url: str):
-    """从缓存中移除（成功时调用）"""
-    try:
-        cache = _load_fail_cache()
-        if url in cache:
-            del cache[url]
-        
-        cache_path = _get_cache_path()
-        with open(cache_path, 'w', encoding='utf-8') as f:
-            json.dump(cache, f, ensure_ascii=False, indent=2)
-        logger.debug(f"成功从缓存移除: {url}")
-    except Exception as e:
-        logger.debug(f"移除缓存失败: {e}")
+        if new_group != '其他' or keep_unmatched:
+            result.append(ch)
+    
+    return result
 
 
 def fetch_channels(urls: List[str], max_workers: int = 10, limit: int = None) -> List[Dict]:
@@ -383,15 +317,14 @@ def fetch_channels(urls: List[str], max_workers: int = 10, limit: int = None) ->
     
     Args:
         urls: 源 URL 列表
-        max_workers: 最大并发数，默认使用 MAX_WORKERS
+        max_workers: 最大并发数
         limit: 需要获取的频道数量，None 表示获取所有
     
     Returns:
         合并后的频道列表
     """
-        
     all_channels = []
-    seen_urls = set()  # URL 去重
+    seen_urls = set()
     
     logger.info(f"正在从 {len(urls)} 个 URL 获取频道...")
     
@@ -404,28 +337,22 @@ def fetch_channels(urls: List[str], max_workers: int = 10, limit: int = None) ->
                 content = future.result()
                 if content:
                     channels = parse_url(url, content)
-                    # 边解析边去重
                     for ch in channels:
-                        # 支持 Channel 对象和字典两种格式
                         ch_url = ch.url if hasattr(ch, 'url') else ch.get('url', '')
                         if ch_url not in seen_urls:
                             seen_urls.add(ch_url)
                             all_channels.append(ch)
-                            # 如果设置了 limit，且已达到数量限制，则停止获取
                             if limit and len(all_channels) >= limit:
                                 break
             except Exception as e:
                 logger.error(f"解析 URL 失败 {url}: {e}")
             
-            # 如果已达到 limit，停止获取
             if limit and len(all_channels) >= limit:
                 break
     
     logger.info(f"合并完成，共 {len(all_channels)} 个唯一频道")
     
-    # 方案一：前置过滤优化
     all_channels = filter_channels(all_channels)
-    
     all_channels = classify_channels(all_channels)
     
     logger.info(f"分类重组完成，剩余 {len(all_channels)} 个频道")
@@ -449,8 +376,7 @@ def save_file(filename: str, content: str, output_dir: str = None) -> bool:
         return False
     
     if output_dir is None:
-        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        output_dir = os.path.join(project_root, 'output', 'iptv')
+        output_dir = get_output_dir()
     
     os.makedirs(output_dir, exist_ok=True)
     path = os.path.join(output_dir, filename)
@@ -470,15 +396,14 @@ def get_file_content(filename: str, input_dir: str = None) -> str:
     获取文件内容
     
     Args:
-        filename: 文件名（如 'migu.m3u', 'ott.m3u' 等）
+        filename: 文件名
         input_dir: 输入目录，默认为 output/iptv
     
     Returns:
         文件内容字符串，如果文件不存在或读取失败则返回空字符串
     """
     if input_dir is None:
-        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        input_dir = os.path.join(project_root, 'output', 'iptv')
+        input_dir = get_output_dir()
     
     path = os.path.join(input_dir, filename)
     if not os.path.exists(path):
@@ -495,177 +420,9 @@ def get_file_content(filename: str, input_dir: str = None) -> str:
         return ""
 
 
-GROUP_MAPPING = {
-    '央视频道': ['央视'],
-    '卫视频道': ['卫视'],
-    '地方频道': ['地方', '浙江频道', '江苏频道', '广东频道', '湖南频道', '湖北频道', '四川频道', '河南频道', '河北频道', '山东频道', '山西频道', '陕西频道', '安徽频道', '福建频道', '江西频道', '辽宁频道', '吉林频道', '黑龙江频道', '北京频道', '上海频道', '天津频道', '重庆频道', '云南频道', '贵州频道', '广西频道', '海南频道', '甘肃频道', '青海频道', '内蒙古频道', '宁夏频道', '新疆频道', '西藏频道'],
-    '电影电视': ['电影', '埋堆堆', '电视剧', '剧场', '影视'],
-    '体育赛事': ['体育', '咪咕赛事'],
-    '少儿教育': ['少儿', '动漫', '儿童', '动画'],
-    '综艺娱乐': ['综艺', '音乐'],
-    '纪录纪实': ['纪录', '直播中国', '纪实'],
-    '国际全球': ['国际', '全球', '外语'],
-    '港澳台': ['港·澳·台', '港澳', '港台'],
-    '咪视界': ['咪视界', '咪视通'],
-    'NewTV': ['NewTV'],
-    'iHOT': ['IHOT'],
-    'iPanda': ['ipanda']
-}
-
-CHANNEL_MAPPING = {
-    '央视频道': ['CCTV', 'CGTN'],
-    '卫视频道': ['湖南卫视', '江苏卫视', '浙江卫视', '东方卫视', '北京卫视', '广东卫视', '安徽卫视', '山东卫视', '河南卫视', '河北卫视', '湖北卫视', '四川卫视', '重庆卫视', '天津卫视', '江西卫视', '云南卫视', '贵州卫视', '广西卫视', '苏州4K'],
-    '地方频道': ['重庆', '天津', '山东', '山西', '陕西', '福建', '安徽', '贵州', '云南', '广西', '海南', '黑龙江', '吉林', '辽宁', '内蒙古', '宁夏', '新疆', '青海', '甘肃', '西藏', '地方', '广州', '佛山', '江门', '汕头', '深圳', '珠海', '东莞', '中山', '惠州', '肇庆', '清远', '韶关', '河源', '梅州', '汕尾', '揭阳', '阳江', '茂名', '湛江', '潮州', '云浮', '南宁', '南京', '宁波', '杭州', '余杭', '上虞', '湖州', '松阳', '庆元', '民视', '余姚', '开化', '南国', '邢台', '绍兴', '嵊州', '新昌', '福州', '萧山', '钱江', '财经', '新闻综合'],
-    '电影电视': ['电影'],
-    '体育赛事': ['体育', '足球'],
-    '少儿教育': ['少儿', '动画', '卡通', '动漫'],
-    '综艺娱乐': ['综艺', '娱乐', '音乐'],
-    '国际全球': ['国际','UK', '美亚'],
-    '纪录纪实': ['纪录','人文', '历史', '地理', '自然', '生物', '纪实', '睛彩'],
-    '港澳台': ['台湾', 'Taiwan', 'TVB', 'ATV', '公视', '华视', '台视', '中视', '东森', '中天', '凤凰', '澳亚', 'CHANNEL', 'CH5', 'CH8', '频道', 'VIUTV', 'RTHK', '明珠台', 'HOY', 'ASTRO', '欢喜台', 'AOD', 'AEC', 'QJ', '港·澳·台', '港澳', '港台'],
-    '咪视界': ['咪视界', '咪视通'],
-    'NewTV': ['NewTV'],
-    'iHOT': ['IHOT'],
-    'iPanda': ['ipanda']
-}
-
-
-def classify_channels(channels: List[Dict], keep_unmatched: bool = False) -> List[Dict]:
-    """
-    对频道进行分组优化
-    
-    匹配策略：
-    1. 首先使用 GROUP_MAPPING 匹配 group-title，没有匹配到的全部归类为"其他"
-    2. 然后使用 CHANNEL_MAPPING 对剩余频道进行二次分组
-    
-    Args:
-        channels: 频道列表
-        keep_unmatched: 是否保留未匹配的频道
-    
-    Returns:
-        优化后的频道列表
-    """
-    result = []
-    
-    for ch in channels:
-        name = ch.get('channel_name', '')
-        group = ch.get('group_title', '')
-        cleaned_name = _clean_channel_name(name)
-        name_upper = cleaned_name.upper()
-        
-        # 第一步：使用 group_title 匹配
-        new_group = '其他'
-        if group:
-            for category, variants in GROUP_MAPPING.items():
-                for variant in variants:
-                    if variant in group or group in variant:
-                        new_group = category
-                        break
-                if new_group != '其他':
-                    break
-        
-        # 第二步：使用 channel_name 二次匹配（优先匹配央视频道和卫视频道）
-        matched = False
-        for category in ['卫视频道', '央视频道']:
-            for keyword in CHANNEL_MAPPING.get(category, []):
-                if keyword.upper() in name_upper or name_upper in keyword.upper():
-                    new_group = category
-                    matched = True
-                    break
-            if matched:
-                break
-        
-        if not matched:
-            for category, keywords in CHANNEL_MAPPING.items():
-                if category not in ['卫视频道', '央视频道']:
-                    for keyword in keywords:
-                        if keyword.upper() in name_upper or name_upper in keyword.upper():
-                            new_group = category
-                            break
-                    if new_group != '其他':
-                        break
-        
-        # 构建新频道
-        new_ch = ch.copy()
-        new_ch['group_title'] = new_group
-        new_ch['channel_name'] = cleaned_name
-        if not new_ch['tvg_id']:
-            new_ch['tvg_id'] = cleaned_name
-        if not new_ch['tvg_name']:
-            new_ch['tvg_name'] = cleaned_name
-        if not new_ch['tvg_logo']:
-            new_ch['tvg_logo'] = f"https://gh-proxy.org/https://raw.githubusercontent.com/fanmingming/live/refs/heads/main/tv/{cleaned_name}.png"
-        
-        # 过滤逻辑
-        if new_group == '央视频道':
-            if any(kw.upper() in name_upper for kw in CHANNEL_MAPPING.get('央视频道', [])):
-                result.append(new_ch)
-        elif new_group == '卫视频道':
-            if any(kw.upper() in name_upper for kw in CHANNEL_MAPPING.get('卫视频道', [])):
-                result.append(new_ch)
-        elif new_group == '地方频道':
-            if cleaned_name not in ['6', 'AYXTV', 'PVA', 'XXTV']:
-                result.append(new_ch)
-        elif new_group != '其他' or keep_unmatched:
-            result.append(new_ch)
-    
-    return result
-
-
-def _clean_channel_name(name: str) -> str:
-    """
-    清理频道名中的特殊字符
-    
-    处理规则：
-    1. 去除 () 及内容，比如 (1080p)、(国)
-    2. 去除 [] 及内容，比如 [Not 24/7]
-    3. CCTV+数字+汉字：去除汉字，只保留CCTV+数字
-    4. CCTV+汉字：全部保留
-    5. 卫视频道：去除 4K、HD、4K超 等后缀
-    6. 去除开头的国家/地区旗帜 emoji
-    
-    Args:
-        name: 原始频道名
-    
-    Returns:
-        清理后的频道名
-    """
-
-    cleaned = name
-    
-    cleaned = re.sub(r'\([^)]*\)', '', cleaned)
-    
-    cleaned = re.sub(r'\[[^\]]*\]', '', cleaned)
-    
-    cleaned = re.sub(r'-([^\d]+)$', '', cleaned)
-    cleaned = re.sub(r'(\w+)-(\d+)', r'\1\2', cleaned)
-
-    # 去除 4K、HD、4K超 等后缀
-    cleaned = re.sub(r'4K超$', '', cleaned)
-    cleaned = re.sub(r'4K$', '', cleaned)
-    cleaned = re.sub(r'HD$', '', cleaned)
-    
-    # 去除常见汉字后缀
-    cleaned = re.sub(r'(综合|财经|新闻|体育|综艺|娱乐|少儿|电影|纪录|纪实|国际|全球|外语|国防军事|戏曲|社会与法|科教|电视剧|音乐|奥林匹克|8K|Documentary|体育赛事|4K超高清|8K超高清|农业农村)$', '', cleaned)
-    
-    # 去除常见前缀（如 BRTV → 去掉）
-    cleaned = re.sub(r'^(BRTV|CTV)\s+', '', cleaned)
-    
-    flag_pattern = re.compile(r"^[\U0001F1E0-\U0001F1FF]+")
-    cleaned = flag_pattern.sub('', cleaned)
-    
-    return cleaned.strip()
-
-
 def sort_channels(channels: List[Dict]) -> List[Dict]:
     """
-    对频道列表进行排序
-    
-    排序规则：
-    - 先按 group_title 排序（按 GROUP_MAPPING 的 key 顺序）
-    - 分组内按 channel_name 排序：
-      - 央视频道：按 CCTV 后的数字排序（CCTV1, CCTV2, CCTV3...）
-      - 其他分组：按频道名的首字母排序
+    按频道组排序
     
     Args:
         channels: 频道列表
@@ -673,23 +430,18 @@ def sort_channels(channels: List[Dict]) -> List[Dict]:
     Returns:
         排序后的频道列表
     """
-    group_order = {key: idx for idx, key in enumerate(GROUP_MAPPING.keys())}
+    group_order = [
+        '央视频道', '卫视频道', '地方频道', '电影电视', '体育赛事',
+        '少儿教育', '综艺娱乐', '纪录纪实', '国际全球', '港澳台',
+        '咪视界', 'NewTV', 'iHOT', 'iPanda', '其他'
+    ]
     
-    def get_sort_key(ch: Dict) -> tuple:
+    def sort_key(ch):
+        group = ch.get('group_title', '其他')
         name = ch.get('channel_name', '')
-        group = ch.get('group_title', '')
-        
-        group_idx = group_order.get(group, 999)
-        
-        if group == '央视频道':
-            match = re.search(r'CCTV[-]?(\d+)', name.upper())
-            if match:
-                name_sort = int(match.group(1))
-            else:
-                name_sort = 9999
-        else:
-            name_sort = name
-        
-        return (group_idx, name_sort, name)
+        try:
+            return (group_order.index(group), name)
+        except ValueError:
+            return (len(group_order), name)
     
-    return sorted(channels, key=get_sort_key)
+    return sorted(channels, key=sort_key)

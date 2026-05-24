@@ -4,7 +4,9 @@ IPTV 配置定时更新模块
 功能：
 - 从多个源获取 IPTV 播放列表
 - 检测频道可用性并生成播放列表
-
+- 智能缓存策略（周日清空）
+- 指数退避重试机制
+- 动态并发控制
 """
 
 import os
@@ -28,17 +30,17 @@ from utils.iptv_utils import (
     sort_channels
 )
 from utils.iptv_checker import IPTVChecker
+from utils.cache_manager import get_cache_manager
+from utils.iptv_config import get_input_file_path, IPTVConfig, ErrorPatterns
 
 logger = get_logger('IPTV')
 _iptv_checker = IPTVChecker()
-
-BATCH_SIZE = 300  # 分批处理大小
-IPTV_URLS_FILE = os.path.join(project_root, 'input', 'iptv_urls.txt')
+_config = IPTVConfig.build()
 
 
 def get_optimal_workers() -> int:
     """
-    方案一：动态并发控制（基于系统负载）
+    动态并发控制（基于系统负载）
     
     根据当前系统负载动态计算最优并发数，避免资源耗尽
     
@@ -49,37 +51,25 @@ def get_optimal_workers() -> int:
     cpu_percent = psutil.cpu_percent()
     memory_percent = psutil.virtual_memory().percent
     
-    # CPU 核心数基础并发
     base_workers = cpu_count * 2
     
-    # 根据负载调整
     if cpu_percent > 80 or memory_percent > 80:
-        # 高负载时降低并发
         workers = max(5, base_workers // 2)
         logger.info(f"系统高负载 (CPU:{cpu_percent}%, MEM:{memory_percent}%)，降低并发数到 {workers}")
     elif cpu_percent > 60 or memory_percent > 60:
-        # 中等负载时保持基础并发
         workers = base_workers
         logger.info(f"系统中等负载 (CPU:{cpu_percent}%, MEM:{memory_percent}%)，使用基础并发数 {workers}")
     else:
-        # 低负载时可以适当提高
-        workers = min(30, int(base_workers * 1.5))
+        workers = min(_config.MAX_WORKERS, int(base_workers * 1.5))
         logger.info(f"系统低负载 (CPU:{cpu_percent}%, MEM:{memory_percent}%)，提高并发数到 {workers}")
     
     return workers
 
 
 def get_current_workers() -> int:
-    """
-    获取当前推荐的并发数（动态）
-    
-    Returns:
-        int: 当前并发数
-    """
+    """获取当前推荐的并发数（动态）"""
     return get_optimal_workers()
 
-
-# ==================== 辅助函数 ====================
 
 def _fetch_and_save(name: str, url: str, filename: str) -> bool:
     """
@@ -111,61 +101,180 @@ def _fetch_and_save(name: str, url: str, filename: str) -> bool:
     return False
 
 
+def _is_temporary_error(error: str) -> bool:
+    """判断是否为临时性错误（需要重试）"""
+    error_patterns = ErrorPatterns()
+    return any(pattern in error.lower() for pattern in error_patterns.TEMPORARY_ERRORS)
+
+
+def _check_single_channel_with_retry(channel: Dict, max_retries: int = _config.MAX_RETRIES) -> Tuple[Dict, Dict, int, bool]:
+    """
+    检测频道可用性（支持指数退避重试）
+    
+    Args:
+        channel: 频道信息
+        max_retries: 最大重试次数
+    
+    Returns:
+        Tuple[Dict, Dict, int, bool]: (channel, result, retry_count, success_after_retry)
+    """
+    import time
+    
+    url = channel.get('url', '')
+    name = channel.get('channel_name', '')
+    retry_count = 0
+    success_after_retry = False
+    last_error = 'unknown'
+    
+    for attempt in range(max_retries + 1):
+        try:
+            result = _iptv_checker.check(url)
+            
+            if result.get('available'):
+                if attempt > 0:
+                    success_after_retry = True
+                    logger.info(f"[重试策略] 重试成功: {name} (第 {attempt + 1} 次尝试) - 上次失败原因: {last_error}")
+                return (channel, result, retry_count, success_after_retry)
+            
+            error = result.get('error', 'unknown')
+            last_error = error
+            
+            if attempt < max_retries and _is_temporary_error(error):
+                wait_time = (2 ** attempt) * _config.RETRY_TIMEOUT_BASE
+                retry_count += 1
+                logger.debug(f"[重试策略] 第 {attempt + 1} 次检测失败 ({error})，等待 {wait_time:.1f}秒后重试: {name}")
+                time.sleep(wait_time)
+                continue
+            
+            logger.debug(f"[检测策略] 检测失败: {name} - 错误类型: {error}")
+            return (channel, result, retry_count, success_after_retry)
+            
+        except Exception as e:
+            error_type = type(e).__name__
+            error_key = f"exception_{error_type}"
+            last_error = error_key
+            
+            if attempt < max_retries:
+                wait_time = (2 ** attempt) * _config.RETRY_TIMEOUT_BASE
+                retry_count += 1
+                logger.debug(f"[重试策略] 第 {attempt + 1} 次异常 ({error_key})，等待 {wait_time:.1f}秒后重试: {name}")
+                time.sleep(wait_time)
+                continue
+            
+            logger.debug(f"[检测策略] 检测异常: {name} - 异常类型: {error_key}")
+            return (channel, {'available': False, 'fluent': False, 'error': error_key}, retry_count, success_after_retry)
+
+
+def _generate_report(total_count: int, valid_count: int, failed_count: int, retry_count: int, success_after_retry: int, total_time: float):
+    """
+    生成检测统计报告
+    
+    Args:
+        total_count: 总检测频道数
+        valid_count: 可用频道数
+        failed_count: 失败频道数
+        retry_count: 重试次数
+        success_after_retry: 重试成功次数
+        total_time: 总耗时（秒）
+    """
+    success_rate = (valid_count / total_count) * 100 if total_count > 0 else 0
+    retry_success_rate = (success_after_retry / retry_count) * 100 if retry_count > 0 else 0
+    
+    minutes = int(total_time // 60)
+    seconds = int(total_time % 60)
+    
+    report = f"""
+╔══════════════════════════════════════════════════════════════════════════╗
+║                    IPTV 频道检测统计报告                                 ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║ 检测时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}                   ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║ 【频道统计】                                                             ║
+║   总检测频道: {total_count:>6d} 个                                       ║
+║   可用频道:   {valid_count:>6d} 个                                       ║
+║   失败频道:   {failed_count:>6d} 个                                       ║
+║   成功率:     {success_rate:>6.2f}%                                     ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║ 【重试统计】                                                             ║
+║   重试次数:   {retry_count:>6d} 次                                       ║
+║   重试成功:   {success_after_retry:>6d} 次                               ║
+║   重试成功率: {retry_success_rate:>6.2f}%                                 ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║ 【性能统计】                                                             ║
+║   总耗时:     {minutes:>3d}分{seconds:>2d}秒                            ║
+║   平均耗时:   {(total_time / total_count):>6.2f}秒/频道                  ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║ 【策略执行】                                                             ║
+║   ✓ 缓存策略: 单例模式 + 批量更新                                         ║
+║   ✓ 重试策略: 指数退避 (最多{_config.MAX_RETRIES}次重试)                    ║
+║   ✓ 检测策略: 动态并发控制                                               ║
+╚══════════════════════════════════════════════════════════════════════════╝
+"""
+    
+    if save_file('playlist_report.txt', report):
+        logger.info(f"[检测策略] 统计报告已保存到 output/iptv/playlist_report.txt")
+    else:
+        logger.warning("[检测策略] 统计报告保存失败")
+
+
 def _fetch_and_check_channels(urls: List[str], limit: Optional[int] = None) -> str:
     """
-    从 URL 列表获取并检查频道可用性（方案一优化：动态并发控制）
+    从 URL 列表获取并检查频道可用性
     """
-    # 获取动态并发数
     current_workers = get_current_workers()
+    logger.info(f"[检测策略] 初始并发数: {current_workers}")
+    
+    # 周日清空缓存
+    if datetime.now().weekday() == 6:
+        cache_manager = get_cache_manager()
+        cache_manager.clear_all()
+        logger.info("[缓存策略] 周日检测，已清空所有缓存")
+    
     all_channels = fetch_channels(urls, max_workers=current_workers, limit=limit)
     
     if not all_channels:
-        logger.warning("未获取到任何频道")
+        logger.warning("[检测策略] 未获取到任何频道")
         return ''
     
-    logger.info(f"开始检测 {len(all_channels)} 个频道的可用性...")
+    logger.info(f"[检测策略] 开始检测 {len(all_channels)} 个频道的可用性...")
     
-    # 分批处理，控制内存使用
     total_count = len(all_channels)
-    batches = [all_channels[i:i+BATCH_SIZE] for i in range(0, total_count, BATCH_SIZE)]
-    logger.info(f"共分为 {len(batches)} 批处理，每批最多 {BATCH_SIZE} 个频道")
+    batches = [all_channels[i:i+_config.BATCH_SIZE] for i in range(0, total_count, _config.BATCH_SIZE)]
+    logger.info(f"[检测策略] 共分为 {len(batches)} 批处理，每批最多 {_config.BATCH_SIZE} 个频道")
     
     valid_channels = []
     checked_count = 0
+    failed_count = 0
+    retry_count = 0
+    success_after_retry = 0
     start_time = datetime.now()
     alpha = 0.1
     avg_time_per_channel = 0.0
     
-    def check_single_channel(channel: Dict) -> Tuple[Dict, Dict]:
-        url = channel.get('url', '')
-        name = channel.get('channel_name', '')
-        try:
-            result = _iptv_checker.check(url)
-            return (channel, result)
-        except Exception as e:
-            error_type = type(e).__name__
-            error_key = f"exception_{error_type}"
-            return (channel, {'available': False, 'fluent': False, 'error': error_key})
+    success_urls_batch = []
+    failed_urls_batch = []
+    cache_manager = get_cache_manager()
     
     for batch_idx, batch in enumerate(batches, 1):
-        # 每批开始时重新计算并发数（动态调整）
         current_workers = get_current_workers()
-        logger.info(f"正在处理第 {batch_idx}/{len(batches)} 批，共 {len(batch)} 个频道，并发数: {current_workers}")
+        logger.info(f"[检测策略] 正在处理第 {batch_idx}/{len(batches)} 批，共 {len(batch)} 个频道，并发数: {current_workers}")
         
         with ThreadPoolExecutor(max_workers=current_workers) as executor:
-            future_to_channel = {executor.submit(check_single_channel, ch): ch for ch in batch}
+            future_to_channel = {executor.submit(_check_single_channel_with_retry, ch): ch for ch in batch}
             
             for future in as_completed(future_to_channel):
-                channel, result = future.result()
+                channel, result, retry_cnt, success_retry = future.result()
+                
+                retry_count += retry_cnt
+                if success_retry:
+                    success_after_retry += 1
+                
                 if result.get('available'):
                     valid_channels.append(channel)
-                    # 成功：从缓存中移除
-                    from utils.iptv_utils import _remove_from_cache
-                    _remove_from_cache(channel.get('url', ''))
+                    success_urls_batch.append(channel.get('url', ''))
                 else:
-                    # 失败：更新失败记录（根据错误类型决定是否加入缓存）
-                    from utils.iptv_utils import _save_fail_cache
-                    _save_fail_cache(channel.get('url', ''), result.get('error', 'unknown'))
+                    failed_count += 1
+                    failed_urls_batch.append((channel.get('url', ''), result.get('error', 'unknown')))
                 
                 checked_count += 1
                 
@@ -192,9 +301,17 @@ def _fetch_and_check_channels(urls: List[str], limit: Optional[int] = None) -> s
                         minutes = int((remaining_seconds % 3600) // 60)
                         remaining_str = f"{hours}小时{minutes}分"
                     
-                    logger.info(f"检测进度: {checked_count}/{total_count} ({progress:.1f}%) - 可用: {len(valid_channels)} - 预计剩余: {remaining_str}")
+                    logger.info(f"[检测策略] 进度: {checked_count}/{total_count} ({progress:.1f}%) - 可用: {len(valid_channels)} - 失败: {failed_count} - 预计剩余: {remaining_str}")
         
-        # 释放内存
+        # 批量更新缓存
+        if success_urls_batch or failed_urls_batch:
+            cache_manager.batch_update(
+                successes=tuple(success_urls_batch),
+                failures=tuple(failed_urls_batch)
+            )
+            success_urls_batch.clear()
+            failed_urls_batch.clear()
+        
         del batch
     
     valid_channels = sort_channels(valid_channels)
@@ -204,12 +321,16 @@ def _fetch_and_check_channels(urls: List[str], limit: Optional[int] = None) -> s
     seconds = int(total_time % 60)
     time_str = f"{minutes}分{seconds}秒"
     
-    logger.info(f"检测完成，可用频道: {len(valid_channels)}/{total_count}，总耗时: {time_str}")
+    logger.info(f"[检测策略] 检测完成，可用频道: {len(valid_channels)}/{total_count}，失败: {failed_count}，重试次数: {retry_count}，重试成功: {success_after_retry}，总耗时: {time_str}")
+    
+    # 保存缓存到磁盘
+    cache_manager.save_to_disk()
+    
+    # 生成统计报告
+    _generate_report(total_count, len(valid_channels), failed_count, retry_count, success_after_retry, total_time)
     
     return build_m3u(valid_channels)
 
-
-# ==================== 主功能函数 ====================
 
 def fetch_ott() -> bool:
     """获取 OTT 播放列表"""
@@ -220,11 +341,6 @@ def fetch_playlist(limit: Optional[int] = None) -> bool:
     """
     获取播放列表并检测频道可用性
     
-    执行流程：
-    1. 从配置文件读取 URL 列表
-    2. 获取频道并检测可用性
-    3. 保存播放列表
-    
     Args:
         limit: 限制获取的频道数量（可选）
     
@@ -232,11 +348,13 @@ def fetch_playlist(limit: Optional[int] = None) -> bool:
         bool: 是否成功
     """
     try:
-        if not os.path.exists(IPTV_URLS_FILE):
-            logger.error(f"URL 配置文件不存在：{IPTV_URLS_FILE}")
+        iptv_urls_file = get_input_file_path('iptv_urls.txt')
+        
+        if not os.path.exists(iptv_urls_file):
+            logger.error(f"URL 配置文件不存在：{iptv_urls_file}")
             return False
         
-        with open(IPTV_URLS_FILE, 'r', encoding='utf-8') as f:
+        with open(iptv_urls_file, 'r', encoding='utf-8') as f:
             urls = [line.strip() for line in f if line.strip() and not line.startswith('#')]
         
         if not urls:
@@ -262,15 +380,9 @@ def fetch_playlist(limit: Optional[int] = None) -> bool:
         return False
 
 
-# ==================== 调度器 ====================
-
 def iptv_scheduler(limit: Optional[int] = None) -> bool:
     """
     IPTV 配置更新调度器
-    
-    执行流程：
-    1. 获取 OTT 播放列表
-    2. 获取播放列表并检测频道可用性
     
     Args:
         limit: 限制获取的频道数量（可选）
@@ -282,21 +394,18 @@ def iptv_scheduler(limit: Optional[int] = None) -> bool:
     logger.info(f"开始更新配置，时间：{start_time.isoformat()}")
     
     try:
-        # 执行 OTT 播放列表获取
         ott_success = fetch_ott()
         if ott_success:
             logger.info("OTT 播放列表获取成功")
         else:
             logger.warning("OTT 播放列表获取失败")
         
-        # 执行播放列表获取和检测
         playlist_success = fetch_playlist(limit)
         if playlist_success:
             logger.info("Playlist 播放列表获取和检测成功")
         else:
             logger.warning("Playlist 播放列表获取和检测失败")
         
-        # 汇总结果
         end_time = datetime.now()
         duration = (end_time - start_time).total_seconds()
         minutes = int(duration // 60)
@@ -315,7 +424,5 @@ def iptv_scheduler(limit: Optional[int] = None) -> bool:
         return False
 
 
-# ==================== 命令行入口 ====================
-
 if __name__ == "__main__":
-    iptv_scheduler()
+    fetch_playlist()
