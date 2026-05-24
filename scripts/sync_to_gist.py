@@ -59,7 +59,7 @@ def sync_to_gist(gist_id: str, token: str, output_dir: str = "output"):
         print(f"复制 {output_dir} 目录内容（平铺目录结构）...")
         
         # 需要排除的目录和文件
-        exclude_dirs = {'cache'}
+        exclude_dirs = {'cache', 'singbox'}
         exclude_files = {'playlist_report.txt'}
         
         for root, dirs, files in os.walk(output_path):
