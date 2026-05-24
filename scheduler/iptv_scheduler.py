@@ -9,6 +9,7 @@ IPTV 配置定时更新模块
 
 import os
 import sys
+import psutil
 from datetime import datetime
 from typing import List, Dict, Tuple, Optional
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -31,11 +32,51 @@ from utils.iptv_checker import IPTVChecker
 logger = get_logger('IPTV')
 _iptv_checker = IPTVChecker()
 
-# 方案三优化：调大并发参数（GitHub Actions 环境使用保守值）
-# GitHub Actions runner 通常为 2-4 核，并发数设置为 CPU 核心数的 2-3 倍
-MAX_WORKERS = min(30, max(10, os.cpu_count() * 2)) if os.cpu_count() else 20
-BATCH_SIZE = 500  # 分批处理大小
+BATCH_SIZE = 300  # 分批处理大小
 IPTV_URLS_FILE = os.path.join(project_root, 'input', 'iptv_urls.txt')
+
+
+def get_optimal_workers() -> int:
+    """
+    方案一：动态并发控制（基于系统负载）
+    
+    根据当前系统负载动态计算最优并发数，避免资源耗尽
+    
+    Returns:
+        int: 最优并发数
+    """
+    cpu_count = os.cpu_count() or 2
+    cpu_percent = psutil.cpu_percent()
+    memory_percent = psutil.virtual_memory().percent
+    
+    # CPU 核心数基础并发
+    base_workers = cpu_count * 2
+    
+    # 根据负载调整
+    if cpu_percent > 80 or memory_percent > 80:
+        # 高负载时降低并发
+        workers = max(5, base_workers // 2)
+        logger.info(f"系统高负载 (CPU:{cpu_percent}%, MEM:{memory_percent}%)，降低并发数到 {workers}")
+    elif cpu_percent > 60 or memory_percent > 60:
+        # 中等负载时保持基础并发
+        workers = base_workers
+        logger.info(f"系统中等负载 (CPU:{cpu_percent}%, MEM:{memory_percent}%)，使用基础并发数 {workers}")
+    else:
+        # 低负载时可以适当提高
+        workers = min(30, int(base_workers * 1.5))
+        logger.info(f"系统低负载 (CPU:{cpu_percent}%, MEM:{memory_percent}%)，提高并发数到 {workers}")
+    
+    return workers
+
+
+def get_current_workers() -> int:
+    """
+    获取当前推荐的并发数（动态）
+    
+    Returns:
+        int: 当前并发数
+    """
+    return get_optimal_workers()
 
 
 # ==================== 辅助函数 ====================
@@ -72,9 +113,11 @@ def _fetch_and_save(name: str, url: str, filename: str) -> bool:
 
 def _fetch_and_check_channels(urls: List[str], limit: Optional[int] = None) -> str:
     """
-    从 URL 列表获取并检查频道可用性（方案三优化：分批处理）
+    从 URL 列表获取并检查频道可用性（方案一优化：动态并发控制）
     """
-    all_channels = fetch_channels(urls, max_workers=MAX_WORKERS, limit=limit)
+    # 获取动态并发数
+    current_workers = get_current_workers()
+    all_channels = fetch_channels(urls, max_workers=current_workers, limit=limit)
     
     if not all_channels:
         logger.warning("未获取到任何频道")
@@ -82,7 +125,7 @@ def _fetch_and_check_channels(urls: List[str], limit: Optional[int] = None) -> s
     
     logger.info(f"开始检测 {len(all_channels)} 个频道的可用性...")
     
-    # 方案三优化：分批处理，控制内存使用
+    # 分批处理，控制内存使用
     total_count = len(all_channels)
     batches = [all_channels[i:i+BATCH_SIZE] for i in range(0, total_count, BATCH_SIZE)]
     logger.info(f"共分为 {len(batches)} 批处理，每批最多 {BATCH_SIZE} 个频道")
@@ -105,9 +148,11 @@ def _fetch_and_check_channels(urls: List[str], limit: Optional[int] = None) -> s
             return (channel, {'available': False, 'fluent': False, 'error': error_key})
     
     for batch_idx, batch in enumerate(batches, 1):
-        logger.info(f"正在处理第 {batch_idx}/{len(batches)} 批，共 {len(batch)} 个频道")
+        # 每批开始时重新计算并发数（动态调整）
+        current_workers = get_current_workers()
+        logger.info(f"正在处理第 {batch_idx}/{len(batches)} 批，共 {len(batch)} 个频道，并发数: {current_workers}")
         
-        with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        with ThreadPoolExecutor(max_workers=current_workers) as executor:
             future_to_channel = {executor.submit(check_single_channel, ch): ch for ch in batch}
             
             for future in as_completed(future_to_channel):
