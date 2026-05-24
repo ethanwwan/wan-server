@@ -57,10 +57,18 @@ def sync_to_gist(gist_id: str, token: str, output_dir: str = "output"):
                     os.remove(item_path)
         
         print(f"复制 {output_dir} 目录内容（平铺目录结构）...")
+        
+        # 需要排除的目录和文件
+        exclude_dirs = {'cache'}
+        exclude_files = {'playlist_report.txt'}
+        
         for root, dirs, files in os.walk(output_path):
+            # 过滤掉需要排除的目录
+            dirs[:] = [d for d in dirs if d not in exclude_dirs]
+            
             for filename in files:
-                # 跳过隐藏文件和缓存文件
-                if filename.startswith('.') or filename.endswith('~'):
+                # 跳过隐藏文件、备份文件和排除的文件
+                if filename.startswith('.') or filename.endswith('~') or filename in exclude_files:
                     continue
                 
                 src_path = os.path.join(root, filename)
