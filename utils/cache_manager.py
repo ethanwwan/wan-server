@@ -64,14 +64,8 @@ class CacheManager:
             logger.error(f"[缓存策略] 保存缓存到磁盘失败: {e}")
     
     def _clean_expired(self):
-        """清理过期记录"""
-        now = datetime.now()
-        self._cache = {
-            url: record 
-            for url, record in self._cache.items()
-            if 'last_fail_time' in record and 
-               (now - datetime.fromisoformat(record['last_fail_time'])).total_seconds() < self._config.CACHE_MAX_AGE
-        }
+        """清理过期记录（空实现，缓存永不过期，只有周日清空）"""
+        pass
     
     def _is_permanent_error(self, error: str) -> bool:
         """判断是否为确定性错误"""
@@ -82,15 +76,10 @@ class CacheManager:
         return self._cache
     
     def is_expired(self, url: str) -> bool:
-        """检查 URL 是否在缓存中且未过期"""
-        if url not in self._cache:
-            return True
-        
-        record = self._cache[url]
-        fail_time = datetime.fromisoformat(record['last_fail_time'])
-        skip_seconds = self._config.CACHE_EXPIRE_PERMANENT if record.get('is_permanent', False) else self._config.CACHE_EXPIRE_TEMPORARY
-        
-        return (datetime.now() - fail_time).total_seconds() >= skip_seconds
+        """检查 URL 是否在缓存中（缓存永不过期，只有周日清空）"""
+        # 如果 URL 不在缓存中，视为已过期（需要检测）
+        # 如果 URL 在缓存中，视为未过期（跳过检测）
+        return url not in self._cache
     
     def batch_update(self, successes: Tuple[str, ...], failures: Tuple[Tuple[str, str], ...]):
         """
