@@ -159,10 +159,13 @@ def _fetch_and_check_channels(urls: List[str], limit: Optional[int] = None) -> s
                 channel, result = future.result()
                 if result.get('available'):
                     valid_channels.append(channel)
+                    # 成功：从缓存中移除
+                    from utils.iptv_utils import _remove_from_cache
+                    _remove_from_cache(channel.get('url', ''))
                 else:
-                    # 方案一优化：保存失败记录到缓存
+                    # 失败：更新失败记录（根据错误类型决定是否加入缓存）
                     from utils.iptv_utils import _save_fail_cache
-                    _save_fail_cache(channel.get('url', ''))
+                    _save_fail_cache(channel.get('url', ''), result.get('error', 'unknown'))
                 
                 checked_count += 1
                 

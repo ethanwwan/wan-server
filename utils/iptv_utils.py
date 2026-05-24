@@ -223,7 +223,7 @@ def filter_channels(channels: List[Dict]) -> List[Dict]:
     过滤规则：
     1. 重复 URL 过滤
     2. 无效协议过滤
-    3. 历史失败记录过滤
+    3. 历史失败记录过滤（已确认失败的频道）
     
     Args:
         channels: 原始频道列表
@@ -251,11 +251,14 @@ def filter_channels(channels: List[Dict]) -> List[Dict]:
             continue
         seen_urls.add(url)
         
-        # 3. 历史失败记录过滤（最近 1 小时内失败过的跳过）
+        # 3. 历史失败记录过滤（已确认失败的频道跳过 1 小时）
         if url in fail_cache:
-            fail_time = fail_cache[url]
-            if (datetime.now() - fail_time).total_seconds() < 3600:
-                logger.debug(f"跳过历史失败 URL: {url}")
+            record = fail_cache[url]
+            fail_time = datetime.fromisoformat(record['last_fail_time'])
+            # 确定性错误跳过 24 小时，不确定性错误跳过 1 小时
+            skip_seconds = 24 * 3600 if record.get('is_permanent', False) else 3600
+            if (datetime.now() - fail_time).total_seconds() < skip_seconds:
+                logger.debug(f"跳过历史失败 URL: {url} (失败次数: {record.get('fail_count', 0)})")
                 continue
         
         filtered.append(ch)
@@ -270,6 +273,18 @@ def _get_cache_path() -> str:
     return os.path.join(project_root, 'output', 'iptv', 'cache', 'fail_cache.json')
 
 
+def _is_permanent_error(error: str) -> bool:
+    """判断是否为确定性错误（永久性错误）"""
+    permanent_patterns = [
+        'invalid_url',
+        'status_404', 'status_403',
+        'ffmpeg_error_not_found_404', 'ffmpeg_error_forbidden_403',
+        'ffmpeg_error_file_not_found', 'ffmpeg_error_protocol_not_found',
+        '_404', '_403', '_not_found', '_protocol_not_found'
+    ]
+    return any(pattern in error for pattern in permanent_patterns)
+
+
 def _load_fail_cache() -> dict:
     """加载历史失败记录缓存（从 output 目录读取，支持跨运行共享）"""
     cache = {}
@@ -277,17 +292,24 @@ def _load_fail_cache() -> dict:
         cache_path = _get_cache_path()
         if os.path.exists(cache_path):
             with open(cache_path, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-                for url, timestamp in data.items():
-                    cache[url] = datetime.fromisoformat(timestamp)
+                cache = json.load(f)
         logger.debug(f"成功加载失败缓存，共 {len(cache)} 条记录")
     except Exception as e:
         logger.debug(f"加载失败缓存失败: {e}")
     return cache
 
 
-def _save_fail_cache(url: str):
-    """保存失败记录到缓存（存储到 output 目录，支持跨运行共享）"""
+def _save_fail_cache(url: str, error: str = 'unknown') -> bool:
+    """
+    保存失败记录到缓存（存储到 output 目录，支持跨运行共享）
+    
+    错误分级策略：
+    - 确定性错误：直接加入缓存（如 404、403、无效URL等）
+    - 不确定性错误：需要连续失败3次才加入缓存（如超时、连接错误等）
+    
+    Returns:
+        bool: 是否成功加入缓存
+    """
     try:
         cache_path = _get_cache_path()
         cache_dir = os.path.dirname(cache_path)
@@ -295,17 +317,64 @@ def _save_fail_cache(url: str):
         
         # 加载现有缓存
         cache = _load_fail_cache()
-        cache[url] = datetime.now().isoformat()
         
-        # 清理过期记录（超过 7 天，因为每天只执行一次）
+        # 获取当前记录
+        if url not in cache:
+            cache[url] = {
+                'fail_count': 0,
+                'last_fail_time': '',
+                'fail_type': 'unknown',
+                'is_permanent': False
+            }
+        
+        record = cache[url]
+        record['fail_count'] += 1
+        record['last_fail_time'] = datetime.now().isoformat()
+        record['fail_type'] = error
+        record['is_permanent'] = _is_permanent_error(error)
+        
+        # 判断是否应该加入缓存
+        should_cache = False
+        if record['is_permanent']:
+            # 确定性错误：直接缓存
+            should_cache = True
+            logger.debug(f"确定性错误，直接缓存: {url} (error={error})")
+        else:
+            # 不确定性错误：需要连续失败3次
+            if record['fail_count'] >= 3:
+                should_cache = True
+                logger.debug(f"连续失败 {record['fail_count']} 次，加入缓存: {url} (error={error})")
+        
+        # 清理过期记录（超过 7 天）
         now = datetime.now()
-        cache = {k: v for k, v in cache.items() if (now - datetime.fromisoformat(v)).total_seconds() < 7 * 24 * 3600}
+        cache = {
+            k: v for k, v in cache.items()
+            if (now - datetime.fromisoformat(v['last_fail_time'])).total_seconds() < 7 * 24 * 3600
+        }
         
         with open(cache_path, 'w', encoding='utf-8') as f:
             json.dump(cache, f, ensure_ascii=False, indent=2)
-        logger.debug(f"成功保存失败记录: {url}")
+        
+        return should_cache
+        
     except Exception as e:
         logger.debug(f"保存失败缓存失败: {e}")
+        return False
+
+
+def _remove_from_cache(url: str):
+    """从缓存中移除（成功时调用）"""
+    try:
+        cache = _load_fail_cache()
+        if url in cache:
+            del cache[url]
+        
+        cache_path = _get_cache_path()
+        with open(cache_path, 'w', encoding='utf-8') as f:
+            json.dump(cache, f, ensure_ascii=False, indent=2)
+        logger.debug(f"成功从缓存移除: {url}")
+    except Exception as e:
+        logger.debug(f"移除缓存失败: {e}")
 
 
 def fetch_channels(urls: List[str], max_workers: int = 10, limit: int = None) -> List[Dict]:
