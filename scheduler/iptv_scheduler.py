@@ -31,7 +31,9 @@ from utils.iptv_checker import IPTVChecker
 logger = get_logger('IPTV')
 _iptv_checker = IPTVChecker()
 
-MAX_WORKERS = min(30, max(10, os.cpu_count() * 2)) if os.cpu_count() else 30
+# 方案三优化：调大并发参数
+MAX_WORKERS = min(100, max(10, os.cpu_count() * 4)) if os.cpu_count() else 50
+BATCH_SIZE = 1000  # 分批处理大小
 IPTV_URLS_FILE = os.path.join(project_root, 'input', 'iptv_urls.txt')
 
 
@@ -69,7 +71,7 @@ def _fetch_and_save(name: str, url: str, filename: str) -> bool:
 
 def _fetch_and_check_channels(urls: List[str], limit: Optional[int] = None) -> str:
     """
-    从 URL 列表获取并检查频道可用性
+    从 URL 列表获取并检查频道可用性（方案三优化：分批处理）
     """
     all_channels = fetch_channels(urls, max_workers=MAX_WORKERS, limit=limit)
     
@@ -79,12 +81,14 @@ def _fetch_and_check_channels(urls: List[str], limit: Optional[int] = None) -> s
     
     logger.info(f"开始检测 {len(all_channels)} 个频道的可用性...")
     
-    valid_channels = []
+    # 方案三优化：分批处理，控制内存使用
     total_count = len(all_channels)
+    batches = [all_channels[i:i+BATCH_SIZE] for i in range(0, total_count, BATCH_SIZE)]
+    logger.info(f"共分为 {len(batches)} 批处理，每批最多 {BATCH_SIZE} 个频道")
+    
+    valid_channels = []
     checked_count = 0
     start_time = datetime.now()
-    
-    failure_reasons = {}
     alpha = 0.1
     avg_time_per_channel = 0.0
     
@@ -99,43 +103,50 @@ def _fetch_and_check_channels(urls: List[str], limit: Optional[int] = None) -> s
             error_key = f"exception_{error_type}"
             return (channel, {'available': False, 'fluent': False, 'error': error_key})
     
-    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        future_to_channel = {executor.submit(check_single_channel, ch): ch for ch in all_channels}
+    for batch_idx, batch in enumerate(batches, 1):
+        logger.info(f"正在处理第 {batch_idx}/{len(batches)} 批，共 {len(batch)} 个频道")
         
-        for future in as_completed(future_to_channel):
-            channel, result = future.result()
-            if result.get('available'):
-                valid_channels.append(channel)
-            else:
-                error = result.get('error', 'unknown')
-                failure_reasons[error] = failure_reasons.get(error, 0) + 1
+        with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+            future_to_channel = {executor.submit(check_single_channel, ch): ch for ch in batch}
             
-            checked_count += 1
-            
-            current_elapsed = (datetime.now() - start_time).total_seconds()
-            if checked_count == 1:
-                avg_time_per_channel = current_elapsed
-            else:
-                instant_time = current_elapsed / checked_count
-                avg_time_per_channel = alpha * instant_time + (1 - alpha) * avg_time_per_channel
-            
-            if checked_count % 500 == 0 or checked_count == total_count:
-                progress = checked_count / total_count * 100
-                remaining_channels = total_count - checked_count
-                remaining_seconds = avg_time_per_channel * remaining_channels
-                
-                if remaining_seconds < 60:
-                    remaining_str = f"{remaining_seconds:.0f}秒"
-                elif remaining_seconds < 3600:
-                    minutes = int(remaining_seconds // 60)
-                    seconds = int(remaining_seconds % 60)
-                    remaining_str = f"{minutes}分{seconds}秒"
+            for future in as_completed(future_to_channel):
+                channel, result = future.result()
+                if result.get('available'):
+                    valid_channels.append(channel)
                 else:
-                    hours = int(remaining_seconds // 3600)
-                    minutes = int((remaining_seconds % 3600) // 60)
-                    remaining_str = f"{hours}小时{minutes}分"
+                    # 方案一优化：保存失败记录到缓存
+                    from utils.iptv_utils import _save_fail_cache
+                    _save_fail_cache(channel.get('url', ''))
                 
-                logger.info(f"检测进度: {checked_count}/{total_count} ({progress:.1f}%) - 可用: {len(valid_channels)} - 预计剩余: {remaining_str}")
+                checked_count += 1
+                
+                current_elapsed = (datetime.now() - start_time).total_seconds()
+                if checked_count == 1:
+                    avg_time_per_channel = current_elapsed
+                else:
+                    instant_time = current_elapsed / checked_count
+                    avg_time_per_channel = alpha * instant_time + (1 - alpha) * avg_time_per_channel
+                
+                if checked_count % 500 == 0 or checked_count == total_count:
+                    progress = checked_count / total_count * 100
+                    remaining_channels = total_count - checked_count
+                    remaining_seconds = avg_time_per_channel * remaining_channels
+                    
+                    if remaining_seconds < 60:
+                        remaining_str = f"{remaining_seconds:.0f}秒"
+                    elif remaining_seconds < 3600:
+                        minutes = int(remaining_seconds // 60)
+                        seconds = int(remaining_seconds % 60)
+                        remaining_str = f"{minutes}分{seconds}秒"
+                    else:
+                        hours = int(remaining_seconds // 3600)
+                        minutes = int((remaining_seconds % 3600) // 60)
+                        remaining_str = f"{hours}小时{minutes}分"
+                    
+                    logger.info(f"检测进度: {checked_count}/{total_count} ({progress:.1f}%) - 可用: {len(valid_channels)} - 预计剩余: {remaining_str}")
+        
+        # 释放内存
+        del batch
     
     valid_channels = sort_channels(valid_channels)
     total_time = (datetime.now() - start_time).total_seconds()

@@ -10,6 +10,8 @@ IPTV 工具类模块
 
 import os
 import re
+import json
+from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import List, Any, Dict
 
@@ -214,6 +216,92 @@ def build_m3u(channels: List[Any]) -> str:
     
     return '\n'.join(lines)
 
+def filter_channels(channels: List[Dict]) -> List[Dict]:
+    """
+    快速过滤无效频道（方案一优化）
+    
+    过滤规则：
+    1. 重复 URL 过滤
+    2. 无效协议过滤
+    3. 历史失败记录过滤
+    
+    Args:
+        channels: 原始频道列表
+    
+    Returns:
+        过滤后的频道列表
+    """
+    seen_urls = set()
+    filtered = []
+    
+    # 加载历史失败记录
+    fail_cache = _load_fail_cache()
+    
+    for ch in channels:
+        url = ch.get('url', '')
+        
+        # 1. 无效协议过滤
+        if not url.startswith(('http://', 'https://')):
+            logger.debug(f"跳过无效协议: {url}")
+            continue
+        
+        # 2. 重复 URL 过滤
+        if url in seen_urls:
+            logger.debug(f"跳过重复 URL: {url}")
+            continue
+        seen_urls.add(url)
+        
+        # 3. 历史失败记录过滤（最近 1 小时内失败过的跳过）
+        if url in fail_cache:
+            fail_time = fail_cache[url]
+            if (datetime.now() - fail_time).total_seconds() < 3600:
+                logger.debug(f"跳过历史失败 URL: {url}")
+                continue
+        
+        filtered.append(ch)
+    
+    logger.info(f"过滤完成: 原始 {len(channels)} 个频道，过滤后 {len(filtered)} 个频道")
+    return filtered
+
+
+def _load_fail_cache() -> dict:
+    """加载历史失败记录缓存"""
+    cache = {}
+    try:
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        cache_path = os.path.join(project_root, 'cache', 'fail_cache.json')
+        if os.path.exists(cache_path):
+            with open(cache_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                for url, timestamp in data.items():
+                    cache[url] = datetime.fromisoformat(timestamp)
+    except Exception as e:
+        logger.debug(f"加载失败缓存失败: {e}")
+    return cache
+
+
+def _save_fail_cache(url: str):
+    """保存失败记录到缓存"""
+    try:
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        cache_dir = os.path.join(project_root, 'cache')
+        os.makedirs(cache_dir, exist_ok=True)
+        cache_path = os.path.join(cache_dir, 'fail_cache.json')
+        
+        # 加载现有缓存
+        cache = _load_fail_cache()
+        cache[url] = datetime.now().isoformat()
+        
+        # 清理过期记录（超过 24 小时）
+        now = datetime.now()
+        cache = {k: v for k, v in cache.items() if (now - datetime.fromisoformat(v)).total_seconds() < 86400}
+        
+        with open(cache_path, 'w', encoding='utf-8') as f:
+            json.dump(cache, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        logger.debug(f"保存失败缓存失败: {e}")
+
+
 def fetch_channels(urls: List[str], max_workers: int = 10, limit: int = None) -> List[Dict]:
     """
     合并多个 URL 的频道（边解析边去重）
@@ -259,6 +347,9 @@ def fetch_channels(urls: List[str], max_workers: int = 10, limit: int = None) ->
                 break
     
     logger.info(f"合并完成，共 {len(all_channels)} 个唯一频道")
+    
+    # 方案一：前置过滤优化
+    all_channels = filter_channels(all_channels)
     
     all_channels = classify_channels(all_channels)
     
