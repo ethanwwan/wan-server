@@ -97,36 +97,35 @@ class IPTVConfig:
 class ErrorPatterns:
     """错误模式定义（集中管理）"""
     
-    # 临时性错误（需要重试）
+    # 临时性错误（需要重试）- 只有这两种需要重试
     TEMPORARY_ERRORS: Tuple[str, ...] = (
         'http_timeout',
-        'http_connection_error',
-        'http_connection_timeout',
-        'http_connection_refused',
-        'http_connection_reset',
-        'ffmpeg_timeout',
-        'ffmpeg_connection_refused',
-        'ffmpeg_connection_reset',
-        'ffmpeg_connection_timeout',
-        'network_error',
-        'reset_by_peer',
-        'http_error',
-        'server_error'
+        'ffmpeg_timeout'
     )
     
-    # 确定性错误（不需要重试）
+    # 确定性错误（不需要重试）- 其他所有错误都是确定性错误
     PERMANENT_ERRORS: Tuple[str, ...] = (
         'invalid_url',
         'status_404',
         'status_403',
+        'http_connection_error',
+        'http_too_many_redirects',
+        'http_request_error_',
+        'http_unknown_error_',
         'ffmpeg_error_not_found_404',
         'ffmpeg_error_forbidden_403',
         'ffmpeg_error_file_not_found',
         'ffmpeg_error_protocol_not_found',
+        'ffmpeg_error_connection_refused',
+        'ffmpeg_error_connection_reset',
+        'ffmpeg_error_connection_timeout',
         '_404',
         '_403',
         '_not_found',
-        '_protocol_not_found'
+        '_protocol_not_found',
+        '_connection_refused',
+        '_connection_reset',
+        '_connection_timeout'
     )
 
 
