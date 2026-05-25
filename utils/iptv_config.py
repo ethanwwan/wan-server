@@ -102,3 +102,7 @@ def get_output_dir() -> str:
 def get_input_file_path(filename: str) -> str:
     """获取输入文件路径"""
     return os.path.join(get_project_root(), 'input', filename)
+
+
+# 全局配置实例
+IPTV_CONFIG = IPTVConfig.build()

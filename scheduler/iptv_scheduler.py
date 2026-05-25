@@ -31,11 +31,10 @@ from utils.iptv_utils import (
 )
 from utils.iptv_checker import IPTVChecker
 from utils.cache_manager import get_cache_manager
-from utils.iptv_config import get_input_file_path, IPTVConfig, ErrorPatterns
+from utils.iptv_config import get_input_file_path, IPTV_CONFIG, get_output_dir
 
 logger = get_logger('IPTV')
 _iptv_checker = IPTVChecker()
-_config = IPTVConfig.build()
 
 
 def get_optimal_workers() -> int:
@@ -60,7 +59,7 @@ def get_optimal_workers() -> int:
         workers = base_workers
         logger.info(f"系统中等负载 (CPU:{cpu_percent}%, MEM:{memory_percent}%)，使用基础并发数 {workers}")
     else:
-        workers = min(_config.MAX_WORKERS, int(base_workers * 1.5))
+        workers = min(IPTV_CONFIG.MAX_WORKERS, int(base_workers * 1.5))
         logger.info(f"系统低负载 (CPU:{cpu_percent}%, MEM:{memory_percent}%)，提高并发数到 {workers}")
     
     return workers
@@ -192,8 +191,8 @@ def _fetch_and_check_channels(urls: List[str], limit: Optional[int] = None) -> s
     logger.info(f"[检测策略] 开始检测 {len(all_channels)} 个频道的可用性...")
     
     total_count = len(all_channels)
-    batches = [all_channels[i:i+_config.BATCH_SIZE] for i in range(0, total_count, _config.BATCH_SIZE)]
-    logger.info(f"[检测策略] 共分为 {len(batches)} 批处理，每批最多 {_config.BATCH_SIZE} 个频道")
+    batches = [all_channels[i:i+IPTV_CONFIG.BATCH_SIZE] for i in range(0, total_count, IPTV_CONFIG.BATCH_SIZE)]
+    logger.info(f"[检测策略] 共分为 {len(batches)} 批处理，每批最多 {IPTV_CONFIG.BATCH_SIZE} 个频道")
     
     valid_channels = []
     checked_count = 0
