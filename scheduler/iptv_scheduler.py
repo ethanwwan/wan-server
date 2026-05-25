@@ -37,15 +37,21 @@ logger = get_logger('IPTV')
 _iptv_checker = IPTVChecker()
 
 
-def get_optimal_workers() -> int:
+def get_optimal_workers(default_workers: int = None) -> int:
     """
     动态并发控制（基于系统负载）
     
-    根据当前系统负载动态计算最优并发数，避免资源耗尽
+    如果指定了 default_workers，则直接返回该值
+    
+    Args:
+        default_workers: 指定的并发数，如果为 None 则根据系统负载动态计算
     
     Returns:
         int: 最优并发数
     """
+    if default_workers is not None:
+        return default_workers
+    
     cpu_count = os.cpu_count() or 2
     cpu_percent = psutil.cpu_percent()
     memory_percent = psutil.virtual_memory().percent
