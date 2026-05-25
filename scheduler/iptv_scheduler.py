@@ -19,6 +19,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, project_root)
 
+from config import CONFIG
 from utils.logger import get_logger
 from utils.iptv_utils import (
     fetch_url,
@@ -31,8 +32,6 @@ from utils.iptv_utils import (
 from utils.iptv_checker import IPTVChecker
 from utils.cache_manager import get_cache_manager
 from utils.iptv_config import get_input_file_path, IPTV_CONFIG, get_output_dir
-
-OTT_URL = "https://live.ottiptv.cc/iptv.m3u?userid=7755950497&sign=b7578005974939b989b3895b921110bcb06c83ed6f42b7139ba8b94c719484c980303585b7a1ffcc75c631fb0e9e8cd3983d6dc87447c558c9dc7770f76795671c177a0ad46048&auth_token=17b0d6712a2beb7e9bfea802dc9d33a3"
 
 logger = get_logger('IPTV')
 _iptv_checker = IPTVChecker()
@@ -284,7 +283,7 @@ def _fetch_and_check_channels(urls: List[str], limit: Optional[int] = None) -> s
 
 def fetch_ott() -> bool:
     """获取 OTT 播放列表"""
-    return _fetch_and_save("OTT", OTT_URL, 'ott.m3u')
+    return _fetch_and_save("OTT", CONFIG.iptv.ott_url, 'ott.m3u')
 
 
 def fetch_playlist(limit: Optional[int] = None) -> bool:

@@ -56,4 +56,3 @@ Dockerfile.local
 !output/iptv/cache/*
 
 test/
-input/config.yaml
