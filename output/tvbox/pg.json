@@ -2,11 +2,11 @@
   "spider": "https://www.252035.xyz/p/pg.jar",
   "sites": [
     {
-      "key": "Nostr测试",
-      "name": "Nostr推荐测试",
+      "key": "Nostr",
+      "name": "Nostr推荐",
       "type": 3,
       "api": "csp_Nostr",
-      "homePage": "https://www.252035.xyz/xs/tvbox/test.html"
+      "homePage": "https://www.252035.xyz/xs/tvbox/nostr.html"
     },
     {
       "key": "豆瓣",

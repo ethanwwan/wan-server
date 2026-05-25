@@ -80,7 +80,7 @@
       "key": "douban",
       "name": "豆瓣",
       "type": 3,
-      "api": "https://pan.uvqzu.cn/f/Q53IP/%E8%B1%86%E7%93%A3.js",
+      "api": "https://meow.668yun.top/api/s/MMpQwoycF4anEkz5K1ZfMO0mqIDjObj5/豆瓣.js",
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1
@@ -114,18 +114,6 @@
       "api": "csp_SecureDanmu",
       "jar": "https://wp.kayyw.com/f/mLbwU9/danmu.jar",
       "index": 1
-    },
-    {
-      "name": "闪退的话，请不要把这个设为首页！",
-      "key": "GoConfig",
-      "type": 3,
-      "api": "csp_GoConfigAmns",
-      "jar": "https://wp.kayyw.com/f/anbbuj/%E5%97%B7%E5%91%9C%E5%BC%B9%E5%B9%95.jar",
-      "indexs": 1,
-      "searchable": 0,
-      "filterable": 0,
-      "quickSearch": 0,
-      "changeable": 0
     },
     {
       "key": "wogg",
@@ -440,7 +428,7 @@
       "key": "金牌123",
       "name": "🥇金牌｜影视",
       "type": 3,
-      "api": "https://cdn.jsdmirror.com/gh/ouhaibo1980/tvbox@main/js/金牌影院.js"
+      "api": "https://fastlink.cokey.xyz/f/AGJeHm/%E9%87%91%E7%89%8C%E5%BD%B1%E9%99%A2.js"
     },
     {
       "key": "移动",
@@ -619,28 +607,13 @@
       }
     },
     {
-      "key": "嘶哩嘶哩",
-      "name": "嘶哩动漫",
-      "type": 3,
-      "style": {
-        "type": "rect",
-        "ratio": 1.485
-      },
-      "api": "https://gitee.com/cpu-iy/lib/raw/master/lib/skapp.py",
-      "ext": {
-        "host": "https://silisili-1251358327.cos.ap-shanghai.myqcloud.com/skapp/api.txt",
-        "key": "ygcnbcznazmyrbdn",
-        "iv": "6571230062143708"
-      }
-    },
-    {
       "key": "布卡",
       "name": "🧿布卡｜影视",
       "type": 3,
       "api": "csp_XBPQ",
-      "jar": "https://wp.kayyw.com/f/EbEgf0/ok%E4%BA%86.jar",
+      "jar": "https://wp.kayyw.com/f/bobgtv/%E5%B0%B1%E5%87%A0%E4%B8%AA.jar",
       "ext": {
-        "副标题": "334",
+        "副标题": "保护正版，人人有责",
         "请求头": "User-Agent$MOBILE_UA",
         "编码": "UTF-8",
         "分类url": "https://m.ycblcw.com/;;!H"
@@ -651,47 +624,29 @@
       "name": "🧿农民｜影视",
       "type": 3,
       "api": "csp_XBPQ",
-      "jar": "https://wp.kayyw.com/f/EbEgf0/ok%E4%BA%86.jar",
+      "jar": "https://wp.kayyw.com/f/bobgtv/%E5%B0%B1%E5%87%A0%E4%B8%AA.jar",
       "ext": {
-        "副标题": "334",
+        "副标题": "保护正版，人人有责",
         "请求头": "User-Agent$MOBILE_UA",
         "编码": "UTF-8",
         "分类url": "https://vip.wwgz.cn:5200/;;!H"
       }
     },
     {
-      "key": "韩",
-      "name": "🧿韩｜影视",
+      "key": "枫叶电影",
+      "name": "枫叶电影",
       "type": 3,
       "api": "csp_XBPQ",
-      "jar": "https://wp.kayyw.com/f/EbEgf0/ok%E4%BA%86.jar",
-      "ext": "https://cdn.jsdmirror.com/gh/ouhaibo1980/tvbox@main/XBPQ/韩剧看看.json"
-    },
-    {
-      "key": "全看",
-      "name": "🧿全看｜影视",
-      "type": 3,
-      "api": "csp_XBPQ",
-      "jar": "https://wp.kayyw.com/f/EbEgf0/ok%E4%BA%86.jar",
+      "jar": "https://wp.kayyw.com/f/bobgtv/%E5%B0%B1%E5%87%A0%E4%B8%AA.jar",
       "ext": {
+        "副标题": "保护正版，人人有责",
         "请求头": "User-Agent$MOBILE_UA",
         "编码": "UTF-8",
-        "分类url": "https://www.qkwaa.com//;;!H"
-      }
-    },
-    {
-      "key": "xiaos",
-      "name": "📚小说",
-      "type": 3,
-      "api": "csp_ProxySpider",
-      "jar": "https://cdn.phototourl.com/free/2026-05-18-b4303542-f08d-40c7-be7c-ae242bc145a3.png",
-      "ext": {
-        "class": "LegadoSpider",
-        "ext": "https://cdn.phototourl.com/free/2026-05-18-461e7bb3-ee17-4d3c-beb2-7581a964a3af.png"
-      },
-      "style": {
-        "type": "rect",
-        "ratio": 1.33
+        "主页url": "https://www.budaichuchen.net/label/qq.html",
+        "线路数组": "<i class=\"fa ds-dianying\">&&</span>",
+        "播放数组": "anthology-list-play size\">&&</ul>",
+        "分类url": "https://www.budaichuchen.net/cupfox-list/{cateId}-{area}--{class}-----{catePg}---{year}.html",
+        "分类": "短剧$5#电视剧$2#电影$1#动漫$4#综艺$3"
       }
     },
     {
@@ -844,26 +799,6 @@
       "playerType": 2
     },
     {
-      "key": "裤佬甜圈短剧",
-      "name": "👖裤佬丨甜圈丨短剧",
-      "type": 3,
-      "api": "https://mpimg.cn/down.php/f194c10e99e326d8904914219b7ebc52.py",
-      "searchable": 1,
-      "changeable": 1,
-      "quickSearch": 1,
-      "filterable": 1
-    },
-    {
-      "key": "裤佬剧王短剧",
-      "name": "👖裤佬丨剧王丨短剧",
-      "type": 3,
-      "api": "https://mpimg.cn/down.php/b9c6c381312dcd5b510ac3e6bb49aa0f.py",
-      "searchable": 1,
-      "changeable": 1,
-      "quickSearch": 1,
-      "filterable": 1
-    },
-    {
       "key": "裤佬七星短剧",
       "name": "👖裤佬丨七星丨短剧",
       "type": 3,
@@ -872,6 +807,69 @@
       "changeable": 1,
       "quickSearch": 1,
       "filterable": 1
+    },
+    {
+      "key": "裤佬博看听书",
+      "name": "👖裤佬丨博看丨听书",
+      "type": 3,
+      "api": "https://play.iptv365.org/%E5%A4%A9%E5%A4%A9%E5%BC%80%E5%BF%83/api/drpy2.min.js",
+      "changeable": 0,
+      "style": {
+        "type": "rect",
+        "ratio": 1
+      },
+      "ext": "https://play.iptv365.org/%E5%A4%A9%E5%A4%A9%E5%BC%80%E5%BF%83/js/博看听书.js"
+    },
+    {
+      "key": "wsycj",
+      "name": "👖裤佬丨采集",
+      "type": 1,
+      "api": "https://api.wsyzy.net/api.php/provide/vod",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "categories": [
+        "4K电影",
+        "Netflix电影",
+        "Netflix自制剧",
+        "邵氏电影",
+        "演唱会",
+        "动作片",
+        "喜剧片",
+        "爱情片",
+        "科幻片",
+        "恐怖片",
+        "剧情片",
+        "战争片",
+        "记录片",
+        "动画片",
+        "国产剧",
+        "欧美剧",
+        "韩剧",
+        "日剧",
+        "港剧",
+        "台剧",
+        "泰剧",
+        "海外剧",
+        "大陆综艺",
+        "日韩综艺",
+        "港台综艺",
+        "欧美综艺",
+        "国产动漫",
+        "日韩动漫",
+        "欧美动漫",
+        "港台动漫",
+        "海外动漫",
+        "有声动漫",
+        "女频恋爱",
+        "反转爽剧",
+        "古装仙侠",
+        "年代穿越",
+        "脑洞悬疑",
+        "现代都市",
+        "擦边短剧",
+        "漫剧"
+      ]
     },
     {
       "key": "采集机器人",

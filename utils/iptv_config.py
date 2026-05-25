@@ -14,7 +14,7 @@ class IPTVConfig:
     """IPTV 检测核心配置"""
     
     # 并发配置
-    DEFAULT_WORKERS: int = 10
+    DEFAULT_WORKERS: int = 30
     MAX_WORKERS: int = 100
     BATCH_SIZE: int = 300
     

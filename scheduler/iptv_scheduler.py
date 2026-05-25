@@ -37,7 +37,7 @@ logger = get_logger('IPTV')
 _iptv_checker = IPTVChecker()
 
 
-def get_optimal_workers(default_workers: int = None) -> int:
+def get_optimal_workers(default_workers: int = IPTV_CONFIG.DEFAULT_WORKERS) -> int:
     """
     动态并发控制（基于系统负载）
     
