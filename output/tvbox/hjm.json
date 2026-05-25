@@ -1223,30 +1223,6 @@
       "playable": 1
     },
     {
-      "key": "兔子",
-      "name": "🐇┃兔子┃APP",
-      "type": 3,
-      "jar": "https://wp.kayyw.com/f/EQ4Mu0/mao.jar",
-      "api": "csp_AppGet",
-      "ext": "https://dyyztvappapigoodgx.68.gy:12689/ciwk28vu38io8/apiurl.txt|dyyztvapiappyyds"
-    },
-    {
-      "key": "黑猫",
-      "name": "🐼┃黑猫┃APP",
-      "type": 3,
-      "jar": "https://wp.kayyw.com/f/EQ4Mu0/mao.jar",
-      "api": "csp_AppGet",
-      "ext": "http://app1-0-0.87333.cc|VwsHxkCViDXEExWa"
-    },
-    {
-      "key": "肥猫",
-      "name": "🐼┃肥猫┃APP",
-      "type": 3,
-      "jar": "https://wp.kayyw.com/f/EQ4Mu0/mao.jar",
-      "api": "csp_AppGet",
-      "ext": "https://wsapi.dafenqi.mom/yuming.txt|bH5mI8iK0tK7aQ5x"
-    },
-    {
       "key": "肥猫的",
       "name": "🥇️金牌┃影视",
       "type": 3,
@@ -1303,13 +1279,6 @@
         "日韩综艺",
         "欧美综艺"
       ]
-    },
-    {
-      "key": "csp_AppJg",
-      "name": "🍧┃坚果┃APP",
-      "jar": "https://wp.kayyw.com/f/EQ4Mu0/mao.jar",
-      "type": 3,
-      "api": "csp_AppJg"
     },
     {
       "key": "星芽短剧",
