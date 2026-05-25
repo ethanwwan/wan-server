@@ -97,7 +97,7 @@ class IPTVConfig:
 class ErrorPatterns:
     """错误模式定义（集中管理）"""
     
-    # 临时性错误（需要重试）- 只有这两种需要重试
+    # 临时性错误（不需要重试，统一视为不稳定频道）
     TEMPORARY_ERRORS: Tuple[str, ...] = (
         'http_timeout',
         'ffmpeg_timeout'

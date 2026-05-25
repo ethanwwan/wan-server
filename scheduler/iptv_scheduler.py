@@ -101,71 +101,33 @@ def _fetch_and_save(name: str, url: str, filename: str) -> bool:
     return False
 
 
-def _is_temporary_error(error: str) -> bool:
-    """判断是否为临时性错误（需要重试）"""
-    error_patterns = ErrorPatterns()
-    return any(pattern in error.lower() for pattern in error_patterns.TEMPORARY_ERRORS)
-
-
-def _check_single_channel_with_retry(channel: Dict, max_retries: int = _config.MAX_RETRIES) -> Tuple[Dict, Dict, int, bool]:
+def _check_single_channel(channel: Dict) -> Tuple[Dict, Dict]:
     """
-    检测频道可用性（支持指数退避重试）
+    检测频道可用性（无重试机制，失败即加入缓存）
     
     Args:
         channel: 频道信息
-        max_retries: 最大重试次数
     
     Returns:
-        Tuple[Dict, Dict, int, bool]: (channel, result, retry_count, success_after_retry)
+        Tuple[Dict, Dict]: (channel, result)
     """
-    import time
-    
     url = channel.get('url', '')
     name = channel.get('channel_name', '')
-    retry_count = 0
-    success_after_retry = False
-    last_error = 'unknown'
     
-    for attempt in range(max_retries + 1):
-        try:
-            result = _iptv_checker.check(url)
-            
-            if result.get('available'):
-                if attempt > 0:
-                    success_after_retry = True
-                    logger.info(f"[重试策略] 重试成功: {name} (第 {attempt + 1} 次尝试) - 上次失败原因: {last_error}")
-                return (channel, result, retry_count, success_after_retry)
-            
+    try:
+        result = _iptv_checker.check(url)
+        if not result.get('available'):
             error = result.get('error', 'unknown')
-            last_error = error
-            
-            if attempt < max_retries and _is_temporary_error(error):
-                wait_time = (2 ** attempt) * _config.RETRY_TIMEOUT_BASE
-                retry_count += 1
-                logger.debug(f"[重试策略] 第 {attempt + 1} 次检测失败 ({error})，等待 {wait_time:.1f}秒后重试: {name}")
-                time.sleep(wait_time)
-                continue
-            
             logger.debug(f"[检测策略] 检测失败: {name} - 错误类型: {error}")
-            return (channel, result, retry_count, success_after_retry)
-            
-        except Exception as e:
-            error_type = type(e).__name__
-            error_key = f"exception_{error_type}"
-            last_error = error_key
-            
-            if attempt < max_retries:
-                wait_time = (2 ** attempt) * _config.RETRY_TIMEOUT_BASE
-                retry_count += 1
-                logger.debug(f"[重试策略] 第 {attempt + 1} 次异常 ({error_key})，等待 {wait_time:.1f}秒后重试: {name}")
-                time.sleep(wait_time)
-                continue
-            
-            logger.debug(f"[检测策略] 检测异常: {name} - 异常类型: {error_key}")
-            return (channel, {'available': False, 'fluent': False, 'error': error_key}, retry_count, success_after_retry)
+        return (channel, result)
+    except Exception as e:
+        error_type = type(e).__name__
+        error_key = f"exception_{error_type}"
+        logger.debug(f"[检测策略] 检测异常: {name} - 异常类型: {error_key}")
+        return (channel, {'available': False, 'fluent': False, 'error': error_key})
 
 
-def _generate_report(total_count: int, valid_count: int, failed_count: int, retry_count: int, success_after_retry: int, total_time: float):
+def _generate_report(total_count: int, valid_count: int, failed_count: int, total_time: float):
     """
     生成检测统计报告
     
@@ -173,12 +135,9 @@ def _generate_report(total_count: int, valid_count: int, failed_count: int, retr
         total_count: 总检测频道数
         valid_count: 可用频道数
         failed_count: 失败频道数
-        retry_count: 重试次数
-        success_after_retry: 重试成功次数
         total_time: 总耗时（秒）
     """
     success_rate = (valid_count / total_count) * 100 if total_count > 0 else 0
-    retry_success_rate = (success_after_retry / retry_count) * 100 if retry_count > 0 else 0
     
     minutes = int(total_time // 60)
     seconds = int(total_time % 60)
@@ -195,19 +154,13 @@ def _generate_report(total_count: int, valid_count: int, failed_count: int, retr
 ║   失败频道:   {failed_count:>6d} 个                                       ║
 ║   成功率:     {success_rate:>6.2f}%                                     ║
 ╠══════════════════════════════════════════════════════════════════════════╣
-║ 【重试统计】                                                             ║
-║   重试次数:   {retry_count:>6d} 次                                       ║
-║   重试成功:   {success_after_retry:>6d} 次                               ║
-║   重试成功率: {retry_success_rate:>6.2f}%                                 ║
-╠══════════════════════════════════════════════════════════════════════════╣
 ║ 【性能统计】                                                             ║
 ║   总耗时:     {minutes:>3d}分{seconds:>2d}秒                            ║
 ║   平均耗时:   {(total_time / total_count):>6.2f}秒/频道                  ║
 ╠══════════════════════════════════════════════════════════════════════════╣
 ║ 【策略执行】                                                             ║
 ║   ✓ 缓存策略: 单例模式 + 批量更新                                         ║
-║   ✓ 重试策略: 指数退避 (最多{_config.MAX_RETRIES}次重试)                    ║
-║   ✓ 检测策略: 动态并发控制                                               ║
+║   ✓ 检测策略: 动态并发控制，无重试机制                                     ║
 ╚══════════════════════════════════════════════════════════════════════════╝
 """
     
@@ -245,10 +198,7 @@ def _fetch_and_check_channels(urls: List[str], limit: Optional[int] = None) -> s
     valid_channels = []
     checked_count = 0
     failed_count = 0
-    retry_count = 0
-    success_after_retry = 0
     start_time = datetime.now()
-    alpha = 0.1
     avg_time_per_channel = 0.0
     
     success_urls_batch = []
@@ -260,14 +210,10 @@ def _fetch_and_check_channels(urls: List[str], limit: Optional[int] = None) -> s
         logger.info(f"[检测策略] 正在处理第 {batch_idx}/{len(batches)} 批，共 {len(batch)} 个频道，并发数: {current_workers}")
         
         with ThreadPoolExecutor(max_workers=current_workers) as executor:
-            future_to_channel = {executor.submit(_check_single_channel_with_retry, ch): ch for ch in batch}
+            future_to_channel = {executor.submit(_check_single_channel, ch): ch for ch in batch}
             
             for future in as_completed(future_to_channel):
-                channel, result, retry_cnt, success_retry = future.result()
-                
-                retry_count += retry_cnt
-                if success_retry:
-                    success_after_retry += 1
+                channel, result = future.result()
                 
                 if result.get('available'):
                     valid_channels.append(channel)
@@ -283,7 +229,7 @@ def _fetch_and_check_channels(urls: List[str], limit: Optional[int] = None) -> s
                     avg_time_per_channel = current_elapsed
                 else:
                     instant_time = current_elapsed / checked_count
-                    avg_time_per_channel = alpha * instant_time + (1 - alpha) * avg_time_per_channel
+                    avg_time_per_channel = 0.1 * instant_time + 0.9 * avg_time_per_channel
                 
                 if checked_count % 500 == 0 or checked_count == total_count:
                     progress = checked_count / total_count * 100
@@ -321,13 +267,13 @@ def _fetch_and_check_channels(urls: List[str], limit: Optional[int] = None) -> s
     seconds = int(total_time % 60)
     time_str = f"{minutes}分{seconds}秒"
     
-    logger.info(f"[检测策略] 检测完成，可用频道: {len(valid_channels)}/{total_count}，失败: {failed_count}，重试次数: {retry_count}，重试成功: {success_after_retry}，总耗时: {time_str}")
+    logger.info(f"[检测策略] 检测完成，可用频道: {len(valid_channels)}/{total_count}，失败: {failed_count}，总耗时: {time_str}")
     
     # 保存缓存到磁盘
     cache_manager.save_to_disk()
     
     # 生成统计报告
-    _generate_report(total_count, len(valid_channels), failed_count, retry_count, success_after_retry, total_time)
+    _generate_report(total_count, len(valid_channels), failed_count, total_time)
     
     return build_m3u(valid_channels)
 
