@@ -100,11 +100,14 @@ class ErrorPatterns:
     # 临时性错误（需要重试）
     TEMPORARY_ERRORS: Tuple[str, ...] = (
         'http_timeout',
-        'connection_error',
-        'connection_timeout',
-        'connection_refused',
-        'connection_reset',
+        'http_connection_error',
+        'http_connection_timeout',
+        'http_connection_refused',
+        'http_connection_reset',
         'ffmpeg_timeout',
+        'ffmpeg_connection_refused',
+        'ffmpeg_connection_reset',
+        'ffmpeg_connection_timeout',
         'network_error',
         'reset_by_peer',
         'http_error',

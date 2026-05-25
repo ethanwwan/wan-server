@@ -289,16 +289,16 @@ class IPTVChecker:
             # 超时：记录具体错误
             return {'available': False, 'error': 'http_timeout'}
         except requests.exceptions.ConnectionError:
-            return {'available': False, 'error': 'connection_error'}
+            return {'available': False, 'error': 'http_connection_error'}
         except requests.exceptions.TooManyRedirects:
             # 重定向过多
-            return {'available': False, 'error': 'too_many_redirects'}
+            return {'available': False, 'error': 'http_too_many_redirects'}
         except requests.exceptions.RequestException as e:
             # 其他请求异常
-            return {'available': False, 'error': f'request_error_{str(e)[:30]}'}
+            return {'available': False, 'error': f'http_request_error_{str(e)[:30]}'}
         except Exception as e:
             # 未知异常
-            return {'available': False, 'error': f'unknown_error_{str(e)[:30]}'}
+            return {'available': False, 'error': f'http_unknown_error_{str(e)[:30]}'}
 
 
     def _stream_availability_check(self, url: str) -> dict:
