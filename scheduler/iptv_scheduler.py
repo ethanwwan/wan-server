@@ -65,9 +65,7 @@ def get_optimal_workers() -> int:
     return workers
 
 
-def get_current_workers() -> int:
-    """获取当前推荐的并发数（动态）"""
-    return get_optimal_workers()
+
 
 
 def _fetch_and_save(name: str, url: str, filename: str) -> bool:
@@ -173,7 +171,7 @@ def _fetch_and_check_channels(urls: List[str], limit: Optional[int] = None) -> s
     """
     从 URL 列表获取并检查频道可用性
     """
-    current_workers = get_current_workers()
+    current_workers = get_optimal_workers()
     logger.info(f"[检测策略] 初始并发数: {current_workers}")
     
     # 周日清空缓存
@@ -205,7 +203,7 @@ def _fetch_and_check_channels(urls: List[str], limit: Optional[int] = None) -> s
     cache_manager = get_cache_manager()
     
     for batch_idx, batch in enumerate(batches, 1):
-        current_workers = get_current_workers()
+        current_workers = get_optimal_workers()
         logger.info(f"[检测策略] 正在处理第 {batch_idx}/{len(batches)} 批，共 {len(batch)} 个频道，并发数: {current_workers}")
         
         with ThreadPoolExecutor(max_workers=current_workers) as executor:
