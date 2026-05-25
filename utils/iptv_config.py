@@ -19,8 +19,8 @@ class IPTVConfig:
     BATCH_SIZE: int = 300
     
     # 超时配置
-    HTTP_TIMEOUT: int = 20
-    FFMPEG_TIMEOUT: int = 5
+    HTTP_TIMEOUT: int = 8      # HTTP 请求超时（基础检测）
+    FFMPEG_TIMEOUT: int = 15   # FFmpeg 检测超时（流畅度检测）
     RETRY_TIMEOUT_BASE: float = 0.1
     
     # 缓存配置

@@ -15,6 +15,8 @@ from dataclasses import dataclass
 from typing import Optional
 import multiprocessing
 
+from .iptv_config import IPTV_CONFIG
+
 # 全局配置：优化网络和子进程参数
 socket.setdefaulttimeout(5)  # 全局 socket 超时
 requests.packages.urllib3.disable_warnings()  # 禁用 SSL 警告
@@ -46,8 +48,8 @@ class IPTVChecker:
         user_agent: str = "okHttp/Mod-1.5.0.0",
         fps_min: int = 20,
         bitrate_min: int = 1000,
-        timeout_basic: int = 8,
-        timeout_fluent: int = 15,
+        timeout_basic: int = IPTV_CONFIG.HTTP_TIMEOUT,
+        timeout_fluent: int = IPTV_CONFIG.FFMPEG_TIMEOUT,
         max_workers: int = None
     ):
         """
