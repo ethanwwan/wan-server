@@ -220,7 +220,7 @@ def _fetch_and_check_channels(urls: List[str], limit: Optional[int] = None) -> s
                     success_urls_batch.append(channel.get('url', ''))
                 else:
                     failed_count += 1
-                    failed_urls_batch.append((channel.get('url', ''), result.get('error', 'unknown')))
+                    failed_urls_batch.append(channel.get('url', ''))
                 
                 checked_count += 1
                 

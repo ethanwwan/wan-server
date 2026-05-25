@@ -241,7 +241,6 @@ def filter_channels(channels: List[Dict]) -> List[Dict]:
     skipped_cache = 0
     
     cache_manager = get_cache_manager()
-    fail_cache = cache_manager.get_cache()
     
     for ch in channels:
         url = ch.get('url', '')
@@ -258,9 +257,9 @@ def filter_channels(channels: List[Dict]) -> List[Dict]:
         seen_urls.add(url)
         
         # 3. 历史失败记录过滤
-        if url in fail_cache and not cache_manager.is_expired(url):
+        if cache_manager.is_in_cache(url):
             skipped_cache += 1
-            logger.debug(f"跳过历史失败 URL: {url} (失败次数: {fail_cache[url].get('fail_count', 0)})")
+            logger.debug(f"跳过历史失败 URL: {url}")
             continue
         
         filtered.append(ch)

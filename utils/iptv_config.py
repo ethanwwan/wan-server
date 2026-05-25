@@ -21,19 +21,10 @@ class IPTVConfig:
     # 超时配置
     HTTP_TIMEOUT: int = 8      # HTTP 请求超时（基础检测）
     FFMPEG_TIMEOUT: int = 15   # FFmpeg 检测超时（流畅度检测）
-    RETRY_TIMEOUT_BASE: float = 0.1
-    
-    # 缓存配置
-    CACHE_EXPIRE_PERMANENT: int = 24 * 3600  # 确定性错误缓存 24 小时
-    CACHE_EXPIRE_TEMPORARY: int = 3600        # 临时性错误缓存 1 小时
-    CACHE_MAX_AGE: int = 7 * 24 * 3600        # 缓存最大保留时间 7 天
     
     # 视频质量配置
     MIN_FPS: int = 20
     MIN_BITRATE: int = 1000  # kbps
-    
-    # 重试配置
-    MAX_RETRIES: int = 2
     
     # 分类配置
     GROUP_MAPPING: Dict[str, List[str]] = None
@@ -91,42 +82,6 @@ class IPTVConfig:
                 'iPanda': ['ipanda']
             }
         )
-
-
-@dataclass(frozen=True)
-class ErrorPatterns:
-    """错误模式定义（集中管理）"""
-    
-    # 临时性错误（不需要重试，统一视为不稳定频道）
-    TEMPORARY_ERRORS: Tuple[str, ...] = (
-        'http_timeout',
-        'ffmpeg_timeout'
-    )
-    
-    # 确定性错误（不需要重试）- 其他所有错误都是确定性错误
-    PERMANENT_ERRORS: Tuple[str, ...] = (
-        'invalid_url',
-        'status_404',
-        'status_403',
-        'http_connection_error',
-        'http_too_many_redirects',
-        'http_request_error_',
-        'http_unknown_error_',
-        'ffmpeg_error_not_found_404',
-        'ffmpeg_error_forbidden_403',
-        'ffmpeg_error_file_not_found',
-        'ffmpeg_error_protocol_not_found',
-        'ffmpeg_error_connection_refused',
-        'ffmpeg_error_connection_reset',
-        'ffmpeg_error_connection_timeout',
-        '_404',
-        '_403',
-        '_not_found',
-        '_protocol_not_found',
-        '_connection_refused',
-        '_connection_reset',
-        '_connection_timeout'
-    )
 
 
 def get_project_root() -> str:
