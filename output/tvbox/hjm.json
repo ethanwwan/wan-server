@@ -1,5 +1,5 @@
 {
-  "spider": "https://mpimg.cn/down.php/7ec4dff4ed481b2c65a02b260a59dd55.jar",
+  "spider": "https://mpimg.cn/down.php/b0af7220b6c2c3aa224c848a90c8b584.jar",
   "logo": "https://fanqienovel.com/page/7621843563495558206",
   "lives": [
     {
@@ -116,130 +116,20 @@
       "index": 1
     },
     {
-      "key": "wogg",
-      "name": "♨️​玩偶|网盘",
-      "type": 4,
-      "api": "https://lucky.1993183.xyz:1111/video/wogg",
+      "key": "GIMI",
+      "name": "剧迷",
+      "type": 3,
+      "api": "https://pan.szfx.top/down.php/a0aba0b564b9d8115d18e78395f3091b.py",
       "searchable": 1,
       "quickSearch": 1,
-      "changeable": 0,
-      "header": {
-        "token": "JT"
-      }
-    },
-    {
-      "key": "labi",
-      "name": "♨️​蜡笔|网盘",
-      "type": 4,
-      "api": "https://lucky.1993183.xyz:1111/video/labi",
-      "searchable": 1,
-      "quickSearch": 1,
-      "changeable": 0,
-      "header": {
-        "token": "JT"
-      }
-    },
-    {
-      "key": "mihdr",
-      "name": "♨️​至臻|网盘",
-      "type": 4,
-      "api": "https://lucky.1993183.xyz:1111/video/mihdr",
-      "searchable": 1,
-      "quickSearch": 1,
-      "changeable": 0,
-      "header": {
-        "token": "JT"
-      }
-    },
-    {
-      "key": "erxiao",
-      "name": "♨️​二小|网盘",
-      "type": 4,
-      "api": "https://lucky.1993183.xyz:1111/video/erxiao",
-      "searchable": 1,
-      "quickSearch": 1,
-      "changeable": 0,
-      "header": {
-        "token": "JT"
-      }
-    },
-    {
-      "key": "ouge",
-      "name": "♨️​欧歌|网盘",
-      "type": 4,
-      "api": "https://lucky.1993183.xyz:1111/video/ouge",
-      "searchable": 1,
-      "quickSearch": 1,
-      "changeable": 0,
-      "header": {
-        "token": "JT"
-      }
-    },
-    {
-      "key": "sd|网盘",
-      "name": "♨️​闪电|网盘",
-      "type": 4,
-      "api": "https://lucky.1993183.xyz:1111/video/sd|%E7%BD%91%E7%9B%98",
-      "searchable": 1,
-      "quickSearch": 1,
-      "changeable": 0,
-      "header": {
-        "token": "JT"
-      }
-    },
-    {
-      "key": "xiaomi",
-      "name": "♨️​小米|网盘",
-      "type": 4,
-      "api": "https://lucky.1993183.xyz:1111/video/xiaomi",
-      "searchable": 1,
-      "quickSearch": 1,
-      "changeable": 0,
-      "header": {
-        "token": "JT"
-      }
-    },
-    {
-      "key": "star2",
-      "name": "♨️​星剧社",
-      "type": 4,
-      "api": "https://lucky.1993183.xyz:1111/video/star2",
-      "searchable": 1,
-      "quickSearch": 1,
-      "changeable": 0,
-      "header": {
-        "token": "JT"
-      }
-    },
-    {
-      "key": "pansouc",
-      "name": "♨️​盘搜|UC",
-      "type": 4,
-      "api": "https://lucky.1993183.xyz:1111/video/pansouc",
-      "searchable": 1,
-      "quickSearch": 1,
-      "changeable": 0,
-      "header": {
-        "token": "JT"
-      }
-    },
-    {
-      "key": "pansobybaidu",
-      "name": "♨️​盘搜|by百度",
-      "type": 4,
-      "api": "https://lucky.1993183.xyz:1111/video/pansobybaidu",
-      "searchable": 1,
-      "quickSearch": 1,
-      "changeable": 0,
-      "header": {
-        "token": "JT"
-      }
+      "changeable": 1,
+      "filterable": 1
     },
     {
       "key": "布布",
       "name": "🐷布布",
       "type": 3,
-      "api": "https://gitee.com/monosodium-glutamate/wjwj/raw/master/lib/布布.js",
+      "api": "https://pan.szfx.top/down.php/ca1d0aee761c0cf8d47d1fddcddb9a30.py",
       "style": {
         "type": "rect",
         "ratio": 1.33
@@ -902,7 +792,7 @@
       "name": "咕噜映画 | APP",
       "type": 3,
       "changeable": 0,
-      "api": "https://17264.kstore.space/Appfox.min.js",
+      "api": "https://fastlink.cokey.xyz/f/oPJvI9/Appfox.min.js",
       "ext": {
         "host": "http://www.yingsw.top",
         "timeout": 8,
@@ -915,7 +805,7 @@
       "name": "🐮快映",
       "type": 3,
       "changeable": 0,
-      "api": "https://17264.kstore.space/Appfox.min.js",
+      "api": "https://fastlink.cokey.xyz/f/oPJvI9/Appfox.min.js",
       "ext": {
         "host": "https://www.baidukuaiy.top",
         "ver": 3
@@ -2039,6 +1929,11 @@
       "name": "爱家",
       "type": 1,
       "url": "https://api.jxapi.cc/api/?key=9f61f1b9797b7b55e306a68da27359ac&url="
+    },
+    {
+      "name": "YYNB",
+      "type": 1,
+      "url": "https://json.cfysoft.cc/api/?key=6af47759daf81f86dc123f0f519bf73d&url="
     },
     {
       "name": "YYNB解析3",

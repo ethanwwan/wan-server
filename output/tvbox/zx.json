@@ -19,6 +19,20 @@
       }
     },
     {
+      "key": "Nostr",
+      "name": "Nostr推荐",
+      "type": 3,
+      "api": "csp_Nostr",
+      "homePage": "https://www.252035.xyz/xs/tvbox/nostr.html"
+    },
+    {
+      "key": "Nostr测试",
+      "name": "测试",
+      "type": 3,
+      "api": "csp_Nostr",
+      "homePage": "https://www.252035.xyz/xs/tvbox/test.html"
+    },
+    {
       "key": "当前版本",
       "name": "真心20260425-1增量包.zip",
       "zip": "https://raw.yzuu.cf/fish2018/ZX/main/真心20260425-1增量包.zip",
@@ -29,21 +43,6 @@
       "ext": {
         "siteUrl": "https://tgsou.252035.xyz",
         "channelUsername": "tgsearchers3",
-        "commonConfig": "https://cnb.cool/fish2018/zx/-/git/raw/master/json/peizhi.json",
-        "filter": "https://cnb.cool/fish2018/zx/-/git/raw/master/json/douban.json"
-      }
-    },
-    {
-      "key": "p2t",
-      "name": "PanSou",
-      "type": 3,
-      "api": "csp_TgYunDouBanPan",
-      "searchable": 1,
-      "changeable": 0,
-      "ext": {
-        "siteUrl": "https://p2t.252035.xyz",
-        "count": 20,
-        "channelUsername": "",
         "commonConfig": "https://cnb.cool/fish2018/zx/-/git/raw/master/json/peizhi.json",
         "filter": "https://cnb.cool/fish2018/zx/-/git/raw/master/json/douban.json"
       }
