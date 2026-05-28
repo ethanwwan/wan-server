@@ -1298,7 +1298,7 @@
       "host": "www.sharenice.net",
       "rule": [
         "huoshan.com",
-        "/item/video/"
+        "http://rihou.cc:555/item/video/"
       ],
       "filter": []
     },
@@ -1314,7 +1314,7 @@
       "host": "www.sharenice.net",
       "rule": [
         "douyin.com",
-        "/play/"
+        "http://rihou.cc:555/play/"
       ]
     },
     {
@@ -1335,7 +1335,7 @@
       "host": "https://api.live.bilibili.com",
       "rule": [
         "bilivideo.com",
-        "/index.m3u8"
+        "http://rihou.cc:555/index.m3u8"
       ],
       "filter": [
         "data.bilibili.com/log/web",

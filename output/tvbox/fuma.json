@@ -6,21 +6,21 @@
     {
       "name": "驸马影视•直播合集",
       "type": 0,
-      "url": "http://fmys.top/lib/tvlive.txt",
+      "url": "https://www.iyouhun.com/tv/json/lib/tvlive.txt",
       "epg": "http://epg.112114.xyz/?ch={name}&date={date}",
       "logo": "https://epg.112114.xyz/logo/{name}.png"
     },
     {
       "name": "驸马影视•电信专线",
       "type": 0,
-      "url": "http://fmys.top/lib/live.m3u",
+      "url": "https://www.iyouhun.com/tv/json/lib/live.m3u",
       "epg": "http://epg.112114.xyz/?ch={name}&date={date}",
       "logo": "https://epg.112114.xyz/logo/{name}.png"
     },
     {
       "name": "驸马影视•移动专线",
       "type": 0,
-      "url": "http://fmys.top/lib/yidong.m3u",
+      "url": "https://www.iyouhun.com/tv/json/lib/yidong.m3u",
       "epg": "http://epg.112114.xyz/?ch={name}&date={date}",
       "logo": "https://epg.112114.xyz/logo/{name}.png"
     },
@@ -40,7 +40,7 @@
       "api": "csp_Douban",
       "searchable": 0,
       "changeable": 1,
-      "ext": "http://fmys.top/lib/douban.json"
+      "ext": "https://www.iyouhun.com/tv/json/lib/douban.json"
     },
     {
       "key": "网盘配置",
@@ -93,7 +93,7 @@
         "ratio": 1.433
       },
       "ext": {
-        "json": "http://fmys.top/lib/blts.json"
+        "json": "https://www.iyouhun.com/tv/json/lib/blts.json"
       }
     },
     {
@@ -140,7 +140,7 @@
         "ratio": 1.433
       },
       "ext": {
-        "json": "http://fmys.top/lib/bilijihe.json"
+        "json": "https://www.iyouhun.com/tv/json/lib/bilijihe.json"
       }
     },
     {
@@ -258,7 +258,7 @@
       "filterable": 1,
       "ext": {
         "host": "https://qjappcms.cs4k.top",
-        "api": "/api.php/qijiappapi",
+        "api": "https://www.iyouhun.com/api.php/qijiappapi",
         "datakey": "Z98KXaLtO2wC1Pte",
         "dataiv": "Z98KXaLtO2wC1Pte",
         "version": "120"
@@ -477,7 +477,7 @@
       "filterable": 1,
       "ext": {
         "host": "https://qjappcms.ll4k.xyz",
-        "api": "/api.php/qijiappapi",
+        "api": "https://www.iyouhun.com/api.php/qijiappapi",
         "datakey": "1yGA85sJ5STtE7uj",
         "dataiv": "1yGA85sJ5STtE7uj",
         "version": "50000"
@@ -493,7 +493,7 @@
       "filterable": 1,
       "ext": {
         "host": "https://jingyu4k-1312635929.cos.ap-nanjing.myqcloud.com/1.json",
-        "api": "/api.php/qijiappapi",
+        "api": "https://www.iyouhun.com/api.php/qijiappapi",
         "datakey": "AAdgrdghjfgswerA",
         "dataiv": "AAdgrdghjfgswerA"
       }
@@ -561,14 +561,14 @@
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,
-      "jar": "http://fmys.top/lib/XBPQ.jar;md5;423e33ec108c0f7816200cebaf18fb69",
-      "ext": "http://fmys.top/lib/wcys.json"
+      "jar": "https://www.iyouhun.com/tv/json/lib/XBPQ.jar;md5;423e33ec108c0f7816200cebaf18fb69",
+      "ext": "https://www.iyouhun.com/tv/json/lib/wcys.json"
     },
     {
       "key": "py_apple",
       "name": "🍎┃苹果┃影视",
       "type": 3,
-      "api": "http://fmys.top/py/apple.py",
+      "api": "https://www.iyouhun.com/tv/json/py/apple.py",
       "playerType": 1,
       "searchable": 1,
       "quickSearch": 1,
@@ -639,29 +639,29 @@
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,
-      "jar": "http://fmys.top/lib/XBPQ.jar;md5;423e33ec108c0f7816200cebaf18fb69",
-      "ext": "http://fmys.top/lib/hhyy.json"
+      "jar": "https://www.iyouhun.com/tv/json/lib/XBPQ.jar;md5;423e33ec108c0f7816200cebaf18fb69",
+      "ext": "https://www.iyouhun.com/tv/json/lib/hhyy.json"
     },
     {
       "key": "XBPQ_电影先生",
       "name": "📽︎┃电影┃先生",
       "type": 3,
-      "jar": "http://fmys.top/lib/XBPQ.jar;md5;423e33ec108c0f7816200cebaf18fb69",
+      "jar": "https://www.iyouhun.com/tv/json/lib/XBPQ.jar;md5;423e33ec108c0f7816200cebaf18fb69",
       "api": "csp_XBPQ",
       "changeable": 1,
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,
-      "ext": "http://fmys.top/lib/dyxs.json"
+      "ext": "https://www.iyouhun.com/tv/json/lib/dyxs.json"
     },
     {
       "key": "白嫖联盟",
       "name": "🎐┃白嫖┃联盟",
       "type": 3,
-      "api": "http://fmys.top/lib/drpy2.min.js",
+      "api": "https://www.iyouhun.com/tv/json/lib/drpy2.min.js",
       "quickSearch": 1,
       "changeable": 1,
-      "ext": "http://fmys.top/lib/bplm.js"
+      "ext": "https://www.iyouhun.com/tv/json/lib/bplm.js"
     },
     {
       "key": "采集机器人",
@@ -686,12 +686,12 @@
       "key": "饺子影院",
       "name": "🥟┃饺子┃影院",
       "type": 3,
-      "api": "http://fmys.top/lib/drpy2.min.js",
+      "api": "https://www.iyouhun.com/tv/json/lib/drpy2.min.js",
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 1,
       "filterable": 1,
-      "ext": "http://fmys.top/lib/jzyy.js"
+      "ext": "https://www.iyouhun.com/tv/json/lib/jzyy.js"
     },
     {
       "key": "红果短剧",
@@ -706,11 +706,11 @@
       "key": "奇米动漫",
       "name": "🍿┃奇米┃动漫",
       "type": 3,
-      "api": "http://fmys.top/lib/drpy2.min.js",
+      "api": "https://www.iyouhun.com/tv/json/lib/drpy2.min.js",
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 1,
-      "ext": "http://fmys.top/lib/qmdm.js"
+      "ext": "https://www.iyouhun.com/tv/json/lib/qmdm.js"
     },
     {
       "key": "巴士",
@@ -742,21 +742,21 @@
       "key": "csp_huya",
       "name": "🐯┃虎牙┃直播",
       "type": 3,
-      "api": "http://fmys.top/lib/drpy2.min.js",
+      "api": "https://www.iyouhun.com/tv/json/lib/drpy2.min.js",
       "searchable": 0,
       "quickSearch": 0,
       "filterable": 0,
-      "ext": "http://fmys.top/lib/huya.js"
+      "ext": "https://www.iyouhun.com/tv/json/lib/huya.js"
     },
     {
       "key": "csp_douyu",
       "name": "🦈┃斗鱼┃直播",
       "type": 3,
-      "api": "http://fmys.top/lib/drpy2.min.js",
+      "api": "https://www.iyouhun.com/tv/json/lib/drpy2.min.js",
       "searchable": 0,
       "quickSearch": 0,
       "filterable": 0,
-      "ext": "http://fmys.top/lib/douyu.js"
+      "ext": "https://www.iyouhun.com/tv/json/lib/douyu.js"
     },
     {
       "key": "88js",
@@ -784,7 +784,7 @@
       "quickSearch": 0,
       "filterable": 0,
       "ext": {
-        "json": "http://fmys.top/lib/song.json"
+        "json": "https://www.iyouhun.com/tv/json/lib/song.json"
       }
     },
     {
@@ -792,7 +792,7 @@
       "name": "🎸┃酷奇┃MV",
       "type": 3,
       "api": "csp_XBPQ",
-      "jar": "http://fmys.top/lib/XBPQ.jar;md5;423e33ec108c0f7816200cebaf18fb69",
+      "jar": "https://www.iyouhun.com/tv/json/lib/XBPQ.jar;md5;423e33ec108c0f7816200cebaf18fb69",
       "searchable": 0,
       "quickSearch": 0,
       "filterable": 1,
@@ -826,7 +826,7 @@
       "quickSearch": 0,
       "changeable": 0,
       "ext": {
-        "json": "http://fmys.top/lib/mtv.json"
+        "json": "https://www.iyouhun.com/tv/json/lib/mtv.json"
       }
     },
     {
@@ -842,14 +842,14 @@
         "ratio": 1.433
       },
       "ext": {
-        "json": "http://fmys.top/lib/xiqu.json"
+        "json": "https://www.iyouhun.com/tv/json/lib/xiqu.json"
       }
     },
     {
       "key": "哔哩影视",
       "name": "🅱️┃哔哩┃影视",
       "type": 3,
-      "api": "http://fmys.top/lib/drpy2.min.js",
+      "api": "https://www.iyouhun.com/tv/json/lib/drpy2.min.js",
       "searchable": 0,
       "quickSearch": 0,
       "filterable": 0,
@@ -857,13 +857,13 @@
         "type": "rect",
         "ratio": 1.433
       },
-      "ext": "http://fmys.top/lib/blys.js"
+      "ext": "https://www.iyouhun.com/tv/json/lib/blys.js"
     },
     {
       "key": "哔哩影音",
       "name": "🅱️┃哔哩┃影音",
       "type": 3,
-      "api": "http://fmys.top/lib/drpy2.min.js",
+      "api": "https://www.iyouhun.com/tv/json/lib/drpy2.min.js",
       "searchable": 0,
       "quickSearch": 0,
       "filterable": 0,
@@ -871,7 +871,7 @@
         "type": "rect",
         "ratio": 1.433
       },
-      "ext": "http://fmys.top/lib/wdbl.js"
+      "ext": "https://www.iyouhun.com/tv/json/lib/wdbl.js"
     },
     {
       "key": "哔哩健身",
@@ -886,7 +886,7 @@
         "ratio": 1.433
       },
       "ext": {
-        "json": "http://fmys.top/lib/bili.json"
+        "json": "https://www.iyouhun.com/tv/json/lib/bili.json"
       }
     },
     {
@@ -902,7 +902,7 @@
         "ratio": 1.733
       },
       "ext": {
-        "json": "http://fmys.top/lib/bbqx.json"
+        "json": "https://www.iyouhun.com/tv/json/lib/bbqx.json"
       }
     },
     {
@@ -918,7 +918,7 @@
         "ratio": 1.433
       },
       "ext": {
-        "json": "http://fmys.top/lib/yely.json"
+        "json": "https://www.iyouhun.com/tv/json/lib/yely.json"
       }
     },
     {
@@ -934,7 +934,7 @@
         "ratio": 1.433
       },
       "ext": {
-        "json": "http://fmys.top/lib/sejy.json"
+        "json": "https://www.iyouhun.com/tv/json/lib/sejy.json"
       }
     },
     {
@@ -950,7 +950,7 @@
         "ratio": 1.433
       },
       "ext": {
-        "json": "http://fmys.top/lib/xxkt.json"
+        "json": "https://www.iyouhun.com/tv/json/lib/xxkt.json"
       }
     },
     {
@@ -966,7 +966,7 @@
         "ratio": 1.433
       },
       "ext": {
-        "json": "http://fmys.top/lib/czkt.json"
+        "json": "https://www.iyouhun.com/tv/json/lib/czkt.json"
       }
     },
     {
@@ -982,7 +982,7 @@
         "ratio": 1.433
       },
       "ext": {
-        "json": "http://fmys.top/lib/gzkt.json"
+        "json": "https://www.iyouhun.com/tv/json/lib/gzkt.json"
       }
     },
     {
@@ -1413,7 +1413,7 @@
       "host": "www.sharenice.net",
       "rule": [
         "huoshan.com",
-        "/item/video/"
+        "https://www.iyouhun.com/item/video/"
       ],
       "filter": []
     },
@@ -1429,7 +1429,7 @@
       "host": "www.sharenice.net",
       "rule": [
         "douyin.com",
-        "/play/"
+        "https://www.iyouhun.com/play/"
       ]
     },
     {
@@ -1450,7 +1450,7 @@
       "host": "https://api.live.bilibili.com",
       "rule": [
         "bilivideo.com",
-        "/index.m3u8"
+        "https://www.iyouhun.com/index.m3u8"
       ],
       "filter": [
         "data.bilibili.com/log/web",

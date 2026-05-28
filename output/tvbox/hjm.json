@@ -116,6 +116,23 @@
       "index": 1
     },
     {
+      "key": "DouyinLive",
+      "name": "抖音直播",
+      "type": 3,
+      "api": "https://fastlink.cokey.xyz/f/RQv6Uo/%E6%8A%96%E9%9F%B3.py",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "changeable": 0,
+      "playable": 1
+    },
+    {
+      "key": "熊猫",
+      "name": "熊猫",
+      "type": 3,
+      "api": "https://mpimg.cn/down.php/ead143caab5026aba986bd712d556d39.py"
+    },
+    {
       "key": "GIMI",
       "name": "剧迷",
       "type": 3,
@@ -847,16 +864,10 @@
       }
     },
     {
-      "key": "茶杯狐",
-      "name": "🦊茶狐┃",
-      "type": 3,
-      "api": "http://rihou.cc:88/js/茶杯狐.js"
-    },
-    {
       "key": "耐看",
       "name": "👀耐看┃",
       "type": 3,
-      "api": "http://rihou.cc:88/js/耐看.js"
+      "api": "https://mpimg.cn/down.php/64822fa89d2b95024b3d621b379dc166.py"
     },
     {
       "key": "mifun",

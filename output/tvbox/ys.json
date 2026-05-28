@@ -1,5 +1,5 @@
 {
-  "spider": "./config/jar/jar/260225.jar",
+  "spider": "http://ysys.lic10.cn/ys/config/jar/jar/260225.jar",
   "wallpaper": "https://深色壁纸.xxooo.cf/",
   "sites": [
     {
@@ -70,8 +70,8 @@
       "key": "TV121",
       "name": "TV121.js",
       "type": 3,
-      "api": "./config/api/drpy2.min.js",
-      "ext": "./config/js/TV121.js"
+      "api": "https://www.iyouhun.com/tv/json/config/api/drpy2.min.js",
+      "ext": "https://www.iyouhun.com/tv/json/config/js/TV121.js"
     },
     {
       "key": "alllive",
@@ -328,8 +328,8 @@
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 0,
-      "api": "./config/api/drpy2.min.js",
-      "ext": "./config/js/4khdr.js"
+      "api": "https://www.iyouhun.com/tv/json/config/api/drpy2.min.js",
+      "ext": "https://www.iyouhun.com/tv/json/config/js/4khdr.js"
     },
     {
       "key": "新6V",
@@ -383,7 +383,7 @@
         "token": "http://127.0.0.1:9978/file/lxhfans/token.txt+4k|auto|fhd",
         "danmu": true
       },
-      "jar": "./jar/danmu.jar"
+      "jar": "https://www.iyouhun.com/tv/json/jar/danmu.jar"
     },
     {
       "key": "易搜弹幕版",
@@ -397,7 +397,7 @@
         "token": "http://127.0.0.1:9978/file/lxhfans/token.txt+4k|auto|fhd",
         "danmu": true
       },
-      "jar": "./config/jar/danmu.jar"
+      "jar": "https://www.iyouhun.com/tv/json/config/jar/danmu.jar"
     },
     {
       "key": "盘Se弹幕版",
@@ -411,7 +411,7 @@
         "token": "http://127.0.0.1:9978/file/lxhfans/token.txt+4k|auto|fhd",
         "danmu": true
       },
-      "jar": "./config/jar/danmu.jar"
+      "jar": "https://www.iyouhun.com/tv/json/config/jar/danmu.jar"
     },
     {
       "key": "盘搜弹幕版",
@@ -425,7 +425,7 @@
         "token": "http://127.0.0.1:9978/file/lxhfans/token.txt+4k|auto|fhd",
         "danmu": true
       },
-      "jar": "./config/jar/danmu.jar"
+      "jar": "https://www.iyouhun.com/tv/json/config/jar/danmu.jar"
     },
     {
       "key": "csp_XBPQ_6V",
@@ -435,8 +435,8 @@
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,
-      "jar": "./config/jar/vip.jar",
-      "ext": "./h/6Vip.json"
+      "jar": "https://www.iyouhun.com/tv/json/config/jar/vip.jar",
+      "ext": "https://www.iyouhun.com/tv/json/h/6Vip.json"
     },
     {
       "key": "Gitcafe",
@@ -446,7 +446,7 @@
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,
-      "jar": "./config/jar/HeChengChaXiu.jar",
+      "jar": "https://www.iyouhun.com/tv/json/config/jar/HeChengChaXiu.jar",
       "ext": "b4242bebe6f144d3aa6a2cd842ac65aa"
     },
     {
@@ -457,7 +457,7 @@
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 0,
-      "jar": "./config/jar/xry.jar",
+      "jar": "https://www.iyouhun.com/tv/json/config/jar/xry.jar",
       "ext": "http://127.0.0.1:9978/file/lxhfans/token.txt"
     },
     {
@@ -474,39 +474,39 @@
       "key": "drpy_js_网飞.TV",
       "name": "🛜 影视 | 网飞.TV[js]",
       "type": 3,
-      "api": "./config/api/drpy2.min.js",
-      "ext": "./config/js/网飞.TV.js"
+      "api": "https://www.iyouhun.com/tv/json/config/api/drpy2.min.js",
+      "ext": "https://www.iyouhun.com/tv/json/config/js/网飞.TV.js"
     },
     {
       "key": "mf",
       "name": "🦆┃耐菲┃影视",
       "type": 3,
-      "api": "./config/api/drpy2.min.js",
+      "api": "https://www.iyouhun.com/tv/json/config/api/drpy2.min.js",
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,
-      "ext": "./config/js/鸭奈飞.js"
+      "ext": "https://www.iyouhun.com/tv/json/config/js/鸭奈飞.js"
     },
     {
       "key": "drpy_js_奈飞中文",
       "name": "影视 | 奈飞中文[js]",
       "type": 3,
-      "api": "./config/api/drpy2.min.js",
-      "ext": "./config/js/奈飞中文.js"
+      "api": "https://www.iyouhun.com/tv/json/config/api/drpy2.min.js",
+      "ext": "https://www.iyouhun.com/tv/json/config/js/奈飞中文.js"
     },
     {
       "key": "drpy_js_奈飞狗[V2]",
       "name": "影视 | 奈飞狗[V2]",
       "type": 3,
-      "api": "./config/api/drpy2.min.js",
-      "ext": "./config/js/奈飞狗[V2].js"
+      "api": "https://www.iyouhun.com/tv/json/config/api/drpy2.min.js",
+      "ext": "https://www.iyouhun.com/tv/json/config/js/奈飞狗[V2].js"
     },
     {
       "key": "drpy_js_思古影视[V2]",
       "name": "影视 | 思古影视[V2]",
       "type": 3,
-      "api": "./config/api/drpy2.min.js",
-      "ext": "./config/js/思古影视[V2].js"
+      "api": "https://www.iyouhun.com/tv/json/config/api/drpy2.min.js",
+      "ext": "https://www.iyouhun.com/tv/json/config/js/思古影视[V2].js"
     },
     {
       "key": "haiwaikan",
@@ -629,8 +629,8 @@
       "key": "csp_qiumi",
       "name": "⚽ Jrs┃球迷",
       "type": 3,
-      "api": "./config/api/drpy2.min.js",
-      "ext": "./config/js/jrk.js",
+      "api": "https://www.iyouhun.com/tv/json/config/api/drpy2.min.js",
+      "ext": "https://www.iyouhun.com/tv/json/config/js/jrk.js",
       "style": {
         "type": "list"
       },
@@ -643,8 +643,8 @@
       "key": "csp_310直播",
       "name": "⚽310┃看球",
       "type": 3,
-      "api": "./config/api/drpy2.min.js",
-      "ext": "./config/js/310直播.js",
+      "api": "https://www.iyouhun.com/tv/json/config/api/drpy2.min.js",
+      "ext": "https://www.iyouhun.com/tv/json/config/js/310直播.js",
       "style": {
         "type": "rect",
         "ratio": 1
@@ -665,7 +665,7 @@
       "searchable": 0,
       "quickSearch": 0,
       "changeable": 0,
-      "ext": "./config/json/企鹅直播.json"
+      "ext": "https://www.iyouhun.com/tv/json/config/json/企鹅直播.json"
     },
     {
       "key": "虎牙直播js",
@@ -697,16 +697,16 @@
       "key": "drpy_js_喜马拉雅",
       "name": "📗 听书 | 喜马拉雅[js]",
       "type": 3,
-      "api": "./config/api/drpy2.min.js",
-      "ext": "./config/js/喜马拉雅.js",
+      "api": "https://www.iyouhun.com/tv/json/config/api/drpy2.min.js",
+      "ext": "https://www.iyouhun.com/tv/json/config/js/喜马拉雅.js",
       "playerType": "2"
     },
     {
       "key": "有声小说js",
       "name": "🎧有声┃小说",
       "type": 3,
-      "api": "./config/api/drpy2.min.js",
-      "ext": "./config/js/有声小说吧.js",
+      "api": "https://www.iyouhun.com/tv/json/config/api/drpy2.min.js",
+      "ext": "https://www.iyouhun.com/tv/json/config/js/有声小说吧.js",
       "style": {
         "type": "rect",
         "ratio": 1
@@ -846,7 +846,7 @@
       "searchable": 1,
       "quickSearch": 0,
       "changeable": 0,
-      "ext": "./config/json/bilibili.json"
+      "ext": "https://www.iyouhun.com/tv/json/config/json/bilibili.json"
     },
     {
       "key": "Biliych",
@@ -860,14 +860,14 @@
       "searchable": 1,
       "quickSearch": 0,
       "changeable": 0,
-      "ext": "./config/js/biliych.json"
+      "ext": "https://www.iyouhun.com/tv/json/config/js/biliych.json"
     },
     {
       "key": "dr_兔小贝",
       "name": "📚儿童┃启蒙",
       "type": 3,
-      "api": "./config/api/drpy2.min.js",
-      "ext": "./config/js/%E5%85%94%E5%B0%8F%E8%B4%9D.js",
+      "api": "https://www.iyouhun.com/tv/json/config/api/drpy2.min.js",
+      "ext": "https://www.iyouhun.com/tv/json/config/js/兔小贝.js",
       "style": {
         "type": "rect",
         "ratio": 1.597
@@ -888,7 +888,7 @@
       "searchable": 0,
       "quickSearch": 0,
       "changeable": 0,
-      "ext": "./config/json/少儿教育.json"
+      "ext": "https://www.iyouhun.com/tv/json/config/json/少儿教育.json"
     },
     {
       "key": "小学课堂",
@@ -902,7 +902,7 @@
       "searchable": 0,
       "quickSearch": 0,
       "changeable": 0,
-      "ext": "./config/js/小学课堂.json"
+      "ext": "https://www.iyouhun.com/tv/json/config/js/小学课堂.json"
     },
     {
       "key": "初中课堂",
@@ -916,7 +916,7 @@
       "searchable": 0,
       "quickSearch": 0,
       "changeable": 0,
-      "ext": "./config/json/初中课堂.json"
+      "ext": "https://www.iyouhun.com/tv/json/config/json/初中课堂.json"
     },
     {
       "key": "高中教育",
@@ -930,7 +930,7 @@
       "searchable": 0,
       "quickSearch": 0,
       "changeable": 0,
-      "ext": "./config/json/高中课堂.json"
+      "ext": "https://www.iyouhun.com/tv/json/config/json/高中课堂.json"
     },
     {
       "key": "ext_live_protocol",

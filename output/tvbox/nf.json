@@ -205,7 +205,7 @@
         "主页url": "http://www.pbpbt.com/",
         "首页": "120",
         "起始页": "1",
-        "分类url": "/class/{cateId}-{area}-{by}--{lang}-{letter}---{catePg}---{year}.html;;mrc",
+        "分类url": "https://gh-proxy.com/class/{cateId}-{area}-{by}--{lang}-{letter}---{catePg}---{year}.html;;mrc",
         "分类": "电影$1#电视剧$2#综艺$3#动漫$4",
         "二次截取": "",
         "数组": "lazyload\"&&</a",
@@ -244,22 +244,6 @@
         "排序值": "time&hits&up&score",
         "筛选": "1",
         "类型": "动作片$5#喜剧片$6#恐怖片$7#科幻片$8#爱情片$9#剧情片$10#战争片$11||国产剧$13#港台剧$14#欧美剧$15#日韩剧$16#海外剧$17||节目秀$23#纪录片$12#赛事$26||动画电影$21#动画剧集$22"
-      }
-    },
-    {
-      "key": "茶杯狐",
-      "name": "🍵茶杯狐",
-      "type": 3,
-      "api": "csp_XBPQ",
-      "ext": {
-        "简介": "【广告勿信】+&&",
-        "请求头": "User-Agent$MOBILE_UA",
-        "编码": "UTF-8",
-        "数组": "lazyload&&</a>",
-        "标题": "+title=\"&&\"",
-        "图片": "data-original=\"&&\"",
-        "分类url": "https://www.xmhxdq.com/vodshow/{cateId}--------{catePg}---.html",
-        "分类": "电影$1#电视剧$2#综艺$3#动漫$4#短剧$36#"
       }
     },
     {
@@ -494,19 +478,6 @@
       "changeable": 1,
       "genre": "shortdrama",
       "jar": "https://jihulab.com/yoursmile3/TVBox/-/raw/main/custom_spider.jar"
-    },
-    {
-      "key": "csp_Kanqiu",
-      "name": "⚾看球",
-      "type": 3,
-      "api": "csp_Kanqiu",
-      "searchable": 1,
-      "quickSearch": 1,
-      "changeable": 0,
-      "gridview": 3,
-      "style": {
-        "type": "list"
-      }
     },
     {
       "key": "csp_Kugou",

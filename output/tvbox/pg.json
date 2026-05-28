@@ -1324,7 +1324,7 @@
       "host": "www.sharenice.net",
       "rule": [
         "huoshan.com",
-        "/item/video/"
+        "https://www.252035.xyz/item/video/"
       ],
       "filter": []
     },
@@ -1340,7 +1340,7 @@
       "host": "www.sharenice.net",
       "rule": [
         "douyin.com",
-        "/play/"
+        "https://www.252035.xyz/play/"
       ]
     },
     {
@@ -1361,7 +1361,7 @@
       "host": "https://api.live.bilibili.com",
       "rule": [
         "bilivideo.com",
-        "/index.m3u8"
+        "https://www.252035.xyz/index.m3u8"
       ],
       "filter": [
         "data.bilibili.com/log/web",
