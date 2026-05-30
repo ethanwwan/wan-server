@@ -580,10 +580,12 @@
       "key": "push_agent",
       "name": "推送┃链接",
       "type": 3,
-      "api": "csp_Push",
+      "api": "csp_PushGuard",
       "searchable": 0,
       "changeable": 0,
-      "jar": "https://tv.菜妮丝.top/jar/fm0501.jar;md5;22f558deceb8273665c00c05d89c4c18"
+      "ext": {
+        "Cloud-drive": "tvfan/Cloud-drive.txt"
+      }
     },
     {
       "key": "公告",
