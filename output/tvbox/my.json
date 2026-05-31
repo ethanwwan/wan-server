@@ -1,5 +1,5 @@
 {
-  "spider": "https://6800.kstore.vip/fish05302000.png;md5;06bf5557a70702fd84040fccaf52a961",
+  "spider": "https://tc-new.z.wiki/autoupload/iYHTWVx6T8RrCmqdGD6MOdiO_OyvX7mIgxFBfDMDErs/20260531/tiYe/0X0/fish05311711.png;md5;698fb6d834c8221ccf3ee5bd04b488df",
   "logo": "https://modelscope-resouces.oss-cn-zhangjiakou.aliyuncs.com/avatar%2Ff5309172-1af6-4c4f-a1c5-a4773a1cc718.gif",
   "wallpaper": "http://127.0.0.1:9978/proxy?do=wallpaper",
   "sites": [
@@ -574,6 +574,15 @@
       "type": 3,
       "api": "csp_TGSouFishGuard",
       "searchable": 1
+    },
+    {
+      "key": "Buguyy",
+      "name": "🐦┃布谷┃音乐",
+      "type": 3,
+      "api": "csp_BuguyyFishGuard",
+      "searchable": 1,
+      "filterable": 1,
+      "changeable": 1
     },
     {
       "key": "ChuXin",

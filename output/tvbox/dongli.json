@@ -419,44 +419,17 @@
       }
     },
     {
-      "key": "灵虎",
-      "name": "💓｜灵虎｜APP",
-      "type": 3,
-      "quickSearch": 1,
-      "api": "csp_AppGet",
-      "ext": {
-        "site": "https://bind.315999.xyz/89.txt",
-        "dataKey": "#getapp@TMD@2025",
-        "dataIv": "#getapp@TMD@2025",
-        "version": "120"
-      }
-    },
-    {
-      "key": "缘梦",
-      "name": "💓｜缘梦｜APP",
-      "type": 3,
-      "searchable": 1,
-      "changeable": 1,
-      "api": "csp_AppGet",
-      "ext": {
-        "url": "http://165.99.42.137:5432",
-        "dataKey": "1234567890987654",
-        "dataIv": "1234567890987654"
-      }
-    },
-    {
-      "key": "爱影",
-      "name": "💓｜爱影｜APP",
+      "key": "首发",
+      "name": "💓｜首发｜APP",
       "type": 3,
       "api": "csp_AppQi",
       "searchable": 1,
       "changeable": 1,
       "ext": {
-        "site": "https://aysappto.oss-cn-chengdu.aliyuncs.com/q20.txt",
-        "dataKey": "ada211sdfsff3261",
-        "dataIv": "ada211sdfsff3261",
+        "site": "https://yun-1316442804.cos.ap-guangzhou.myqcloud.com/600.txt",
+        "dataKey": "FTgP4Gq8zPiqbt7M",
+        "dataIv": "FTgP4Gq8zPiqbt7M",
         "init": "initV122",
-        "search": "mineInfo",
         "ua": "okhttp/3.10.0"
       }
     },
@@ -468,25 +441,10 @@
       "searchable": 1,
       "changeable": 1,
       "ext": {
-        "url": "https://qj3.ggtvb.cc",
+        "url": "https://qj4.catbb.xyz",
         "dataKey": "eecbio48dsq13kkk",
         "dataIv": "eecbio48dsq13kkk",
         "search": "searchList4",
-        "init": "initV122",
-        "ua": "okhttp/3.10.0"
-      }
-    },
-    {
-      "key": "奇奇",
-      "name": "💓｜奇奇｜APP",
-      "type": 3,
-      "api": "csp_AppQi",
-      "searchable": 1,
-      "changeable": 1,
-      "ext": {
-        "url": "http://110.42.67.221:8009",
-        "dataKey": "123456789abcdefg",
-        "dataIv": "123456789abcdefg",
         "init": "initV122",
         "ua": "okhttp/3.10.0"
       }
@@ -506,17 +464,70 @@
       }
     },
     {
-      "key": "优兔",
-      "name": "💓｜优兔｜APP",
+      "key": "蓝鹰",
+      "name": "💓｜蓝鹰｜APP",
       "type": 3,
       "api": "csp_AppQi",
       "searchable": 1,
       "changeable": 1,
       "ext": {
-        "site": "https://uututv-1319209748.cos.ap-shanghai.myqcloud.com/uutuv4.txt",
-        "dataKey": "UrWKPnmQWJA8AQzd",
-        "dataIv": "UrWKPnmQWJA8AQzd",
+        "site": "https://xinlanyinghb.oss-cn-wuhan-lr.aliyuncs.com/xly.txt",
+        "dataKey": "ca94b06ca359d80e",
+        "dataIv": "ca94b06ca359d80e",
+        "init": "initV120",
         "ua": "okhttp/3.10.0"
+      }
+    },
+    {
+      "key": "猎豹",
+      "name": "💓｜猎豹｜APP",
+      "type": 3,
+      "api": "csp_AppGet",
+      "searchable": 1,
+      "changeable": 1,
+      "ext": {
+        "url": "https://444421.xyz",
+        "dataKey": "#getapp@TMD@2025",
+        "dataIv": "#getapp@TMD@2025"
+      }
+    },
+    {
+      "key": "映画",
+      "name": "💓｜映画｜APP",
+      "type": 3,
+      "api": "csp_AppGet",
+      "searchable": 1,
+      "changeable": 1,
+      "ext": {
+        "url": "https://cms140.yhg.one",
+        "dataKey": "bM7iC9eA3oZ1nB7z",
+        "dataIv": "bM7iC9eA3oZ1nB7z"
+      }
+    },
+    {
+      "key": "王子",
+      "name": "💓｜王子｜APP",
+      "type": 3,
+      "api": "csp_AppGet",
+      "searchable": 1,
+      "changeable": 1,
+      "ext": {
+        "url": "https://app.95112475.xyz",
+        "dataKey": "5a9w6x58dsq6z3a6",
+        "dataIv": "5a9w6x58dsq6z3a6"
+      }
+    },
+    {
+      "key": "茉莉",
+      "name": "💓｜茉莉｜APP",
+      "type": 3,
+      "api": "csp_AppGet",
+      "searchable": 1,
+      "changeable": 1,
+      "ext": {
+        "site": "https://gitee.com/wmmoliill/wimg/raw/master/img/bk/9.txt",
+        "dataKey": "88689667dce61725",
+        "dataIv": "88689667dce61725"
       }
     },
     {
