@@ -9,76 +9,60 @@
       "url": "https://localhost/api/tvbox/zx.json"
     },
     {
-      "name": "🚀万家┃王二小",
-      "url": "https://localhost/api/tvbox/wex.json"
-    },
-    {
-      "name": "🚀万家┃饭太硬",
-      "url": "https://localhost/api/tvbox/fty.json"
-    },
-    {
-      "name": "🚀万家┃小米",
-      "url": "https://localhost/api/tvbox/xiaomi.json"
-    },
-    {
       "name": "🚀万家┃多多",
       "url": "https://localhost/api/tvbox/duo.json"
-    },
-    {
-      "name": "🚀万家┃王二小(新)",
-      "url": "https://localhost/api/tvbox/newwex.json"
     },
     {
       "name": "🚀万家┃东篱",
       "url": "https://localhost/api/tvbox/dongli.json"
     },
     {
-      "name": "🚀万家┃香雅情",
-      "url": "https://localhost/api/tvbox/xyq.json"
-    },
-    {
-      "name": "🚀万家┃摸鱼",
-      "url": "https://localhost/api/tvbox/my.json"
-    },
-    {
-      "name": "🚀万家┃南风",
-      "url": "https://localhost/api/tvbox/nf.json"
+      "name": "🚀万家┃王二小",
+      "url": "https://localhost/api/tvbox/wex.json"
     },
     {
       "name": "🚀万家┃PG",
       "url": "https://localhost/api/tvbox/pg.json"
     },
     {
-      "name": "🚀万家┃D佬",
-      "url": "https://localhost/api/tvbox/dl.json"
+      "name": "🚀万家┃王二小(新)",
+      "url": "https://localhost/api/tvbox/newwex.json"
     },
     {
-      "name": "🚀万家┃驸马",
-      "url": "https://localhost/api/tvbox/fuma.json"
+      "name": "🚀万家┃南风",
+      "url": "https://localhost/api/tvbox/nf.json"
     },
     {
-      "name": "🎨万家┃动漫城",
-      "url": "https://localhost/api/tvbox/dmc.json"
-    },
-    {
-      "name": "🚀万家┃菜妮丝",
-      "url": "https://localhost/api/tvbox/lns.json"
+      "name": "🚀万家┃小米",
+      "url": "https://localhost/api/tvbox/xiaomi.json"
     },
     {
       "name": "🚀万家┃哈基米",
       "url": "https://localhost/api/tvbox/hjm.json"
     },
     {
-      "name": "🎥万家┃短剧",
-      "url": "https://localhost/api/tvbox/dj.json"
+      "name": "🚀万家┃香雅情",
+      "url": "https://localhost/api/tvbox/xyq.json"
     },
     {
-      "name": "🚀万家┃高天流云",
-      "url": "https://localhost/api/tvbox/gtly.json"
+      "name": "🚀万家┃驸马",
+      "url": "https://localhost/api/tvbox/fuma.json"
     },
     {
-      "name": "😹万家┃余生",
-      "url": "https://localhost/api/tvbox/ys.json"
+      "name": "🚀万家┃D佬",
+      "url": "https://localhost/api/tvbox/dl.json"
+    },
+    {
+      "name": "🚀万家┃摸鱼",
+      "url": "https://localhost/api/tvbox/my.json"
+    },
+    {
+      "name": "🚀万家┃饭太硬",
+      "url": "https://localhost/api/tvbox/fty.json"
+    },
+    {
+      "name": "🎨万家┃动漫城",
+      "url": "https://localhost/api/tvbox/dmc.json"
     },
     {
       "name": "🚀万家┃牛播一",
@@ -89,8 +73,24 @@
       "url": "https://localhost/api/tvbox/et.json"
     },
     {
+      "name": "🚀万家┃菜妮丝",
+      "url": "https://localhost/api/tvbox/lns.json"
+    },
+    {
+      "name": "😹万家┃余生",
+      "url": "https://localhost/api/tvbox/ys.json"
+    },
+    {
+      "name": "🎥万家┃短剧",
+      "url": "https://localhost/api/tvbox/dj.json"
+    },
+    {
       "name": "🚀万家┃L佬",
       "url": "https://localhost/api/tvbox/llao.json"
+    },
+    {
+      "name": "🚀万家┃高天流云",
+      "url": "https://localhost/api/tvbox/gtly.json"
     }
   ]
 }
