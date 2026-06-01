@@ -72,7 +72,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: 同步 output 目录到 Gist
-        if: env.GIST_ID != '' && env.GIST_TOKEN != ''
+        if: ${{ secrets.GIST_ID != '' && secrets.GIST_TOKEN != '' }}
         run: |
           python scripts/sync_to_gist.py --gist-id ${{ secrets.GIST_ID }} --token ${{ secrets.GIST_TOKEN }}
         env:
