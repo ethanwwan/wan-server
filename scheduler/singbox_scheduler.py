@@ -16,7 +16,6 @@ sys.path.insert(0, PROJECT_ROOT)
 
 from utils.ip_utils import get_server_ip, get_ip_location
 from utils.logger import get_logger
-from config import CONFIG
 import requests
 
 # 项目根目录和配置路径
@@ -26,13 +25,13 @@ CONFIG_OLD_PATH = os.path.join(CONFIG_DIR, 'config_old.json')
 DOCKER_CONFIG_DIR = os.path.join(CONFIG_DIR, 'docker')
 DOCKER_CONFIG_PATH = os.path.join(DOCKER_CONFIG_DIR, 'config.json')
 
-# 从配置文件读取常量
-SINGBOX_URL = CONFIG.singbox.url
-SINGBOX_VERSION = CONFIG.singbox.version
-SINGBOX_OLD_VERSION = CONFIG.singbox.old_version
-GLOBAL_RULESET_URL = CONFIG.singbox.ruleset_global
-GEOIP_CN_URL = CONFIG.singbox.ruleset_geoip_cn
-GEOSITE_CN_URL = CONFIG.singbox.ruleset_geosite_cn
+# Singbox 配置常量
+SINGBOX_URL = "https://47.238.198.94/iv/verify_mode.htm?token=9a49f8e2abcce3a0d3fd12e072065cdd"
+SINGBOX_VERSION = "1.12.14"
+SINGBOX_OLD_VERSION = "1.11.15"
+GLOBAL_RULESET_URL = "https://gh-proxy.org/https://raw.githubusercontent.com/ethanwwan/sing-box-rules/refs/heads/main/rule_json/Global_All.json"
+GEOIP_CN_URL = "https://gh-proxy.com/https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-cn.srs"
+GEOSITE_CN_URL = "https://gh-proxy.com/https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-geolocation-cn.srs"
 
 # 请求超时设置
 REQUEST_TIMEOUT = 20
