@@ -26,7 +26,7 @@ DOCKER_CONFIG_DIR = os.path.join(CONFIG_DIR, 'docker')
 DOCKER_CONFIG_PATH = os.path.join(DOCKER_CONFIG_DIR, 'config.json')
 
 # Singbox 配置常量
-SINGBOX_URL = "https://47.238.198.94/iv/verify_mode.htm?token=9a49f8e2abcce3a0d3fd12e072065cdd"
+SINGBOX_URL = "https://47.76.155.27/iv/verify_mode.htm?token=9a49f8e2abcce3a0d3fd12e072065cdd"
 SINGBOX_VERSION = "1.12.14"
 SINGBOX_OLD_VERSION = "1.11.15"
 GLOBAL_RULESET_URL = "https://gh-proxy.org/https://raw.githubusercontent.com/ethanwwan/sing-box-rules/refs/heads/main/rule_json/Global_All.json"

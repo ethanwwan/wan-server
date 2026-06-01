@@ -87,7 +87,7 @@ def main():
     
     # 任务配置列表（按执行顺序）
     tasks: List[Tuple[str, Callable[[], bool]]] = [
-        # ("Singbox", singbox_job),
+        ("Singbox", singbox_job),
         ("TVBox", tvbox_job),
         ("IPTV", iptv_job),
     ]

@@ -1,0 +1,957 @@
+{
+    "log": {
+        "disabled": false,
+        "level": "info",
+        "timestamp": true
+    },
+    "dns": {
+        "servers": [
+            {
+                "tag": "google_dns",
+                "type": "https",
+                "server": "8.8.8.8",
+                "detour": "🚀 节点选择"
+            },
+            {
+                "tag": "ali_dns",
+                "type": "https",
+                "server": "223.5.5.5"
+            },
+            {
+                "tag": "fakeip",
+                "type": "fakeip",
+                "inet4_range": "198.18.0.0/15",
+                "inet6_range": "fc00::/18"
+            }
+        ],
+        "rules": [
+            {
+                "clash_mode": "全球直连",
+                "server": "ali_dns"
+            },
+            {
+                "clash_mode": "全局代理",
+                "server": "google_dns"
+            },
+            {
+                "rule_set": "geosite-cn",
+                "server": "ali_dns"
+            },
+            {
+                "query_type": [
+                    "A",
+                    "AAAA"
+                ],
+                "server": "fakeip"
+            }
+        ],
+        "strategy": "prefer_ipv6",
+        "independent_cache": true,
+        "final": "ali_dns"
+    },
+    "inbounds": [
+        {
+            "tag": "mixed-in",
+            "type": "mixed",
+            "listen": "127.0.0.1",
+            "listen_port": 7891
+        }
+    ],
+    "outbounds": [
+        {
+            "type": "selector",
+            "tag": "🚀 节点选择",
+            "outbounds": [
+                "♻️ 自动选择",
+                "❇️猎户座-A",
+                "❇️猎户座-B",
+                "❇️猎户座-C",
+                "❇️猎户座-D",
+                "❇️猎户座-E",
+                "❇️猎户座-F",
+                "❇️猎户座-G",
+                "❇️猎户座-H",
+                "❇️猎户座-I",
+                "❇️猎户座-J",
+                "🇺🇸美国-X-US",
+                "🇺🇸美国-Z",
+                "🇯🇵日本-X",
+                "🇭🇰香江-E(通用)",
+                "🇭🇰香江-F(通用)",
+                "🇭🇰香江-G(流量)",
+                "🇭🇰香江-H(流量)",
+                "🇺🇸西美-E(通用)",
+                "🇺🇸西美-F(通用)",
+                "🇺🇸西美-G(流量)",
+                "🇺🇸西美-H(流量)",
+                "🇯🇵东京-E(通用)",
+                "🇯🇵东京-F(通用)",
+                "🇯🇵东京-G(流量)",
+                "🇯🇵东京-H(流量)",
+                "🇸🇬狮城-E(通用)",
+                "🇸🇬狮城-F(通用)",
+                "🇸🇬狮城-G(流量)",
+                "🇸🇬狮城-H(流量)"
+            ],
+            "interrupt_exist_connections": true
+        },
+        {
+            "type": "urltest",
+            "tag": "♻️ 自动选择",
+            "outbounds": [
+                "❇️猎户座-A",
+                "❇️猎户座-B",
+                "❇️猎户座-C",
+                "❇️猎户座-D",
+                "❇️猎户座-E",
+                "❇️猎户座-F",
+                "❇️猎户座-G",
+                "❇️猎户座-H",
+                "❇️猎户座-I",
+                "❇️猎户座-J",
+                "🇺🇸美国-X-US",
+                "🇺🇸美国-Z",
+                "🇯🇵日本-X",
+                "🇭🇰香江-E(通用)",
+                "🇭🇰香江-F(通用)",
+                "🇭🇰香江-G(流量)",
+                "🇭🇰香江-H(流量)",
+                "🇺🇸西美-E(通用)",
+                "🇺🇸西美-F(通用)",
+                "🇺🇸西美-G(流量)",
+                "🇺🇸西美-H(流量)",
+                "🇯🇵东京-E(通用)",
+                "🇯🇵东京-F(通用)",
+                "🇯🇵东京-G(流量)",
+                "🇯🇵东京-H(流量)",
+                "🇸🇬狮城-E(通用)",
+                "🇸🇬狮城-F(通用)",
+                "🇸🇬狮城-G(流量)",
+                "🇸🇬狮城-H(流量)"
+            ],
+            "url": "http://www.apple.com/library/test/success.html",
+            "interval": "5m",
+            "tolerance": 50,
+            "idle_timeout": "30m",
+            "interrupt_exist_connections": true
+        },
+        {
+            "type": "direct",
+            "tag": "direct"
+        },
+        {
+            "server": "bgpa.dd7431c0-38e1-4998-ae2b-dc830b4e6bdb.1530fe2e.demo-chat-airport.com",
+            "server_port": 16883,
+            "tls": {
+                "enabled": true,
+                "insecure": true,
+                "server_name": "www.bing.com"
+            },
+            "password": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "tag": "❇️猎户座-A",
+            "type": "hysteria2",
+            "up_mbps": 30,
+            "down_mbps": 30
+        },
+        {
+            "server": "bgpb.dd7431c0-38e1-4998-ae2b-dc830b4e6bdb.cc16bd23.demo-chat-airport.com",
+            "server_port": 16883,
+            "tls": {
+                "enabled": true,
+                "insecure": true,
+                "server_name": "www.bing.com"
+            },
+            "password": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "tag": "❇️猎户座-B",
+            "type": "hysteria2",
+            "up_mbps": 30,
+            "down_mbps": 30
+        },
+        {
+            "tag": "❇️猎户座-C",
+            "type": "tuic",
+            "server": "bgpg.c9aee41f-979e-48be-8ad5-e0c8eb90f38c.a77d7834.demo-chat-airport.com",
+            "server_port": 18662,
+            "uuid": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "password": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "congestion_control": "bbr",
+            "udp_relay_mode": "native",
+            "zero_rtt_handshake": false,
+            "tls": {
+                "enabled": true,
+                "insecure": true,
+                "alpn": [
+                    "h3"
+                ],
+                "disable_sni": false,
+                "server_name": "www.bing.com"
+            }
+        },
+        {
+            "tag": "❇️猎户座-D",
+            "type": "tuic",
+            "server": "bgph.edc75321-7544-48f3-aea1-3068c0711ea8.1ac0370c.demo-chat-airport.com",
+            "server_port": 18662,
+            "uuid": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "password": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "congestion_control": "bbr",
+            "udp_relay_mode": "native",
+            "zero_rtt_handshake": false,
+            "tls": {
+                "enabled": true,
+                "insecure": true,
+                "alpn": [
+                    "h3"
+                ],
+                "disable_sni": false,
+                "server_name": "www.bing.com"
+            }
+        },
+        {
+            "tag": "❇️猎户座-E",
+            "type": "tuic",
+            "server": "bgpI.96ce655c-9bd0-449c-8bc5-28e6dc3e141c.adddf608.demo-chat-airport.com",
+            "server_port": 18662,
+            "uuid": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "password": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "congestion_control": "bbr",
+            "udp_relay_mode": "native",
+            "zero_rtt_handshake": false,
+            "tls": {
+                "enabled": true,
+                "insecure": true,
+                "alpn": [
+                    "h3"
+                ],
+                "disable_sni": false,
+                "server_name": "www.bing.com"
+            }
+        },
+        {
+            "tag": "❇️猎户座-F",
+            "type": "tuic",
+            "server": "bgpj.553996da-bd33-4177-882c-dcb1b09f5f88.74fbb505.demo-chat-airport.com",
+            "server_port": 18662,
+            "uuid": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "password": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "congestion_control": "bbr",
+            "udp_relay_mode": "native",
+            "zero_rtt_handshake": false,
+            "tls": {
+                "enabled": true,
+                "insecure": true,
+                "alpn": [
+                    "h3"
+                ],
+                "disable_sni": false,
+                "server_name": "www.bing.com"
+            }
+        },
+        {
+            "server": "bgpc.dd7431c0-38e1-4998-ae2b-dc830b4e6bdb.7b0b7c27.demo-chat-airport.com",
+            "server_port": 16883,
+            "tls": {
+                "enabled": true,
+                "insecure": true,
+                "server_name": "www.bing.com"
+            },
+            "password": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "tag": "❇️猎户座-G",
+            "type": "hysteria2",
+            "up_mbps": 30,
+            "down_mbps": 30
+        },
+        {
+            "server": "bgpd.dd7431c0-38e1-4998-ae2b-dc830b4e6bdb.7e5b3b39.demo-chat-airport.com",
+            "server_port": 16883,
+            "tls": {
+                "enabled": true,
+                "insecure": true,
+                "server_name": "www.bing.com"
+            },
+            "password": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "tag": "❇️猎户座-H",
+            "type": "hysteria2",
+            "up_mbps": 30,
+            "down_mbps": 30
+        },
+        {
+            "server": "bgpe.dd7431c0-38e1-4998-ae2b-dc830b4e6bdb.c946fa3d.demo-chat-airport.com",
+            "server_port": 16883,
+            "tls": {
+                "enabled": true,
+                "insecure": true,
+                "server_name": "www.bing.com"
+            },
+            "password": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "tag": "❇️猎户座-I",
+            "type": "hysteria2",
+            "up_mbps": 30,
+            "down_mbps": 30
+        },
+        {
+            "server": "bgpf.dd7431c0-38e1-4998-ae2b-dc830b4e6bdb.1060b930.demo-chat-airport.com",
+            "server_port": 16883,
+            "tls": {
+                "enabled": true,
+                "insecure": true,
+                "server_name": "www.bing.com"
+            },
+            "password": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "tag": "❇️猎户座-J",
+            "type": "hysteria2",
+            "up_mbps": 30,
+            "down_mbps": 30
+        },
+        {
+            "server": "69.165.69.45",
+            "server_port": 16883,
+            "tls": {
+                "enabled": true,
+                "insecure": true,
+                "server_name": "www.bing.com"
+            },
+            "password": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "tag": "🇺🇸美国-X-US",
+            "type": "hysteria2",
+            "up_mbps": 100,
+            "down_mbps": 100
+        },
+        {
+            "server": "bgpt.dd7431c0-38e1-4998-ae2b-dc830b4e6bdb.c946fa3d.demo-chat-airport.com",
+            "server_port": 16883,
+            "tls": {
+                "enabled": true,
+                "insecure": true,
+                "server_name": "www.bing.com"
+            },
+            "password": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "tag": "🇺🇸美国-Z",
+            "type": "hysteria2",
+            "up_mbps": 100,
+            "down_mbps": 100
+        },
+        {
+            "type": "vless",
+            "tag": "🇯🇵日本-X",
+            "server": "cos-cdn-a.alicdn.win",
+            "server_port": 443,
+            "uuid": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "packet_encoding": "xudp",
+            "flow": "",
+            "tls": {
+                "enabled": true,
+                "insecure": false,
+                "server_name": "mms-static-uhf0ve-e.oppocdn.sbs",
+                "utls": {
+                    "enabled": true,
+                    "fingerprint": "ios"
+                }
+            },
+            "transport": {
+                "type": "ws",
+                "path": "/newlogin/login.do",
+                "headers": {
+                    "Host": [
+                        "mms-static-edio-e.oppocdn.sbs"
+                    ],
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                },
+                "max_early_data": 2048,
+                "early_data_header_name": "Sec-WebSocket-Protocol"
+            }
+        },
+        {
+            "type": "vless",
+            "tag": "🇭🇰香江-E(通用)",
+            "server": "cos-cdn-a.alicdn.win",
+            "server_port": 443,
+            "uuid": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "packet_encoding": "xudp",
+            "flow": "",
+            "tls": {
+                "enabled": true,
+                "insecure": false,
+                "server_name": "mms-statlc-qtsn4vg-e.codeu.men",
+                "utls": {
+                    "enabled": true,
+                    "fingerprint": "firefox"
+                }
+            },
+            "transport": {
+                "type": "ws",
+                "path": "/newlogin/login.do",
+                "headers": {
+                    "Host": [
+                        "mms-static-version-e.codeu.men"
+                    ],
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                },
+                "max_early_data": 2048,
+                "early_data_header_name": "Sec-WebSocket-Protocol"
+            }
+        },
+        {
+            "type": "vless",
+            "tag": "🇭🇰香江-F(通用)",
+            "server": "cos-cdn-b.alicdn.win",
+            "server_port": 443,
+            "uuid": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "packet_encoding": "xudp",
+            "flow": "",
+            "tls": {
+                "enabled": true,
+                "insecure": false,
+                "server_name": "mms-statlc-tjjh2ro-f.codeu.men",
+                "utls": {
+                    "enabled": true,
+                    "fingerprint": "edge"
+                }
+            },
+            "transport": {
+                "type": "ws",
+                "path": "/newlogin/login.do",
+                "headers": {
+                    "Host": [
+                        "mms-static-version-f.codeu.men"
+                    ],
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                },
+                "max_early_data": 2048,
+                "early_data_header_name": "Sec-WebSocket-Protocol"
+            }
+        },
+        {
+            "type": "vless",
+            "tag": "🇭🇰香江-G(流量)",
+            "server": "cos-cdn-f.alicdn.win",
+            "server_port": 443,
+            "uuid": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "packet_encoding": "xudp",
+            "flow": "",
+            "tls": {
+                "enabled": true,
+                "insecure": false,
+                "server_name": "mms-statlc-version-g.aliapp.men",
+                "utls": {
+                    "enabled": true,
+                    "fingerprint": "firefox"
+                }
+            },
+            "transport": {
+                "type": "ws",
+                "path": "/newlogin/login.do",
+                "headers": {
+                    "Host": [
+                        "mms-static-version-g.aliapp.men"
+                    ],
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                },
+                "max_early_data": 2048,
+                "early_data_header_name": "Sec-WebSocket-Protocol"
+            }
+        },
+        {
+            "type": "vless",
+            "tag": "🇭🇰香江-H(流量)",
+            "server": "cos-cdn-z.alicdn.win",
+            "server_port": 443,
+            "uuid": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "packet_encoding": "xudp",
+            "flow": "",
+            "tls": {
+                "enabled": true,
+                "insecure": false,
+                "server_name": "mms-statlc-version-h.aliapp.men",
+                "utls": {
+                    "enabled": true,
+                    "fingerprint": "safari"
+                }
+            },
+            "transport": {
+                "type": "ws",
+                "path": "/newlogin/login.do",
+                "headers": {
+                    "Host": [
+                        "mms-static-version-h.aliapp.men"
+                    ],
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                },
+                "max_early_data": 2048,
+                "early_data_header_name": "Sec-WebSocket-Protocol"
+            }
+        },
+        {
+            "type": "vless",
+            "tag": "🇺🇸西美-E(通用)",
+            "server": "cos-cdn-g.alicdn.win",
+            "server_port": 443,
+            "uuid": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "packet_encoding": "xudp",
+            "flow": "",
+            "tls": {
+                "enabled": true,
+                "insecure": false,
+                "server_name": "mms-statlc-sl3o0g-e.hzedu.men",
+                "utls": {
+                    "enabled": true,
+                    "fingerprint": "ios"
+                }
+            },
+            "transport": {
+                "type": "ws",
+                "path": "/newlogin/login.do",
+                "headers": {
+                    "Host": [
+                        "mms-static-origin-e.hzedu.men"
+                    ],
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                },
+                "max_early_data": 2048,
+                "early_data_header_name": "Sec-WebSocket-Protocol"
+            }
+        },
+        {
+            "type": "vless",
+            "tag": "🇺🇸西美-F(通用)",
+            "server": "cos-cdn-i.alicdn.win",
+            "server_port": 443,
+            "uuid": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "packet_encoding": "xudp",
+            "flow": "",
+            "tls": {
+                "enabled": true,
+                "insecure": false,
+                "server_name": "mms-statlc-ffzrdw-f.hzedu.men",
+                "utls": {
+                    "enabled": true,
+                    "fingerprint": "safari"
+                }
+            },
+            "transport": {
+                "type": "ws",
+                "path": "/newlogin/login.do",
+                "headers": {
+                    "Host": [
+                        "mms-static-origin-f.hzedu.men"
+                    ],
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                },
+                "max_early_data": 2048,
+                "early_data_header_name": "Sec-WebSocket-Protocol"
+            }
+        },
+        {
+            "type": "vless",
+            "tag": "🇺🇸西美-G(流量)",
+            "server": "cos-cdn-l.alicdn.win",
+            "server_port": 443,
+            "uuid": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "packet_encoding": "xudp",
+            "flow": "",
+            "tls": {
+                "enabled": true,
+                "insecure": false,
+                "server_name": "mms-statlc-origin-g.aliapp.men",
+                "utls": {
+                    "enabled": true,
+                    "fingerprint": "qq"
+                }
+            },
+            "transport": {
+                "type": "ws",
+                "path": "/newlogin/login.do",
+                "headers": {
+                    "Host": [
+                        "mms-static-origin-g.aliapp.men"
+                    ],
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                },
+                "max_early_data": 2048,
+                "early_data_header_name": "Sec-WebSocket-Protocol"
+            }
+        },
+        {
+            "type": "vless",
+            "tag": "🇺🇸西美-H(流量)",
+            "server": "cos-cdn-n.alicdn.win",
+            "server_port": 443,
+            "uuid": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "packet_encoding": "xudp",
+            "flow": "",
+            "tls": {
+                "enabled": true,
+                "insecure": false,
+                "server_name": "mms-statlc-origin-h.aliapp.men",
+                "utls": {
+                    "enabled": true,
+                    "fingerprint": "edge"
+                }
+            },
+            "transport": {
+                "type": "ws",
+                "path": "/newlogin/login.do",
+                "headers": {
+                    "Host": [
+                        "mms-static-origin-h.aliapp.men"
+                    ],
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                },
+                "max_early_data": 2048,
+                "early_data_header_name": "Sec-WebSocket-Protocol"
+            }
+        },
+        {
+            "type": "vless",
+            "tag": "🇯🇵东京-E(通用)",
+            "server": "cos-cdn-c.alicdn.win",
+            "server_port": 443,
+            "uuid": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "packet_encoding": "xudp",
+            "flow": "",
+            "tls": {
+                "enabled": true,
+                "insecure": false,
+                "server_name": "mms-statlc-2csp-e.gdedu.men",
+                "utls": {
+                    "enabled": true,
+                    "fingerprint": "safari"
+                }
+            },
+            "transport": {
+                "type": "ws",
+                "path": "/newlogin/login.do",
+                "headers": {
+                    "Host": [
+                        "mms-static-edit-e.gdedu.men"
+                    ],
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                },
+                "max_early_data": 2048,
+                "early_data_header_name": "Sec-WebSocket-Protocol"
+            }
+        },
+        {
+            "type": "vless",
+            "tag": "🇯🇵东京-F(通用)",
+            "server": "cos-cdn-u.alicdn.win",
+            "server_port": 443,
+            "uuid": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "packet_encoding": "xudp",
+            "flow": "",
+            "tls": {
+                "enabled": true,
+                "insecure": false,
+                "server_name": "mms-statlc-4d1d-f.gdedu.men",
+                "utls": {
+                    "enabled": true,
+                    "fingerprint": "firefox"
+                }
+            },
+            "transport": {
+                "type": "ws",
+                "path": "/newlogin/login.do",
+                "headers": {
+                    "Host": [
+                        "mms-static-edit-f.gdedu.men"
+                    ],
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                },
+                "max_early_data": 2048,
+                "early_data_header_name": "Sec-WebSocket-Protocol"
+            }
+        },
+        {
+            "type": "vless",
+            "tag": "🇯🇵东京-G(流量)",
+            "server": "cos-cdn-t.alicdn.win",
+            "server_port": 443,
+            "uuid": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "packet_encoding": "xudp",
+            "flow": "",
+            "tls": {
+                "enabled": true,
+                "insecure": false,
+                "server_name": "mms-statlc-edit-g.aliapp.men",
+                "utls": {
+                    "enabled": true,
+                    "fingerprint": "firefox"
+                }
+            },
+            "transport": {
+                "type": "ws",
+                "path": "/newlogin/login.do",
+                "headers": {
+                    "Host": [
+                        "mms-static-edit-g.aliapp.men"
+                    ],
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                },
+                "max_early_data": 2048,
+                "early_data_header_name": "Sec-WebSocket-Protocol"
+            }
+        },
+        {
+            "type": "vless",
+            "tag": "🇯🇵东京-H(流量)",
+            "server": "cos-cdn-y.alicdn.win",
+            "server_port": 443,
+            "uuid": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "packet_encoding": "xudp",
+            "flow": "",
+            "tls": {
+                "enabled": true,
+                "insecure": false,
+                "server_name": "mms-statlc-edit-h.aliapp.men",
+                "utls": {
+                    "enabled": true,
+                    "fingerprint": "edge"
+                }
+            },
+            "transport": {
+                "type": "ws",
+                "path": "/newlogin/login.do",
+                "headers": {
+                    "Host": [
+                        "mms-static-edit-h.aliapp.men"
+                    ],
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                },
+                "max_early_data": 2048,
+                "early_data_header_name": "Sec-WebSocket-Protocol"
+            }
+        },
+        {
+            "type": "vless",
+            "tag": "🇸🇬狮城-E(通用)",
+            "server": "cos-cdn-a.alicdn.win",
+            "server_port": 443,
+            "uuid": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "packet_encoding": "xudp",
+            "flow": "",
+            "tls": {
+                "enabled": true,
+                "insecure": false,
+                "server_name": "mms-statlc-mkem5utq-e.bjedu.men",
+                "utls": {
+                    "enabled": true,
+                    "fingerprint": "firefox"
+                }
+            },
+            "transport": {
+                "type": "ws",
+                "path": "/newlogin/login.do",
+                "headers": {
+                    "Host": [
+                        "mms-static-lication-e.bjedu.men"
+                    ],
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                },
+                "max_early_data": 2048,
+                "early_data_header_name": "Sec-WebSocket-Protocol"
+            }
+        },
+        {
+            "type": "vless",
+            "tag": "🇸🇬狮城-F(通用)",
+            "server": "cos-cdn-b.alicdn.win",
+            "server_port": 443,
+            "uuid": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "packet_encoding": "xudp",
+            "flow": "",
+            "tls": {
+                "enabled": true,
+                "insecure": false,
+                "server_name": "mms-statlc-3y8wpzij-f.bjedu.men",
+                "utls": {
+                    "enabled": true,
+                    "fingerprint": "firefox"
+                }
+            },
+            "transport": {
+                "type": "ws",
+                "path": "/newlogin/login.do",
+                "headers": {
+                    "Host": [
+                        "mms-static-lication-f.bjedu.men"
+                    ],
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                },
+                "max_early_data": 2048,
+                "early_data_header_name": "Sec-WebSocket-Protocol"
+            }
+        },
+        {
+            "type": "vless",
+            "tag": "🇸🇬狮城-G(流量)",
+            "server": "cos-cdn-f.alicdn.win",
+            "server_port": 443,
+            "uuid": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "packet_encoding": "xudp",
+            "flow": "",
+            "tls": {
+                "enabled": true,
+                "insecure": false,
+                "server_name": "mms-statlc-lication-g.aliapp.men",
+                "utls": {
+                    "enabled": true,
+                    "fingerprint": "qq"
+                }
+            },
+            "transport": {
+                "type": "ws",
+                "path": "/newlogin/login.do",
+                "headers": {
+                    "Host": [
+                        "mms-static-lication-g.aliapp.men"
+                    ],
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                },
+                "max_early_data": 2048,
+                "early_data_header_name": "Sec-WebSocket-Protocol"
+            }
+        },
+        {
+            "type": "vless",
+            "tag": "🇸🇬狮城-H(流量)",
+            "server": "cos-cdn-z.alicdn.win",
+            "server_port": 443,
+            "uuid": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
+            "packet_encoding": "xudp",
+            "flow": "",
+            "tls": {
+                "enabled": true,
+                "insecure": false,
+                "server_name": "mms-statlc-lication-h.aliapp.men",
+                "utls": {
+                    "enabled": true,
+                    "fingerprint": "ios"
+                }
+            },
+            "transport": {
+                "type": "ws",
+                "path": "/newlogin/login.do",
+                "headers": {
+                    "Host": [
+                        "mms-static-lication-h.aliapp.men"
+                    ],
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                },
+                "max_early_data": 2048,
+                "early_data_header_name": "Sec-WebSocket-Protocol"
+            }
+        }
+    ],
+    "route": {
+        "default_domain_resolver": {
+            "server": "ali_dns"
+        },
+        "auto_detect_interface": true,
+        "rules": [
+            {
+                "inbound": [
+                    "tun-in",
+                    "mixed-in"
+                ],
+                "action": "sniff"
+            },
+            {
+                "type": "logical",
+                "mode": "or",
+                "rules": [
+                    {
+                        "protocol": "dns"
+                    },
+                    {
+                        "port": 53
+                    }
+                ],
+                "action": "hijack-dns"
+            },
+            {
+                "domain_suffix": [
+                    "pandalive.co.kr"
+                ],
+                "outbound": "direct"
+            },
+            {
+                "domain_suffix": [
+                    "services.googleapis.cn",
+                    "xn--ngstr-lra8j.com"
+                ],
+                "outbound": "节点选择"
+            },
+            {
+                "ip_is_private": true,
+                "outbound": "direct"
+            },
+            {
+                "clash_mode": "全球直连",
+                "outbound": "direct"
+            },
+            {
+                "clash_mode": "全局代理",
+                "outbound": "🚀 节点选择"
+            },
+            {
+                "rule_set": [
+                    "geoip-cn",
+                    "geosite-cn"
+                ],
+                "outbound": "direct"
+            },
+            {
+                "domain_suffix": [
+                    ".cdn77.org",
+                    ".91selfie.com",
+                    ".rmhfrtnd.com",
+                    ".btc620.com",
+                    ".jads.co",
+                    ".kwai.net",
+                    ".killcovid2021.com"
+                ],
+                "outbound": "🚀 节点选择"
+            },
+            {
+                "rule_set": "Global",
+                "outbound": "🚀 节点选择"
+            }
+        ],
+        "rule_set": [
+            {
+                "type": "remote",
+                "tag": "geoip-cn",
+                "format": "binary",
+                "url": "https://gh-proxy.com/https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-cn.srs",
+                "download_detour": "direct"
+            },
+            {
+                "type": "remote",
+                "tag": "geosite-cn",
+                "format": "binary",
+                "url": "https://gh-proxy.com/https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-geolocation-cn.srs",
+                "download_detour": "direct"
+            },
+            {
+                "tag": "Global",
+                "type": "remote",
+                "format": "source",
+                "url": "https://gh-proxy.org/https://raw.githubusercontent.com/ethanwwan/sing-box-rules/refs/heads/main/rule_json/Global_All.json",
+                "download_detour": "direct"
+            }
+        ],
+        "final": "direct"
+    },
+    "experimental": {
+        "cache_file": {
+            "enabled": true,
+            "store_fakeip": true,
+            "store_rdrc": true
+        },
+        "clash_api": {
+            "default_mode": "智能首选",
+            "external_controller": "127.0.0.1:9091",
+            "secret": ""
+        }
+    }
+}

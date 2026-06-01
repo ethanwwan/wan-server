@@ -290,7 +290,7 @@
       "key": "华数",
       "name": "🦐华数",
       "type": 3,
-      "api": "https://pan.29o.cn/down.php/b917074fabbfc6b4e8d2d25cd4227474.py",
+      "api": "https://pan.29o.cn/down.php/10b39f7bc2521aea8a4a091a0d86e2da.py",
       "changeable": 1
     },
     {
@@ -1929,17 +1929,12 @@
       "url": "Parallel"
     },
     {
-      "name": "YYNB",
-      "type": 1,
-      "url": "https://json.cfysoft.cc/api/?key=6af47759daf81f86dc123f0f519bf73d&url="
-    },
-    {
       "name": "不知道谁的",
       "type": 1,
       "url": "http://1.94.244.214:8889/geturl?url="
     },
     {
-      "name": "2了k",
+      "name": "好像不能用",
       "type": 1,
       "url": "https://json.xmi6.com/api/?key=2CkQXrfnaanrht0gCQ&url="
     },
@@ -1957,6 +1952,21 @@
       "name": "虾米",
       "type": 0,
       "url": "https://jx.xmflv.com/?url="
+    },
+    {
+      "name": "NSYS①",
+      "type": 1,
+      "url": "http://nsys.hundong.xyz/api/?key=EdG87gW0IDYarx9ry5&url="
+    },
+    {
+      "name": "SHNB",
+      "type": 1,
+      "url": "https://json.xophp.com/api/?key=5492ef7d5a1646338426e2f45b8c8e0d&url="
+    },
+    {
+      "name": "YYNB",
+      "type": 1,
+      "url": "https://json.cfysoft.cc/api/?key=db40a4b2f15c4078301a068181bb2724&url="
     },
     {
       "name": "广告",
