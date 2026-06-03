@@ -64,9 +64,9 @@
             "outbounds": [
                 "♻️ 自动选择",
                 "❇️猎户座-A-ID",
-                "❇️猎户座-B-ID",
-                "❇️猎户座-C-MY",
-                "❇️猎户座-D-MY",
+                "❇️猎户座-B-KR",
+                "❇️猎户座-C-SG",
+                "❇️猎户座-D-IN",
                 "❇️猎户座-E-AU",
                 "❇️猎户座-F-AU",
                 "❇️猎户座-G-US",
@@ -100,9 +100,9 @@
             "tag": "♻️ 自动选择",
             "outbounds": [
                 "❇️猎户座-A-ID",
-                "❇️猎户座-B-ID",
-                "❇️猎户座-C-MY",
-                "❇️猎户座-D-MY",
+                "❇️猎户座-B-KR",
+                "❇️猎户座-C-SG",
+                "❇️猎户座-D-IN",
                 "❇️猎户座-E-AU",
                 "❇️猎户座-F-AU",
                 "❇️猎户座-G-US",
@@ -162,13 +162,13 @@
                 "server_name": "www.bing.com"
             },
             "password": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
-            "tag": "❇️猎户座-B-ID",
+            "tag": "❇️猎户座-B-KR",
             "type": "hysteria2",
             "up_mbps": 30,
             "down_mbps": 30
         },
         {
-            "tag": "❇️猎户座-C-MY",
+            "tag": "❇️猎户座-C-SG",
             "type": "tuic",
             "server": "bgpg.c9aee41f-979e-48be-8ad5-e0c8eb90f38c.a77d7834.demo-chat-airport.com",
             "server_port": 18662,
@@ -188,7 +188,7 @@
             }
         },
         {
-            "tag": "❇️猎户座-D-MY",
+            "tag": "❇️猎户座-D-IN",
             "type": "tuic",
             "server": "bgph.edc75321-7544-48f3-aea1-3068c0711ea8.1ac0370c.demo-chat-airport.com",
             "server_port": 18662,
@@ -342,7 +342,7 @@
             "tls": {
                 "enabled": true,
                 "insecure": false,
-                "server_name": "mms-static-rpjng5-e.oppocdn.sbs",
+                "server_name": "mms-static-yswcq6-e.oppocdn.sbs",
                 "utls": {
                     "enabled": true,
                     "fingerprint": "firefox"
@@ -372,10 +372,10 @@
             "tls": {
                 "enabled": true,
                 "insecure": false,
-                "server_name": "mms-statlc-r5by2ha-e.codeu.men",
+                "server_name": "mms-statlc-m6wi15l-e.codeu.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "qq"
+                    "fingerprint": "edge"
                 }
             },
             "transport": {
@@ -402,10 +402,10 @@
             "tls": {
                 "enabled": true,
                 "insecure": false,
-                "server_name": "mms-statlc-lg60gow-f.codeu.men",
+                "server_name": "mms-statlc-mpam4aa-f.codeu.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "qq"
+                    "fingerprint": "edge"
                 }
             },
             "transport": {
@@ -435,7 +435,7 @@
                 "server_name": "mms-statlc-version-g.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "safari"
+                    "fingerprint": "edge"
                 }
             },
             "transport": {
@@ -465,7 +465,7 @@
                 "server_name": "mms-statlc-version-h.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "firefox"
+                    "fingerprint": "edge"
                 }
             },
             "transport": {
@@ -492,7 +492,7 @@
             "tls": {
                 "enabled": true,
                 "insecure": false,
-                "server_name": "mms-statlc-kgp6lz-e.hzedu.men",
+                "server_name": "mms-statlc-djb2mh-e.hzedu.men",
                 "utls": {
                     "enabled": true,
                     "fingerprint": "qq"
@@ -522,7 +522,7 @@
             "tls": {
                 "enabled": true,
                 "insecure": false,
-                "server_name": "mms-statlc-upzvgb-f.hzedu.men",
+                "server_name": "mms-statlc-vz89ot-f.hzedu.men",
                 "utls": {
                     "enabled": true,
                     "fingerprint": "edge"
@@ -555,7 +555,7 @@
                 "server_name": "mms-statlc-origin-g.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "firefox"
+                    "fingerprint": "qq"
                 }
             },
             "transport": {
@@ -585,7 +585,7 @@
                 "server_name": "mms-statlc-origin-h.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "firefox"
+                    "fingerprint": "qq"
                 }
             },
             "transport": {
@@ -612,10 +612,10 @@
             "tls": {
                 "enabled": true,
                 "insecure": false,
-                "server_name": "mms-statlc-ymgr-e.gdedu.men",
+                "server_name": "mms-statlc-rbu9-e.tedu.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "firefox"
+                    "fingerprint": "ios"
                 }
             },
             "transport": {
@@ -623,7 +623,7 @@
                 "path": "/newlogin/login.do",
                 "headers": {
                     "Host": [
-                        "mms-static-edit-e.gdedu.men"
+                        "mms-static-edit-e.tedu.men"
                     ],
                     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
                 },
@@ -642,7 +642,7 @@
             "tls": {
                 "enabled": true,
                 "insecure": false,
-                "server_name": "mms-statlc-s2tt-f.gdedu.men",
+                "server_name": "mms-statlc-a81l-f.uedu.men",
                 "utls": {
                     "enabled": true,
                     "fingerprint": "firefox"
@@ -653,7 +653,7 @@
                 "path": "/newlogin/login.do",
                 "headers": {
                     "Host": [
-                        "mms-static-edit-f.gdedu.men"
+                        "mms-static-edit-f.uedu.men"
                     ],
                     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
                 },
@@ -732,7 +732,7 @@
             "tls": {
                 "enabled": true,
                 "insecure": false,
-                "server_name": "mms-statlc-3h3wppnu-e.bjedu.men",
+                "server_name": "mms-statlc-bvqfb5em-e.bjedu.men",
                 "utls": {
                     "enabled": true,
                     "fingerprint": "firefox"
@@ -762,10 +762,10 @@
             "tls": {
                 "enabled": true,
                 "insecure": false,
-                "server_name": "mms-statlc-2mtvdld0-f.bjedu.men",
+                "server_name": "mms-statlc-2s0p5sgv-f.bjedu.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "edge"
+                    "fingerprint": "qq"
                 }
             },
             "transport": {
@@ -795,7 +795,7 @@
                 "server_name": "mms-statlc-lication-g.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "firefox"
+                    "fingerprint": "edge"
                 }
             },
             "transport": {
@@ -825,7 +825,7 @@
                 "server_name": "mms-statlc-lication-h.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "edge"
+                    "fingerprint": "firefox"
                 }
             },
             "transport": {

@@ -133,6 +133,22 @@
       "api": "https://mpimg.cn/down.php/ead143caab5026aba986bd712d556d39.py"
     },
     {
+      "key": "极影",
+      "name": "极影",
+      "type": 3,
+      "api": "https://fastlink.cokey.xyz/f/5lO2Fd/%E6%9E%81%E5%BD%B1.js",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": "http://cmsyun2.qijiyun.vip/api.php/app/"
+    },
+    {
+      "key": "Acfun",
+      "name": "Acfun",
+      "type": 3,
+      "api": "https://fastlink.cokey.xyz/f/XB4Oik/Acfun.py"
+    },
+    {
       "key": "GIMI",
       "name": "剧迷",
       "type": 3,
@@ -1934,16 +1950,6 @@
       "url": "http://1.94.244.214:8889/geturl?url="
     },
     {
-      "name": "好像不能用",
-      "type": 1,
-      "url": "https://json.xmi6.com/api/?key=2CkQXrfnaanrht0gCQ&url="
-    },
-    {
-      "name": "2k①",
-      "type": 1,
-      "url": "https://test1.12321app.com/daoliansiquanjia.php?url="
-    },
-    {
       "name": "AB",
       "type": 0,
       "url": "http://jx.abplayer.top/?url="
@@ -1972,11 +1978,6 @@
       "name": "广告",
       "type": 0,
       "url": "https://yparse.ik9.cc/index.php?url="
-    },
-    {
-      "name": "Motive4K",
-      "type": 1,
-      "url": "http://yunhai.zhujiale.cn/api/?key=a29aa5d71a4e91b991294356b864e83e&url="
     },
     {
       "name": "有广告",

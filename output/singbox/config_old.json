@@ -77,9 +77,9 @@
             "outbounds": [
                 "♻️ 自动选择",
                 "❇️猎户座-A-ID",
-                "❇️猎户座-B-ID",
-                "❇️猎户座-C-MY",
-                "❇️猎户座-D-MY",
+                "❇️猎户座-B-KR",
+                "❇️猎户座-C-SG",
+                "❇️猎户座-D-IN",
                 "❇️猎户座-E-AU",
                 "❇️猎户座-F-AU",
                 "❇️猎户座-G-US",
@@ -113,9 +113,9 @@
             "tag": "♻️ 自动选择",
             "outbounds": [
                 "❇️猎户座-A-ID",
-                "❇️猎户座-B-ID",
-                "❇️猎户座-C-MY",
-                "❇️猎户座-D-MY",
+                "❇️猎户座-B-KR",
+                "❇️猎户座-C-SG",
+                "❇️猎户座-D-IN",
                 "❇️猎户座-E-AU",
                 "❇️猎户座-F-AU",
                 "❇️猎户座-G-US",
@@ -175,13 +175,13 @@
                 "server_name": "www.bing.com"
             },
             "password": "9e1574ba-3c31-4cb5-9d31-d1786a4807e3",
-            "tag": "❇️猎户座-B-ID",
+            "tag": "❇️猎户座-B-KR",
             "type": "hysteria2",
             "up_mbps": 30,
             "down_mbps": 30
         },
         {
-            "tag": "❇️猎户座-C-MY",
+            "tag": "❇️猎户座-C-SG",
             "type": "tuic",
             "server": "bgpg.c9aee41f-979e-48be-8ad5-e0c8eb90f38c.a77d7834.demo-chat-airport.com",
             "server_port": 18662,
@@ -201,7 +201,7 @@
             }
         },
         {
-            "tag": "❇️猎户座-D-MY",
+            "tag": "❇️猎户座-D-IN",
             "type": "tuic",
             "server": "bgph.edc75321-7544-48f3-aea1-3068c0711ea8.1ac0370c.demo-chat-airport.com",
             "server_port": 18662,
@@ -355,10 +355,10 @@
             "tls": {
                 "enabled": true,
                 "insecure": false,
-                "server_name": "mms-static-pybm7o-e.oppocdn.sbs",
+                "server_name": "mms-static-63fv27-e.oppocdn.sbs",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "firefox"
+                    "fingerprint": "safari"
                 }
             },
             "transport": {
@@ -385,10 +385,10 @@
             "tls": {
                 "enabled": true,
                 "insecure": false,
-                "server_name": "mms-statlc-o2l5vvo-e.codeu.men",
+                "server_name": "mms-statlc-mcy8hcs-e.codeu.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "edge"
+                    "fingerprint": "firefox"
                 }
             },
             "transport": {
@@ -415,10 +415,10 @@
             "tls": {
                 "enabled": true,
                 "insecure": false,
-                "server_name": "mms-statlc-w7hu4qa-f.codeu.men",
+                "server_name": "mms-statlc-u43wh0g-f.codeu.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "qq"
+                    "fingerprint": "firefox"
                 }
             },
             "transport": {
@@ -478,7 +478,7 @@
                 "server_name": "mms-statlc-version-h.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "qq"
+                    "fingerprint": "firefox"
                 }
             },
             "transport": {
@@ -505,10 +505,10 @@
             "tls": {
                 "enabled": true,
                 "insecure": false,
-                "server_name": "mms-statlc-ggkfem-e.hzedu.men",
+                "server_name": "mms-statlc-b5105w-e.hzedu.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "firefox"
+                    "fingerprint": "safari"
                 }
             },
             "transport": {
@@ -535,7 +535,7 @@
             "tls": {
                 "enabled": true,
                 "insecure": false,
-                "server_name": "mms-statlc-1ywsjf-f.hzedu.men",
+                "server_name": "mms-statlc-aokgkc-f.hzedu.men",
                 "utls": {
                     "enabled": true,
                     "fingerprint": "qq"
@@ -568,7 +568,7 @@
                 "server_name": "mms-statlc-origin-g.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "qq"
+                    "fingerprint": "firefox"
                 }
             },
             "transport": {
@@ -598,7 +598,7 @@
                 "server_name": "mms-statlc-origin-h.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "firefox"
+                    "fingerprint": "safari"
                 }
             },
             "transport": {
@@ -625,10 +625,10 @@
             "tls": {
                 "enabled": true,
                 "insecure": false,
-                "server_name": "mms-statlc-uckh-e.gdedu.men",
+                "server_name": "mms-statlc-75zy-e.tedu.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "safari"
+                    "fingerprint": "edge"
                 }
             },
             "transport": {
@@ -636,7 +636,7 @@
                 "path": "/newlogin/login.do",
                 "headers": {
                     "Host": [
-                        "mms-static-edit-e.gdedu.men"
+                        "mms-static-edit-e.tedu.men"
                     ],
                     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36"
                 },
@@ -655,7 +655,7 @@
             "tls": {
                 "enabled": true,
                 "insecure": false,
-                "server_name": "mms-statlc-mee8-f.gdedu.men",
+                "server_name": "mms-statlc-fph2-f.uedu.men",
                 "utls": {
                     "enabled": true,
                     "fingerprint": "ios"
@@ -666,7 +666,7 @@
                 "path": "/newlogin/login.do",
                 "headers": {
                     "Host": [
-                        "mms-static-edit-f.gdedu.men"
+                        "mms-static-edit-f.uedu.men"
                     ],
                     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36"
                 },
@@ -688,7 +688,7 @@
                 "server_name": "mms-statlc-edit-g.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "edge"
+                    "fingerprint": "ios"
                 }
             },
             "transport": {
@@ -718,7 +718,7 @@
                 "server_name": "mms-statlc-edit-h.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "safari"
+                    "fingerprint": "qq"
                 }
             },
             "transport": {
@@ -745,10 +745,10 @@
             "tls": {
                 "enabled": true,
                 "insecure": false,
-                "server_name": "mms-statlc-kdtzyljf-e.bjedu.men",
+                "server_name": "mms-statlc-qkd1bhxt-e.bjedu.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "qq"
+                    "fingerprint": "ios"
                 }
             },
             "transport": {
@@ -775,10 +775,10 @@
             "tls": {
                 "enabled": true,
                 "insecure": false,
-                "server_name": "mms-statlc-uel6u2yw-f.bjedu.men",
+                "server_name": "mms-statlc-8bgda99y-f.bjedu.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "qq"
+                    "fingerprint": "edge"
                 }
             },
             "transport": {
@@ -838,7 +838,7 @@
                 "server_name": "mms-statlc-lication-h.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "firefox"
+                    "fingerprint": "ios"
                 }
             },
             "transport": {
