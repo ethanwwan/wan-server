@@ -1,5 +1,5 @@
 {
-  "spider": "https://mpimg.cn/down.php/b0af7220b6c2c3aa224c848a90c8b584.jar",
+  "spider": "https://mpimg.cn/down.php/62615d7d56348e870ccfb9cef5222f9d.jar",
   "logo": "https://fanqienovel.com/page/7621843563495558206",
   "lives": [
     {
@@ -572,6 +572,22 @@
         "播放数组": "anthology-list-play size\">&&</ul>",
         "分类url": "https://www.budaichuchen.net/cupfox-list/{cateId}-{area}--{class}-----{catePg}---{year}.html",
         "分类": "短剧$5#电视剧$2#电影$1#动漫$4#综艺$3"
+      }
+    },
+    {
+      "key": "鹊桥",
+      "name": "鹊桥｜影视 ",
+      "type": 3,
+      "api": "csp_XBPQ",
+      "jar": "https://wp.kayyw.com/f/bobgtv/%E5%B0%B1%E5%87%A0%E4%B8%AA.jar",
+      "ext": {
+        "副标题": "保护正版，人人有责",
+        "简介": "请不要相信视频中的广告，以免上当受骗！+description\" content=\"&&\"",
+        "线路标题": "官方线路",
+        "请求头": "User-Agent$MOBILE_UA",
+        "编码": "UTF-8",
+        "分类url": "http://114bate.com/hdshow/{cateId}-{area}-{by}-{class}-{lang}----{catePg}---{year}.html",
+        "分类": "电影$1#电视剧$2#综艺$3#动漫$4#短剧$5#日韩$6"
       }
     },
     {
@@ -1970,9 +1986,9 @@
       "url": "https://json.xophp.com/api/?key=5492ef7d5a1646338426e2f45b8c8e0d&url="
     },
     {
-      "name": "YYNB",
+      "name": "YNB",
       "type": 1,
-      "url": "https://json.cfysoft.cc/api/?key=db40a4b2f15c4078301a068181bb2724&url="
+      "url": "http://global.apirun.xn--vsqw5hh18a8vw.com:2025/api/?key=63c856aac8b205a5cb972ae8950cfd78&url="
     },
     {
       "name": "广告",
