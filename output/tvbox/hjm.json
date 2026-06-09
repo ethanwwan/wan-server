@@ -591,6 +591,42 @@
       }
     },
     {
+      "key": "kk动漫",
+      "name": "KKK┃动漫",
+      "type": 3,
+      "api": "csp_XBPQ",
+      "jar": "https://wp.kayyw.com/f/bobgtv/%E5%B0%B1%E5%87%A0%E4%B8%AA.jar",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": {
+        "请求头": "User-Agent$MOBILE_UA",
+        "编码": "UTF-8",
+        "主页url": "https://cn.agekkkk.com/",
+        "数组": "lazyload\"&&</a>",
+        "标题": "title=\"&&\"",
+        "图片": "data-original=\"&&\"",
+        "副标题": "bbFB text-right\"><b>&&</b>",
+        "链接": "href=\"&&\"",
+        "播放数组": "class=\"play-list-content\"&&</ul>",
+        "播放列表": "<a&&a>",
+        "播放链接": "href=\"&&\"",
+        "播放标题": ">&&</",
+        "线路数组": "href=\"\\#playlist&&</a>",
+        "线路标题": "动漫",
+        "跳转播放链接": "urlDecode(var player_*\"url\":\"&&\")",
+        "搜索url": "https://cn.agekkkk.com/search/{wd}----------{pg}---.html",
+        "搜索数组": "lazyload\"&&</a>",
+        "搜索标题": "title=\"&&\"",
+        "搜索图片": "data-original=\"&&\"",
+        "搜索副标题": "bbFB text-right\"><b>&&</b>",
+        "搜索链接": "href=\"&&\"",
+        "简介": "style=\"display: none;\">&&</span>",
+        "分类url": "https://cn.agekkkk.com/type/{cateId}-{catePg}.html",
+        "分类": "日韩漫$1#国产漫$2#动态漫$5#特摄片$4#欧美漫$3"
+      }
+    },
+    {
       "key": "js_亲子",
       "name": "👨‍👨‍👧亲子教育",
       "type": 3,
@@ -811,6 +847,14 @@
         "擦边短剧",
         "漫剧"
       ]
+    },
+    {
+      "key": "裤佬JS聚合",
+      "name": "采集┃聚合",
+      "type": 4,
+      "api": "http://zhangqun1818.serv00.net/cj/cjjh.php?ac=list",
+      "searchable": 1,
+      "changeable": 1
     },
     {
       "key": "采集机器人",
@@ -1989,6 +2033,31 @@
       "name": "YNB",
       "type": 1,
       "url": "http://global.apirun.xn--vsqw5hh18a8vw.com:2025/api/?key=63c856aac8b205a5cb972ae8950cfd78&url="
+    },
+    {
+      "name": "麒麟2k(限次)",
+      "type": 1,
+      "url": "https://api.jxapi.cc/api/?key=6e4acf058180b58cbdb0106aa5cdb1e2&url="
+    },
+    {
+      "name": "花旗2k",
+      "type": 1,
+      "url": "https://api.huaqi.pro/api/?key=5bd0db7c858ba9f999373450f3651af7&url="
+    },
+    {
+      "name": "2k(限次)",
+      "type": 1,
+      "url": "http://111.170.140.70:1332/?url="
+    },
+    {
+      "name": "69 2k",
+      "type": 1,
+      "url": "http://jiexi.69mini.com/api/?key=5cc632accf2f4b27a417b89c8edf69c7&url="
+    },
+    {
+      "name": "2k",
+      "type": 1,
+      "url": "http://111.170.140.70:1332/?url="
     },
     {
       "name": "广告",
