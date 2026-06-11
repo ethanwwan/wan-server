@@ -627,6 +627,24 @@
       }
     },
     {
+      "key": "电影先生1",
+      "name": "❤️|电影┃先生",
+      "type": 3,
+      "api": "csp_XBPQ",
+      "jar": "https://wp.kayyw.com/f/bobgtv/%E5%B0%B1%E5%87%A0%E4%B8%AA.jar",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": {
+        "请求头": "User-Agent$MOBILE_UA",
+        "编码": "UTF-8",
+        "主页url": "https://silidm.com/",
+        "线路标题": "保护正版，人人有责",
+        "分类url": "https://silidm.com/show/{cateId}-{area}-{by}-{class}-{lang}-{letter}---{catePg}---{year}.html",
+        "分类": "电影$dianying#剧集$juji#动漫$dongman#综艺$zongyi"
+      }
+    },
+    {
       "key": "js_亲子",
       "name": "👨‍👨‍👧亲子教育",
       "type": 3,
@@ -1057,149 +1075,6 @@
       "type": 3,
       "api": "https://pan.szfx.top/down.php/540e0c721a30390c4f5d2d77b8286905.py",
       "ext": "http://154.94.224.98:8762"
-    },
-    {
-      "key": "至免扫",
-      "name": "至臻免扫",
-      "type": 4,
-      "api": "http://115.191.55.109:7023/api/tvbox/source/2054142090224340992?token=phcB9KDg6dzm8lNH5uG67q5BXdf0X3dR",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "changeable": 0,
-      "playable": 1
-    },
-    {
-      "key": "虎免扫",
-      "name": "虎斑免扫",
-      "type": 4,
-      "api": "http://115.191.55.109:7023/api/tvbox/source/2054142089293205504?token=phcB9KDg6dzm8lNH5uG67q5BXdf0X3dR",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "changeable": 0,
-      "playable": 1
-    },
-    {
-      "key": "盘免扫",
-      "name": "盘搜免扫",
-      "type": 4,
-      "api": "http://115.191.55.109:7023/api/tvbox/source/2054142084146794497?token=phcB9KDg6dzm8lNH5uG67q5BXdf0X3dR",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "changeable": 0,
-      "playable": 1
-    },
-    {
-      "key": "盘免费1",
-      "name": "盘尊社区免扫",
-      "type": 4,
-      "api": "http://115.191.55.109:7023/api/tvbox/source/2054142081961562112?token=phcB9KDg6dzm8lNH5uG67q5BXdf0X3dR",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "changeable": 0,
-      "playable": 1
-    },
-    {
-      "key": "玩免扫",
-      "name": "玩偶免扫",
-      "type": 4,
-      "api": "http://115.191.55.109:7023/api/tvbox/source/2054142081324027905?token=phcB9KDg6dzm8lNH5uG67q5BXdf0X3dR",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "changeable": 0,
-      "playable": 1
-    },
-    {
-      "key": "木免扫",
-      "name": "木偶免扫",
-      "type": 4,
-      "api": "http://115.191.55.109:7023/api/tvbox/source/2054142081324027906?token=phcB9KDg6dzm8lNH5uG67q5BXdf0X3dR",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "changeable": 0,
-      "playable": 1
-    },
-    {
-      "key": "气味分",
-      "name": "七味分组",
-      "type": 4,
-      "api": "http://115.191.55.109:7023/api/tvbox/source/2054142081328222208?token=phcB9KDg6dzm8lNH5uG67q5BXdf0X3dR",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "changeable": 0,
-      "playable": 1
-    },
-    {
-      "key": "libvo",
-      "name": "LIBVIO",
-      "type": 4,
-      "api": "http://115.191.55.109:7023/api/tvbox/source/2054142112860999680?token=phcB9KDg6dzm8lNH5uG67q5BXdf0X3dR",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "changeable": 0,
-      "playable": 1
-    },
-    {
-      "key": "哇莫",
-      "name": "玩偶聚合",
-      "type": 4,
-      "api": "http://115.191.55.109:7023/api/tvbox/source/2054142081324027904?token=phcB9KDg6dzm8lNH5uG67q5BXdf0X3dR",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "changeable": 0,
-      "playable": 1
-    },
-    {
-      "key": "欧免扫",
-      "name": "欧哥免扫",
-      "type": 4,
-      "api": "http://115.191.55.109:7023/api/tvbox/source/2054142081080758272?token=phcB9KDg6dzm8lNH5uG67q5BXdf0X3dR",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "changeable": 0,
-      "playable": 1
-    },
-    {
-      "key": "多免扫",
-      "name": "多多免扫",
-      "type": 4,
-      "api": "http://115.191.55.109:7023/api/tvbox/source/2054142078383820801?token=phcB9KDg6dzm8lNH5uG67q5BXdf0X3dR",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "changeable": 0,
-      "playable": 1
-    },
-    {
-      "key": "二小免扫",
-      "name": "二小免扫",
-      "type": 4,
-      "api": "http://115.191.55.109:7023/api/tvbox/source/2054142076416692224?token=phcB9KDg6dzm8lNH5uG67q5BXdf0X3dR",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "changeable": 0,
-      "playable": 1
-    },
-    {
-      "key": "人人电",
-      "name": "人人电影",
-      "type": 4,
-      "api": "http://115.191.55.109:7023/api/tvbox/source/2054142076173422592?token=phcB9KDg6dzm8lNH5uG67q5BXdf0X3dR",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "changeable": 0,
-      "playable": 1
     },
     {
       "key": "肥猫的",

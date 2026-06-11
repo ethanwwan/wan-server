@@ -1,6 +1,6 @@
 {
   "wallpaper": "https://wp.upx8.com/api.php",
-  "spider": "https://gh-proxy.com/https://raw.githubusercontent.com/xyq254245/xyqonlinerule/main/custom_spider.jar;md5;58a6e012f4b819e573af3b2515c61dcf",
+  "spider": "https://gh-proxy.com/https://raw.githubusercontent.com/xyq254245/xyqonlinerule/main/custom_spider.jar;md5;eed040a6247f375adbff7ec181f8e0d6",
   "lives": [
     {
       "name": "本地live文件",
@@ -146,35 +146,6 @@
       "filterable": 1,
       "quickSearch": 1,
       "searchable": 1
-    },
-    {
-      "key": "csp_Kuaikan",
-      "name": "💡快看影视",
-      "type": 3,
-      "api": "csp_Kuaikan",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1
-    },
-    {
-      "key": "csp_Bdys",
-      "name": "🐞哔嘀影视",
-      "type": 3,
-      "api": "csp_Bdys",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "ext": "https://v.xlys.ltd.ua"
-    },
-    {
-      "key": "csp_XYQHiker_修罗影视",
-      "name": "🧲修罗影视(XYQH)",
-      "type": 3,
-      "api": "csp_XYQHiker",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "ext": "https://gh-proxy.com/https://raw.githubusercontent.com/xyq254245/xyqonlinerule/main/XYQHiker/哔嘀影视.json"
     },
     {
       "key": "csp_JianPian",
