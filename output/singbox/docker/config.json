@@ -65,7 +65,7 @@
                 "♻️ 自动选择",
                 "❇️猎户座-A-KR",
                 "❇️猎户座-B-KR",
-                "❇️猎户座-C-IN",
+                "❇️猎户座-C-MY",
                 "❇️猎户座-D-IN",
                 "❇️猎户座-E-AU",
                 "❇️猎户座-F-AU",
@@ -101,7 +101,7 @@
             "outbounds": [
                 "❇️猎户座-A-KR",
                 "❇️猎户座-B-KR",
-                "❇️猎户座-C-IN",
+                "❇️猎户座-C-MY",
                 "❇️猎户座-D-IN",
                 "❇️猎户座-E-AU",
                 "❇️猎户座-F-AU",
@@ -168,7 +168,7 @@
             "down_mbps": 30
         },
         {
-            "tag": "❇️猎户座-C-IN",
+            "tag": "❇️猎户座-C-MY",
             "type": "tuic",
             "server": "bgpg.c9aee41f-979e-48be-8ad5-e0c8eb90f38c.a77d7834.demo-chat-airport.com",
             "server_port": 18662,
@@ -342,10 +342,10 @@
             "tls": {
                 "enabled": true,
                 "insecure": false,
-                "server_name": "mms-static-kvqe8s-e.oppocdn.sbs",
+                "server_name": "mms-static-eeiiws-e.oppocdn.sbs",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "edge"
+                    "fingerprint": "ios"
                 }
             },
             "transport": {
@@ -372,10 +372,10 @@
             "tls": {
                 "enabled": true,
                 "insecure": false,
-                "server_name": "mms-statlc-9gmlgdg-e.codeu.men",
+                "server_name": "mms-statlc-temxxum-e.codeu.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "safari"
+                    "fingerprint": "qq"
                 }
             },
             "transport": {
@@ -402,10 +402,10 @@
             "tls": {
                 "enabled": true,
                 "insecure": false,
-                "server_name": "mms-statlc-2hwyk46-f.codeu.men",
+                "server_name": "mms-statlc-9531wkl-f.codeu.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "firefox"
+                    "fingerprint": "edge"
                 }
             },
             "transport": {
@@ -435,7 +435,7 @@
                 "server_name": "mms-statlc-version-g.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "edge"
+                    "fingerprint": "firefox"
                 }
             },
             "transport": {
@@ -465,7 +465,7 @@
                 "server_name": "mms-statlc-version-h.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "firefox"
+                    "fingerprint": "qq"
                 }
             },
             "transport": {
@@ -492,10 +492,10 @@
             "tls": {
                 "enabled": true,
                 "insecure": false,
-                "server_name": "mms-statlc-1czedq-e.hzedu.men",
+                "server_name": "mms-statlc-gbshb3-e.hzedu.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "qq"
+                    "fingerprint": "firefox"
                 }
             },
             "transport": {
@@ -522,10 +522,10 @@
             "tls": {
                 "enabled": true,
                 "insecure": false,
-                "server_name": "mms-statlc-iz65lj-f.hzedu.men",
+                "server_name": "mms-statlc-ep698z-f.hzedu.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "edge"
+                    "fingerprint": "firefox"
                 }
             },
             "transport": {
@@ -555,7 +555,7 @@
                 "server_name": "mms-statlc-origin-g.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "safari"
+                    "fingerprint": "ios"
                 }
             },
             "transport": {
@@ -585,7 +585,7 @@
                 "server_name": "mms-statlc-origin-h.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "safari"
+                    "fingerprint": "ios"
                 }
             },
             "transport": {
@@ -612,10 +612,10 @@
             "tls": {
                 "enabled": true,
                 "insecure": false,
-                "server_name": "mms-statlc-eg7f-e.tedu.men",
+                "server_name": "mms-statlc-mlff-e.tedu.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "safari"
+                    "fingerprint": "qq"
                 }
             },
             "transport": {
@@ -642,10 +642,10 @@
             "tls": {
                 "enabled": true,
                 "insecure": false,
-                "server_name": "mms-statlc-1055-f.uedu.men",
+                "server_name": "mms-statlc-obut-f.uedu.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "edge"
+                    "fingerprint": "safari"
                 }
             },
             "transport": {
@@ -675,7 +675,7 @@
                 "server_name": "mms-statlc-edit-g.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "ios"
+                    "fingerprint": "safari"
                 }
             },
             "transport": {
@@ -705,7 +705,7 @@
                 "server_name": "mms-statlc-edit-h.aliapp.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "safari"
+                    "fingerprint": "ios"
                 }
             },
             "transport": {
@@ -732,7 +732,7 @@
             "tls": {
                 "enabled": true,
                 "insecure": false,
-                "server_name": "mms-statlc-hjq7wkpp-e.bjedu.men",
+                "server_name": "mms-statlc-bz4d5z65-e.bjedu.men",
                 "utls": {
                     "enabled": true,
                     "fingerprint": "edge"
@@ -762,10 +762,10 @@
             "tls": {
                 "enabled": true,
                 "insecure": false,
-                "server_name": "mms-statlc-r4wntung-f.bjedu.men",
+                "server_name": "mms-statlc-3xnmgc1t-f.bjedu.men",
                 "utls": {
                     "enabled": true,
-                    "fingerprint": "qq"
+                    "fingerprint": "firefox"
                 }
             },
             "transport": {
