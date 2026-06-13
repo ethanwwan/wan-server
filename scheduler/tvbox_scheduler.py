@@ -14,6 +14,7 @@ from utils.logger import get_logger
 
 TVBOX_DIR = os.path.join(PROJECT_ROOT, 'output', 'tvbox')
 TVBOX_URL = "https://www.iyouhun.com/tv/dc"
+TVBOX_ITEM_URL = "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_"
 headers = {"User-Agent": "okhttp/3.12.12", "Accept": "application/json"}
 os.makedirs(TVBOX_DIR, exist_ok=True)
 
@@ -52,8 +53,7 @@ def process_single_url(item):
         file_path = os.path.join(TVBOX_DIR, file_name)
         with open(file_path, 'wb') as f:
             f.write(final_content)
-        
-        new_item['url'] = f"https://localhost/api/tvbox/{file_name}"
+        new_item['url'] = TVBOX_ITEM_URL + file_name
         new_item['name'] = new_item['name'].replace('游魂', '万家')
         return new_item
         
