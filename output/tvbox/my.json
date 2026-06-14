@@ -6,7 +6,9 @@
     {
       "key": "Douban",
       "name": "🚀豆瓣┃热播",
+      "name": "🚀豆瓣┃热播",
       "type": 3,
+      "api": "csp_Douban",
       "api": "csp_Douban",
       "indexs": 1,
       "searchable": 0,
@@ -18,11 +20,13 @@
       "name": "🍼┃设置┃中心",
       "type": 3,
       "api": "csp_FishConfig"
+      "api": "csp_FishConfig"
     },
     {
       "key": "YGP",
       "name": "🔔┃新片┃预告",
       "type": 3,
+      "api": "csp_YGP",
       "api": "csp_YGP",
       "searchable": 1,
       "quickSearch": 1,
@@ -32,6 +36,7 @@
       "key": "Wogg",
       "name": "👽️┃玩偶┃4K",
       "type": 3,
+      "api": "csp_Wogg",
       "api": "csp_Wogg",
       "searchable": 1,
       "changeable": 1,
@@ -52,6 +57,7 @@
       "name": "🪵┃木偶┃4K",
       "type": 3,
       "api": "csp_FishCloud",
+      "api": "csp_FishCloud",
       "searchable": 1,
       "ext": {
         "site": [
@@ -66,12 +72,14 @@
       "key": "知予",
       "name": "🍁┃知予┃4K",
       "api": "csp_AppNox",
+      "api": "csp_AppNox",
       "type": 3,
       "ext": "AXa/dhw2PLXN7GTzaamHOCEf9KWdx8b5bp7n8hAmf9Boa6AZrB5/hhb4qGO6kjkz/Oh5Uei9rzPWsZlQhgxQGSu7Zb/ZmT15NpqUP+qEjAXGPyOlfFWZbr4rxW3WZSqH6i+OT49idbNqqJdm1jXPR00G5O44GJb+9H7f1iioaW5GOEXjTbDGfBqd4uVVCz6vPPgb/k1NVY/Ze+bb5AsQMmZyAcHWgow8PEaTln0cVXxkb5VmKMQfj5sEq9ZnWGHbu4/32qI2Jjtkmj6VijcdWZSyxuwW/O1i8QbrqQZMeYyr16m5gwNFIyv3ppAxMfyjSz6P7J9dbMfS5PaT3xL3TKTAnZFjS0KyZIKYrJBLj9lXwgox8aFmPV1fT2CBX5t/dHX6gL8CfkhYGjFj7LnVLZo5se/1WjuMkzPTSZharqLvXySQsKpiGKLhfs8DsgQppW4BP8Lv2wPFDmbwB2op21RJDJNQhJXbOW6Z4rI5uXZJAW6LuvudGVKVD/RF3/yUlM4Boda3iuV/7ER45wPegGXouEiiuS7QHjYCgiMLVmUEiYLVhiTe3qDU6VlHqn5YhP7+1kibrXrRQ7JzyQ0sOxljdVHQw6IIRTQwzSBJLoDiiCddIncVXxYmKuhW6Pxen1bOfQgd723GkDyLB1Y5U9KXbzS9y6+ko37HVfmwUzDEcG+DYyxa2lJTCIXbdPbl8LBGUGMURx1S43wMLh1rurnz41qwPL5/WULQJmx4bt4E30dcTi/KfIBD8EUM8YZk8z7JSG5bi3oyYToXXRJCXK/qNpxaJ5I0s27MfnJRE/xF2k7Pv0YtFPmwdQr6Z3neEzOo/Vt1E5WlC0JiURC2bO+MWqA70m6B5WJkmnd46qPLtaofki6EzbH81AMvgsYAgjf8iAO6nYWFcrVoAsYMMgJkyPExJEUQStc+TB4gvUFUT9VeTHMXNSWiHMrhGkAQIA37PXzfig3c0sAUy+9iNlKXZv/lfbVFRgV9w8k0eDLrcR40Ma1Pmgnwq7v05RqJiSQCngiXOQgzR4wFar5anDJT73LmmP77+zaoJDH0aZeY"
     },
     {
       "key": "寻川",
       "name": "🍧┃寻川┃4K",
+      "api": "csp_AppNox",
       "api": "csp_AppNox",
       "type": 3,
       "ext": "AbcP1HG0F9DImJN3O0j1Bbun2pWvbIasZkXzOSFtW0E/HSe2wlzD6dQpVI9d9bmoCMLwvn2SborJU02oWR2PwVx5rDrBoxNUmdN0kbis2BLgbLmTYH0OT9VpeTpjiCj9WOoVXqnWtpPPxJSmUxDawdyPleyFu186EEDaVhlYY5tGOvh4j4zpu67S/HtYreFssTYUYuNpKwdoGIg7bWXmuM11j8PecqLCioIsxAXK7OeZNDErFXw5sw2w4Gx8Mv5gfVVo+6EU0QwPdhl9oQGbSizsRpdhneZe5QxSCnxTD4H9MU/52+bgirD+V93aMn9glFssf1NWCP/KEqxwx/F4A50023mXgL4Axk0/ClID5jrnVgxi6L/rl15KXfG1Ks7x9nyQadrDfsnwD6Ht6pcgipkP/WlOJBnf80DC0NEi1xUKMdZN/mndpIJBIqHrUdi4+5nV0aght2VISlNlmfA6ZXfa0P3dUUza+2vGBMkWZnGpsw6qMPLq1Fi1PVegq7zqd4Q7EU6QnHjpQLISbw3WegBgLkwJI4g7arygvD2DqWLqHDjQyCf+0ERiNss65iH9tg1nc6oxl3NAzFN5YkxpvN7eWCVWVhgKkcl7Tdkfzt2LI7XUPj5Q8eNM88dwgKoeE/mMPmLBD2xg/B7Bq3RZa3sZAswf6QDKYrxrm3leGD9HRDZBd+nMPQ9V86J/YZ6WqS3ekLwGjfzxl2VpmrTzdhFIym6D9YpAUQ4Jsvi6pdPgDpWrwb0LGsYZdrS0Y5Ppp8vzbFuvBXDCkl96gwOJIVT/k9OEj6V0vfLXK6XgW/PIRisZRFKNU5upA7UFv20s0cRv4qScI7UTI8FP/E6w5BElCMTeQ6RQOiGjH0NVsgCTVgaXi8qbOL9bkeuh2zHHc03QxoKM3v0k1LGmPT2MBWRTcTHo3NtomX+ox/BqyD0wFPptZgMJ/mm+vorXvvWD+SXmNwqwdWG4G9Q69bD1/YR2AQS1yDjJcvIuqSgAJYQHAhFxBBACy6j8cRpHl2fnlQ=="
@@ -80,12 +88,14 @@
       "key": "沐辞",
       "name": "🧊┃沐辞┃4K",
       "api": "csp_AppNox",
+      "api": "csp_AppNox",
       "type": 3,
       "ext": "AQUucLUJRH9RFWo2llKlyTrMCyVJ0Kpob6GGGwM0j5jiyraPW+SaJOKlkFrgd1ZhRMCnf0G74bm9C+4z5cinWObAMVMVtYf3sq6ftyqkjscrCwmACTm3lYdUtHGXFJI5MibkogunAZdw4jqNzeJW5yZmcvtvNWAB2u3HpiPCZ/7BBa+frYoJk64v5fZCFR9ywNGr0nXP+F3iwSBdiuzG3EiSTWwdh66EiviaRCI17Qad4cXfy3SMDsy39ejvXzdTrN0VOAx2XDqhFRpL6JnxweIDg8NZ75R0qJDpn9hLiTUxiIB2fT9pjD+Da10ThaLJbcf49f2N2AbwIYaL0+7lGdPD4/WSG1B/MsJYbNVEIPVn4d3lWofSBf904ualn0Yx+RE8SQfoXWXiHowqIU01uQfWuFXV+1LwHTc3ZkTfdAd9SRqQgkfl4QwyogKb9KXE51rexjvPo7heswXhKJVnginjrFrCSuPbQ5I4G9mY0ivmsNLhl4YgezZ8nNLYJTisU7gn4Q5tSUdGCo4NGVmTAm9hRLKz5ao1FNnQ6zbq33/IRtiwfHPlGZf543z+wA4ZCXukLVd2HKmNniR7dnIScjvSENMatCmS60pm6xW0ZapgZZd6rDnSivtChrU+GetWYQBBA1d/FeFgOSGhd175JvnInnwe0sGlQ+aoSyaANoEDXjk8LSzJPScRIqEn4sUBHehjWBQyQjb8wGFjciWlQETGYFYyXn4SEAhqk/KSNNHbAO7nDTZrVJatDtF/e1W0+ryHzoY+UWoVoHqm2zbsqNezbSpumOfaIJIfM5GmcpiMdjAh7w/HpGngmX/MI574TixdhpqWvtagwEVu61hxxmK5ZDJXER2wjFxZBMn2T5QelhNRHUNT7HoxkrHs8VXBwkYbLjoXs05vtXVpkLkokEi2QJU/Qjh0lCCyvHHIE2cvEzcpAqRfvzGHksXSWwZzV1MO4iHjd86Sgo/8Xp7RLQMe4G57+bg+HoZXY5YDQzK+ESXGIs1p3agfPhvaP/0fkUhUSHkLCsoO3yCuQarGPR4qgDVN8bayFm7Ya3rK9zD4"
     },
     {
       "key": "清沅",
       "name": "💧┃清沅┃4K",
+      "api": "csp_AppNox",
       "api": "csp_AppNox",
       "type": 3,
       "ext": "ASjKEhQKe/DZHt0fbLID47aB3aYcWUG5aIPwrmTCgGinaSykux5CZpbz57zl1moRZGFkoEXqk7decpKNU6W/p/6OTfj3JWvZtr89yPZSxNyjJm1Il5upXQT68sXR/0WG392H71MN7Q8NC8xkSOuwAq7EfX2cuHMsiqFeCCugzAiINUiEqvboCFdXiI97C6kqqqiaQIS9d+R1r7krr5vQXWtky7XJNsiK5ACjppyTh68cbONYIcgLp5Kg5woh/wj9xmNT6mFGqF2D3j2RUaLoWYf+K1+ltBiuzZ7THWKwrnpBBig8XUAG3lXNXiFhPILyYWfr+1j/UoInhNITzJJ+SSRc88KmOk5kpch+idGzVMzHIq/bLpRRxE0iV8Qdtc2atKF9QUqPXJLrwv21Dl+nxgPEGOZ+71L+gABeQdvXO7xvyzUnd+rOidPJr1mBsfu9ySbcqHkhL5EIEQpGHwRhG/yN3Y5xj0BU+SdSxnDo+CwMC+g+WCts34c2u8h2tz7G5vuTw8QvDF23kF/BZeD2QaoCBAd3SDG9ObAichfuO1nDa938+Ul+iekNOEPtPFr6k5o+px/JJkE7MKYhekE/2JfmIkbkBHdnewJYckdM37/9EKsnAozbDyFKhfKR06Es52KtuAhGyh1B8uyfsj33qFpreAqGam8kjEHdYA0i832o0BtTU2gS3mf3NoijVH/XNmlJRuNXo9yYxdjuip4Eq4iqIgajM16MGAIJ0rumYhxJ5uJUFDlf55b9iS+DvJ8wotnBvfdINpAaeXPPlVc/1JDp1rIOw0qg2XIRAafLL7kzXnW8djs2dPSQU1+j9LIrfQ6u3k4lqUs9gRMW1JhwC/4iqimnwg0KsVValaplt+fxFHhwCCkS45uLf8BaY+UZtp5ZDffbi3Q0EDAK8F210Bzd5l8W8MokURUSj374Z7y2hAROBAAgZ8qWRrFOmBC+I+LUCm7sV4h7Mwdpe8sDAtxBhxOpBAYyV8eACQsDbnQsBvizlafy16ptRrArViG0uB1VSPqvi8gqcFD1zMl+uRo="
@@ -95,12 +105,14 @@
       "name": "🌟┃星河┃共影",
       "type": 3,
       "api": "csp_ALLLive",
+      "api": "csp_ALLLive",
       "searchable": 1
     },
     {
       "key": "FishPs",
       "name": "🐟┃鱼鱼┃盘搜",
       "type": 3,
+      "api": "csp_FishPs",
       "api": "csp_FishPs",
       "searchable": 1,
       "filterable": 0
@@ -109,6 +121,7 @@
       "key": "bili",
       "name": "🎨┃笔触┃琉璃",
       "type": 3,
+      "api": "csp_Bili",
       "api": "csp_Bili",
       "searchable": 1,
       "quickSearch": 1,
@@ -121,6 +134,7 @@
       "name": "🍃┃听风┃知秋",
       "type": 3,
       "api": "csp_zhiqiu",
+      "api": "csp_zhiqiu",
       "searchable": 1,
       "ext": "http://www.小不点.com/api//2026/zhiqiu.php"
     },
@@ -129,12 +143,14 @@
       "name": "💃┃韩圈┃影视",
       "type": 3,
       "api": "csp_FishHxq",
+      "api": "csp_FishHxq",
       "ext": "http://www.小不点.com/api//2026/fishhxq.php"
     },
     {
       "key": "Kan360",
       "name": "🎡┃三六┃影视",
       "type": 3,
+      "api": "csp_Kan360",
       "api": "csp_Kan360",
       "searchable": 1,
       "filterable": 1,
@@ -150,6 +166,7 @@
       "name": "🍓┃热播┃APP",
       "type": 3,
       "api": "csp_AppRJ",
+      "api": "csp_AppRJ",
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 0,
@@ -161,6 +178,7 @@
       "key": "三秋影视",
       "name": "🍂┃三秋┃APP",
       "api": "csp_App3Q",
+      "api": "csp_App3Q",
       "type": 3,
       "searchable": 1,
       "quickSearch": 1,
@@ -171,6 +189,7 @@
       "name": "💭┃思追┃APP",
       "type": 3,
       "api": "csp_AppGet",
+      "api": "csp_AppGet",
       "searchable": 1,
       "changeable": 1,
       "ext": "ASKjgwRNiR0Cm6kFKdNzI8WI/ic4PmwK3odgt8MhFQvbl3mhDbShb5bbTFTo7paa8t0h/eK0IaCgWFxjyrk9E3XEhEgnQl4lSED6Aai0eVzXMurDiNGdHxvF3VEUI6e4G/o4FILNazhcr7ECOwLDz/VhNAd/7G/VxdrrL+Dz0oAUiUsfLmy4DiP+aQrY1INXLXmkDb2xN5Ev3pZr7xs6XtM="
@@ -179,6 +198,7 @@
       "key": "Libvio",
       "name": "📺┃立播┃4K",
       "type": 3,
+      "api": "csp_Libvio",
       "api": "csp_Libvio",
       "searchable": 1,
       "changeable": 1,
@@ -196,6 +216,7 @@
       "name": "🧁┃指南┃4K",
       "type": 3,
       "api": "csp_KZN",
+      "api": "csp_KZN",
       "searchable": 1,
       "changeable": 1
     },
@@ -203,6 +224,7 @@
       "key": "SeedHub",
       "name": "🌱┃Seed┃4K",
       "type": 3,
+      "api": "csp_SeedHub",
       "api": "csp_SeedHub",
       "searchable": 1,
       "ext": {
@@ -217,6 +239,7 @@
       "key": "Qiwei",
       "name": "🌈┃七味┃4K",
       "type": 3,
+      "api": "csp_Qiwei",
       "api": "csp_Qiwei",
       "searchable": 1,
       "filterable": 0,
@@ -236,6 +259,7 @@
       "key": "gying",
       "name": "👀┃观影┃4K",
       "type": 3,
+      "api": "csp_Gying",
       "api": "csp_Gying",
       "searchable": 1,
       "quickSearch": 0,
@@ -259,6 +283,7 @@
       "name": "🖍️┃蜡笔┃4K",
       "type": 3,
       "api": "csp_FishCloud",
+      "api": "csp_FishCloud",
       "searchable": 1,
       "ext": {
         "site": [
@@ -277,6 +302,7 @@
       "name": "💫┃至臻┃4K",
       "type": 3,
       "api": "csp_FishCloud",
+      "api": "csp_FishCloud",
       "searchable": 1,
       "ext": {
         "site": [
@@ -294,6 +320,7 @@
       "name": "🍀┃多多┃4K",
       "type": 3,
       "api": "csp_FishCloud",
+      "api": "csp_FishCloud",
       "searchable": 1,
       "ext": {
         "site": [
@@ -307,6 +334,7 @@
       "key": "FishErxiao",
       "name": "🍒┃二小┃4K",
       "type": 3,
+      "api": "csp_FishCloud",
       "api": "csp_FishCloud",
       "searchable": 1,
       "ext": {
@@ -324,6 +352,7 @@
       "name": "🐅┃虎斑┃4K",
       "type": 3,
       "api": "csp_FishCloud",
+      "api": "csp_FishCloud",
       "searchable": 1,
       "ext": {
         "site": [
@@ -335,6 +364,7 @@
       "key": "LeiJing",
       "name": "🐳┃雷鲸┃4K",
       "type": 3,
+      "api": "csp_LeiJing",
       "api": "csp_LeiJing",
       "searchable": 1,
       "changeable": 1,
@@ -352,6 +382,7 @@
       "name": "💿┃盘它┃4K",
       "type": 3,
       "api": "csp_PanTa",
+      "api": "csp_PanTa",
       "searchable": 1,
       "changeable": 1
     },
@@ -359,6 +390,7 @@
       "key": "夸父",
       "name": "☀️┃夸父┃4K",
       "type": 3,
+      "api": "csp_FishKF",
       "api": "csp_FishKF",
       "searchable": 1,
       "quickSearch": 1,
@@ -380,6 +412,7 @@
       "name": "🌟┃双星┃4K",
       "type": 3,
       "api": "csp_ShuangXing",
+      "api": "csp_ShuangXing",
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 1,
@@ -393,6 +426,7 @@
       "name": "☁️┃云集┃4K",
       "type": 3,
       "api": "csp_DianYingYunJi",
+      "api": "csp_DianYingYunJi",
       "searchable": 1,
       "changeable": 1
     },
@@ -401,6 +435,7 @@
       "name": "📀┃盘吧┃4K",
       "type": 3,
       "api": "csp_YunPanBa",
+      "api": "csp_YunPanBa",
       "searchable": 1,
       "ext": "https://yunpan6.com/"
     },
@@ -408,6 +443,7 @@
       "key": "Wwys",
       "name": "🍙┃糯米┃影视",
       "type": 3,
+      "api": "csp_Wwys",
       "api": "csp_Wwys",
       "searchable": 1,
       "filterable": 1,
@@ -419,6 +455,7 @@
       "name": "🏭┃厂长┃影视",
       "type": 3,
       "api": "csp_CZ",
+      "api": "csp_CZ",
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 0,
@@ -429,6 +466,7 @@
       "name": "✏️┃文才┃影视",
       "type": 3,
       "api": "csp_WenCai",
+      "api": "csp_WenCai",
       "searchable": 1,
       "ext": "https://www.tjrongze.com,https://y2s52n7.com,https://m.hkybqufgh.com,https://m.sizhengxt.com,https://m.9zhoukj.com,https://m.jiabaide.cn"
     },
@@ -437,12 +475,14 @@
       "name": "🍉┃瓜子┃影视",
       "type": 3,
       "api": "csp_Guazi",
+      "api": "csp_Guazi",
       "searchable": 1
     },
     {
       "key": "TvDy",
       "name": "👼┃天堂┃影视",
       "type": 3,
+      "api": "csp_TvDy",
       "api": "csp_TvDy",
       "searchable": 1,
       "filterable": 1
@@ -452,6 +492,7 @@
       "name": "🐦┃麻雀┃影视",
       "type": 3,
       "api": "csp_MqTv",
+      "api": "csp_MqTv",
       "searchable": 1,
       "ext": "https://www.mqtv.cc"
     },
@@ -459,6 +500,7 @@
       "key": "SaoHuo",
       "name": "🌶️┃骚火┃影视",
       "type": 3,
+      "api": "csp_SaoHuo",
       "api": "csp_SaoHuo",
       "searchable": 1,
       "filterable": 1,
@@ -470,6 +512,7 @@
       "name": "🎯┃独播┃影视",
       "type": 3,
       "api": "csp_Duboku",
+      "api": "csp_Duboku",
       "searchable": 1,
       "filterable": 1,
       "changeable": 1
@@ -479,6 +522,7 @@
       "name": "🥰┃爱看┃影视",
       "type": 3,
       "api": "csp_Ikanbot",
+      "api": "csp_Ikanbot",
       "searchable": 1,
       "filterable": 0,
       "ext": "{\"box\": \"TVBox\", \"danmu\": false}"
@@ -487,6 +531,7 @@
       "key": "Hema",
       "name": "🦛┃河马┃短剧",
       "type": 3,
+      "api": "csp_Hema",
       "api": "csp_Hema",
       "searchable": 1,
       "quickSearch": 1,
@@ -508,6 +553,7 @@
       "name": "😍┃好看┃短剧",
       "type": 3,
       "api": "csp_HHkk",
+      "api": "csp_HHkk",
       "searchable": 1,
       "quickSearch": 1,
       "genre": "shortdrama",
@@ -519,12 +565,14 @@
       "type": 3,
       "quickSearch": 1,
       "api": "csp_AppGet",
+      "api": "csp_AppGet",
       "ext": "AYCBc+fWtk3Ww5c5E60Bo/WU/T4E6CeEycr4XI4G5qlbHuIqnYVSkEL3SU7CelK5Try8WfXhaNH+v57CAk7j2WsarjlyXV8uztVoM5+2qHrAlnCAla8ODUNhdN9dxGa8uKfX0x1ICKB+3HQfIKV9BRVGyFNO/xqOPnpLDK0+jGr/"
     },
     {
       "key": "XiFan",
       "name": "🥣┃稀饭┃动漫",
       "type": 3,
+      "api": "csp_XiFan",
       "api": "csp_XiFan",
       "searchable": 1,
       "quickSearch": 1,
@@ -537,6 +585,7 @@
       "name": "🕺┃曼波┃动漫",
       "type": 3,
       "api": "csp_AppGet",
+      "api": "csp_AppGet",
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,
@@ -546,6 +595,7 @@
       "key": "Gugu",
       "name": "🐤┃咕咕┃动漫",
       "type": 3,
+      "api": "csp_AppGet",
       "api": "csp_AppGet",
       "searchable": 1,
       "quickSearch": 1,
@@ -557,6 +607,7 @@
       "name": "🧲┃荐片┃磁力",
       "type": 3,
       "api": "csp_Jianpian",
+      "api": "csp_Jianpian",
       "searchable": 1,
       "filterable": 1
     },
@@ -564,6 +615,7 @@
       "key": "Xb6v",
       "name": "🔋┃6V┃磁力",
       "type": 3,
+      "api": "csp_Xb6v",
       "api": "csp_Xb6v",
       "searchable": 1,
       "filterable": 1
@@ -573,12 +625,14 @@
       "name": "🍬┃糖果┃搜索",
       "type": 3,
       "api": "csp_TGSou",
+      "api": "csp_TGSou",
       "searchable": 1
     },
     {
       "key": "Buguyy",
       "name": "🐦┃布谷┃音乐",
       "type": 3,
+      "api": "csp_Buguyy",
       "api": "csp_Buguyy",
       "searchable": 1,
       "filterable": 1,
@@ -589,6 +643,7 @@
       "name": "💕┃初心┃音乐",
       "type": 3,
       "api": "csp_ChuXin",
+      "api": "csp_ChuXin",
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 0
@@ -598,6 +653,7 @@
       "name": "🎧┃爱听┃音乐",
       "type": 3,
       "api": "csp_AiTingMusic",
+      "api": "csp_AiTingMusic",
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 0
@@ -606,6 +662,7 @@
       "key": "Music24bit",
       "name": "🎼┃无损┃音乐",
       "type": 3,
+      "api": "csp_Music24bit",
       "api": "csp_Music24bit",
       "searchable": 1,
       "changeable": 1,
@@ -624,6 +681,7 @@
       "name": "🐰┃小兔┃少儿",
       "type": 3,
       "api": "csp_TuXiaoBei",
+      "api": "csp_TuXiaoBei",
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 0
@@ -633,6 +691,7 @@
       "name": "🐯┃小虎┃少儿",
       "type": 3,
       "api": "csp_BeiLeHu",
+      "api": "csp_BeiLeHu",
       "searchable": 0,
       "quickSearch": 0,
       "filterable": 0
@@ -641,6 +700,7 @@
       "key": "少儿教育",
       "name": "🧒┃少儿┃教育",
       "type": 3,
+      "api": "csp_Bili",
       "api": "csp_Bili",
       "style": {
         "type": "rect",
@@ -658,6 +718,7 @@
       "name": "📚┃小学┃课堂",
       "type": 3,
       "api": "csp_Bili",
+      "api": "csp_Bili",
       "style": {
         "type": "rect",
         "ratio": 1.597
@@ -673,6 +734,7 @@
       "key": "初中课堂",
       "name": "📐┃初中┃课堂",
       "type": 3,
+      "api": "csp_Bili",
       "api": "csp_Bili",
       "style": {
         "type": "rect",
@@ -690,6 +752,7 @@
       "name": "🎓┃高中┃课堂",
       "type": 3,
       "api": "csp_Bili",
+      "api": "csp_Bili",
       "style": {
         "type": "rect",
         "ratio": 1.597
@@ -706,6 +769,7 @@
       "name": "⚽┃看球┃体育",
       "type": 3,
       "api": "csp_Kanqiu",
+      "api": "csp_Kanqiu",
       "searchable": 0,
       "filterable": 1,
       "indexs": 0,
@@ -719,6 +783,7 @@
       "name": "🏟️┃超全┃体育",
       "type": 3,
       "api": "csp_Sir88",
+      "api": "csp_Sir88",
       "searchable": 0,
       "filterable": 1,
       "indexs": 0,
@@ -731,6 +796,7 @@
       "name": "🏀┃球通┃体育",
       "type": 3,
       "api": "csp_QiutongTY",
+      "api": "csp_QiutongTY",
       "searchable": 0,
       "filterable": 0,
       "changeable": 1
@@ -739,6 +805,7 @@
       "key": "GuaziTY",
       "name": "🥜┃瓜子┃体育",
       "type": 3,
+      "api": "csp_GuaziTY",
       "api": "csp_GuaziTY",
       "searchable": 0,
       "filterable": 0,
@@ -749,6 +816,7 @@
       "name": "🏅┃919┃体育",
       "type": 3,
       "api": "csp_C919TY",
+      "api": "csp_C919TY",
       "searchable": 0,
       "filterable": 0,
       "changeable": 1
@@ -757,6 +825,7 @@
       "key": "TingBook",
       "name": "📻┃六月┃有声",
       "type": 3,
+      "api": "csp_TingBook",
       "api": "csp_TingBook",
       "searchable": 1,
       "indexs": 0,
@@ -769,6 +838,7 @@
       "key": "TingBookJinXia",
       "name": "🎙️┃堇夏┃有声",
       "type": 3,
+      "api": "csp_TingBookJinXia",
       "api": "csp_TingBookJinXia",
       "searchable": 1,
       "filterable": 1,
@@ -783,6 +853,7 @@
       "name": "📁┃文件┃浏览",
       "type": 3,
       "api": "csp_Local",
+      "api": "csp_Local",
       "searchable": 0,
       "changeable": 0,
       "indexs": 0,
@@ -794,6 +865,7 @@
       "key": "Market",
       "name": "🛒┃网盘┃市场",
       "type": 3,
+      "api": "csp_Market",
       "api": "csp_Market",
       "searchable": 0,
       "indexs": 0,
@@ -807,6 +879,7 @@
       "name": "💌┃推送┃接收",
       "type": 3,
       "api": "csp_Push",
+      "api": "csp_Push",
       "searchable": 0,
       "changeable": 0,
       "indexs": 0,
@@ -816,6 +889,7 @@
       "key": "Fishdrive",
       "name": "🐠┃摸鱼┃媒体库",
       "type": 3,
+      "api": "csp_FishDrive",
       "api": "csp_FishDrive",
       "indexs": 0,
       "searchable": 1,
@@ -827,6 +901,7 @@
       "name": "🖼️┃摸鱼┃壁纸库",
       "type": 3,
       "api": "csp_Wallpaper",
+      "api": "csp_Wallpaper",
       "searchable": 0,
       "indexs": 0,
       "quickSearch": 0,
@@ -835,6 +910,16 @@
         "type": "rect",
         "ratio": 0.56
       }
+    }
+  ],
+  "lives": [
+    {
+      "name": "superiptv",
+      "type": 0,
+      "url": "http://127.0.0.1:5266/iptv.m3u",
+      "playerType": 2,
+      "epg": "http://diyp5.112114.xyz/?ch={name}&date={date}",
+      "logo": "https://epg.112114.xyz/logo/{name}.png"
     }
   ],
   "lives": [
