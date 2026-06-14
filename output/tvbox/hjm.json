@@ -1,11 +1,17 @@
 {
-  "spider": "https://mpimg.cn/down.php/62615d7d56348e870ccfb9cef5222f9d.jar",
+  "spider": "https://mpimg.cn/down.php/dacf2112a4873aaa4f9442f3c489af7f.jar",
   "logo": "https://fanqienovel.com/page/7621843563495558206",
   "lives": [
     {
       "name": "夜空",
       "type": 0,
       "url": "https://pan.szfx.top/down.php/4f5dad27633e1293d7ef2317ee9c801e.txt",
+      "timeout": 10
+    },
+    {
+      "name": "夜空1",
+      "type": 0,
+      "url": "https://pan.29o.cn/down.php/aa846bceb7a1b4adb0385b1f61b192e8.txt",
       "timeout": 10
     },
     {
@@ -33,27 +39,9 @@
       "timeout": 10
     },
     {
-      "name": "问号",
-      "type": 0,
-      "url": "https://mpimg.cn/down.php/e29ec89f78ad259cd1b00d8500144330.txt",
-      "timeout": 10
-    },
-    {
       "name": "应该能看",
       "type": 0,
       "url": "https://gh-proxy.org/raw.githubusercontent.com/vinkerq/iptv-api/refs/heads/master/iptv.txt",
-      "timeout": 10
-    },
-    {
-      "name": "潇雨萌萌",
-      "type": 0,
-      "url": "https://ds65.tv1288.xyz",
-      "timeout": 10
-    },
-    {
-      "name": "潇雨萌萌(限时看)",
-      "type": 0,
-      "url": "http://43.251.226.110:9991/zwyrj3",
       "timeout": 10
     },
     {
