@@ -3,6 +3,12 @@
   "logo": "https://fanqienovel.com/page/7621843563495558206",
   "lives": [
     {
+      "name": "没4K",
+      "type": 0,
+      "url": "https://mpimg.cn/text.php?hash=7265d70b6834cefbddb61bcc2d9c99db",
+      "timeout": 10
+    },
+    {
       "name": "夜空",
       "type": 0,
       "url": "https://pan.szfx.top/down.php/4f5dad27633e1293d7ef2317ee9c801e.txt",
@@ -108,6 +114,19 @@
       "name": "⚽🏀体育赛事",
       "type": 1,
       "api": "https://jsnzkpg.us.ci"
+    },
+    {
+      "key": "四叶草",
+      "name": "四叶草",
+      "type": 3,
+      "api": "https://pan.szfx.top/down.php/08343ea7d5d8d12da1c16f9ccf03040d.js",
+      "ext": {
+        "host": "http://107.151.244.162:6622",
+        "key": "wNCwbXzr0Bm6cS2C",
+        "init": "V122",
+        "api": 2,
+        "ua": "okhttp/3.10.0"
+      }
     },
     {
       "key": "极影",
@@ -563,24 +582,7 @@
         "请求头": "User-Agent$MOBILE_UA",
         "编码": "UTF-8",
         "主页url": "https://cn.agekkkk.com/",
-        "数组": "lazyload\"&&</a>",
-        "标题": "title=\"&&\"",
-        "图片": "data-original=\"&&\"",
-        "副标题": "bbFB text-right\"><b>&&</b>",
-        "链接": "href=\"&&\"",
-        "播放数组": "class=\"play-list-content\"&&</ul>",
-        "播放列表": "<a&&a>",
-        "播放链接": "href=\"&&\"",
-        "播放标题": ">&&</",
-        "线路数组": "href=\"\\#playlist&&</a>",
         "线路标题": "动漫",
-        "跳转播放链接": "urlDecode(var player_*\"url\":\"&&\")",
-        "搜索url": "https://cn.agekkkk.com/search/{wd}----------{pg}---.html",
-        "搜索数组": "lazyload\"&&</a>",
-        "搜索标题": "title=\"&&\"",
-        "搜索图片": "data-original=\"&&\"",
-        "搜索副标题": "bbFB text-right\"><b>&&</b>",
-        "搜索链接": "href=\"&&\"",
         "简介": "style=\"display: none;\">&&</span>",
         "分类url": "https://cn.agekkkk.com/type/{cateId}-{catePg}.html",
         "分类": "日韩漫$1#国产漫$2#动态漫$5#特摄片$4#欧美漫$3"
@@ -1013,7 +1015,7 @@
       "name": "♨️皮虾｜皮皮",
       "type": 3,
       "api": "https://pan.szfx.top/down.php/540e0c721a30390c4f5d2d77b8286905.py",
-      "ext": "http://154.94.224.98:8762"
+      "ext": "http://43.248.117.123:4680"
     },
     {
       "key": "肥猫的",
