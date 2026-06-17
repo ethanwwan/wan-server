@@ -116,6 +116,17 @@
       "api": "https://jsnzkpg.us.ci"
     },
     {
+      "key": "JD",
+      "name": "JD4k采集网盘",
+      "type": 3,
+      "api": "https://mpimg.cn/down.php/99ed736540ae820ae00d67669d22dc90.js",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "changeable": 1,
+      "ext": "https://qp.69mini.com/api.php/app/"
+    },
+    {
       "key": "四叶草",
       "name": "四叶草",
       "type": 3,
@@ -291,6 +302,26 @@
       "quickSearch": 1,
       "changeable": 1,
       "filterable": 1
+    },
+    {
+      "key": "路漫漫",
+      "name": "路漫漫",
+      "type": 3,
+      "api": "https://gh-proxy.com/https://raw.githubusercontent.com/IY-CPU/IY/main/lib/drpy2.min.js",
+      "ext": "https://gh-proxy.com/https://raw.githubusercontent.com/IY-CPU/IY/main/lib/路漫漫.png"
+    },
+    {
+      "key": "动漫堂",
+      "name": "漫堂",
+      "type": 3,
+      "api": "https://pan.szfx.top/down.php/08343ea7d5d8d12da1c16f9ccf03040d.js",
+      "ext": {
+        "host": "http://110.42.67.221:6802",
+        "key": "1vi33w2pAHEm8Y6U",
+        "init": "V122",
+        "api": 2,
+        "ua": "okhttp/3.10.0"
+      }
     },
     {
       "key": "去看吧",

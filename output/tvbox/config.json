@@ -1,36 +1,40 @@
 {
   "urls": [
     {
+      "name": "🚀万家┃PG",
+      "url": "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_pg.json"
+    },
+    {
       "name": "🚀万家┃小米",
       "url": "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_xiaomi.json"
-    },
-    {
-      "name": "🚀万家┃肥猫",
-      "url": "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_fm.json"
-    },
-    {
-      "name": "🚀万家┃王二小",
-      "url": "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_wex.json"
-    },
-    {
-      "name": "🚀万家┃多多",
-      "url": "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_duo.json"
     },
     {
       "name": "🚀万家┃饭太硬",
       "url": "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_fty.json"
     },
     {
-      "name": "🚀万家┃PG",
-      "url": "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_pg.json"
-    },
-    {
       "name": "🚀万家┃真心",
       "url": "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_zx.json"
     },
     {
-      "name": "🚀万家┃东篱",
-      "url": "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_dongli.json"
+      "name": "🚀万家┃王二小",
+      "url": "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_wex.json"
+    },
+    {
+      "name": "🚀万家┃肥猫",
+      "url": "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_fm.json"
+    },
+    {
+      "name": "🚀万家┃多多",
+      "url": "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_duo.json"
+    },
+    {
+      "name": "🚀万家┃菜妮丝",
+      "url": "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_lns.json"
+    },
+    {
+      "name": "🚀万家┃王二小(新)",
+      "url": "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_newwex.json"
     },
     {
       "name": "🚀万家┃哈基米",
@@ -41,32 +45,20 @@
       "url": "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_xyq.json"
     },
     {
+      "name": "🚀万家┃东篱",
+      "url": "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_dongli.json"
+    },
+    {
       "name": "🚀万家┃摸鱼",
       "url": "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_my.json"
     },
     {
+      "name": "🚀万家┃D佬",
+      "url": "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_dl.json"
+    },
+    {
       "name": "🚀万家┃驸马",
       "url": "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_fuma.json"
-    },
-    {
-      "name": "🚀万家┃L佬",
-      "url": "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_llao.json"
-    },
-    {
-      "name": "🚀万家┃王二小(新)",
-      "url": "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_newwex.json"
-    },
-    {
-      "name": "🚀万家┃菜妮丝",
-      "url": "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_lns.json"
-    },
-    {
-      "name": "😹万家┃余生",
-      "url": "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_ys.json"
-    },
-    {
-      "name": "👼万家┃儿童专属",
-      "url": "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_et.json"
     },
     {
       "name": "🎨万家┃动漫城",
@@ -77,16 +69,24 @@
       "url": "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_nb.json"
     },
     {
+      "name": "😹万家┃余生",
+      "url": "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_ys.json"
+    },
+    {
+      "name": "🚀万家┃L佬",
+      "url": "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_llao.json"
+    },
+    {
       "name": "🎥万家┃短剧",
       "url": "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_dj.json"
     },
     {
-      "name": "🚀万家┃D佬",
-      "url": "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_dl.json"
-    },
-    {
       "name": "🚀万家┃高天流云",
       "url": "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_gtly.json"
+    },
+    {
+      "name": "👼万家┃儿童专属",
+      "url": "https://gh-proxy.org/https://gist.githubusercontent.com/ethanwwan/79df08bd7185b03692a03d44d5598dd7/raw/531b039cf6e130b70a46f9109a967c0d555c7cd3/tvbox_et.json"
     }
   ]
 }
