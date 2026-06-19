@@ -1,5 +1,5 @@
 {
-  "spider": "https://mpimg.cn/down.php/dacf2112a4873aaa4f9442f3c489af7f.jar",
+  "spider": "https://mpimg.cn/down.php/3360d1b22a3f7d2d1eac89eeace6b0fc.jar",
   "logo": "https://fanqienovel.com/page/7621843563495558206",
   "lives": [
     {
@@ -526,6 +526,17 @@
       "filterable": 0,
       "quickSearch": 0,
       "ext": ""
+    },
+    {
+      "key": "甜圈短剧",
+      "name": "甜圈短剧",
+      "type": 3,
+      "api": "https://pan.29o.cn/down.php/e9c44ed748739aeb4abfdb3408631302.py",
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "playerType": 2
     },
     {
       "key": "短剧｜聚合",
@@ -1628,6 +1639,190 @@
       "name": "🔍短剧影音阁🔍",
       "type": 4,
       "api": "https://so.yinpai.xyz/duanju.php?type=dquark"
+    },
+    {
+      "key": "qixingzhenren",
+      "name": "TG|阿里",
+      "type": 4,
+      "api": "http://189.1.224.165:4676/proxy.php?code=duanwu&target=6c651d7ebfaf7155ab58",
+      "searchable": 1,
+      "quickSearch": 1,
+      "changeable": 0
+    },
+    {
+      "key": "wydwpzy",
+      "name": "TG|百度/夸克",
+      "type": 4,
+      "api": "http://189.1.224.165:4676/proxy.php?code=duanwu&target=8bd7e0c546d5695bdd5d",
+      "searchable": 1,
+      "quickSearch": 1,
+      "changeable": 0
+    },
+    {
+      "key": "Baidu_Netdisk",
+      "name": "TG|百度1",
+      "type": 4,
+      "api": "http://189.1.224.165:4676/proxy.php?code=duanwu&target=aaf063dd2cda4e4d47d4",
+      "searchable": 1,
+      "quickSearch": 1,
+      "changeable": 0
+    },
+    {
+      "key": "Baidu_qhy",
+      "name": "TG|百度2",
+      "type": 4,
+      "api": "http://189.1.224.165:4676/proxy.php?code=duanwu&target=a0f0ace3dc9bed58e29a",
+      "searchable": 1,
+      "quickSearch": 1,
+      "changeable": 0
+    },
+    {
+      "key": "QukanMovie",
+      "name": "TG|115/1",
+      "type": 4,
+      "api": "http://189.1.224.165:4676/proxy.php?code=duanwu&target=dfb53b3e9028b2c47d83",
+      "searchable": 1,
+      "quickSearch": 1,
+      "changeable": 0
+    },
+    {
+      "key": "yingshiziyuanpindao",
+      "name": "TG|115/2",
+      "type": 4,
+      "api": "http://189.1.224.165:4676/proxy.php?code=duanwu&target=6c5dcfe4ef5caa0a51ed",
+      "searchable": 1,
+      "quickSearch": 1,
+      "changeable": 0
+    },
+    {
+      "key": "yunpanuc",
+      "name": "TG|优汐",
+      "type": 4,
+      "api": "http://189.1.224.165:4676/proxy.php?code=duanwu&target=cfc4c32c5f82b5c50c34",
+      "searchable": 1,
+      "quickSearch": 1,
+      "changeable": 0
+    },
+    {
+      "key": "zyywpzy",
+      "name": "TG|天翼",
+      "type": 4,
+      "api": "http://189.1.224.165:4676/proxy.php?code=duanwu&target=4022c6bb2322e05fd0f4",
+      "searchable": 1,
+      "quickSearch": 1,
+      "changeable": 0
+    },
+    {
+      "key": "ucquark",
+      "name": "TG|多多",
+      "type": 4,
+      "api": "http://189.1.224.165:4676/proxy.php?code=duanwu&target=fc9a05152ced41cb995c",
+      "searchable": 1,
+      "quickSearch": 1,
+      "changeable": 0
+    },
+    {
+      "key": "ydwpzy",
+      "name": "TG|移动",
+      "type": 4,
+      "api": "http://189.1.224.165:4676/proxy.php?code=duanwu&target=0f0013821b45a5429c54",
+      "searchable": 1,
+      "quickSearch": 1,
+      "changeable": 0
+    },
+    {
+      "key": "bilibili_video",
+      "name": "哔哩视频[官]",
+      "type": 4,
+      "api": "http://189.1.224.165:4676/proxy.php?code=duanwu&target=43a51c6900799fd673cd",
+      "logo": "http://189.1.224.165:99/png/bili.png"
+    },
+    {
+      "key": "iqiyi",
+      "name": "爱奇艺[官]",
+      "logo": "http://189.1.224.165:99/png/qiyi.png",
+      "type": 4,
+      "api": "http://189.1.224.165:4676/proxy.php?code=duanwu&target=e923bf89f755054bfc8a",
+      "searchable": 2,
+      "quickSearch": 0,
+      "changeable": 0
+    },
+    {
+      "key": "tengxun",
+      "name": "腾讯视频[官]",
+      "logo": "http://189.1.224.165:99/png/tx.jpg",
+      "type": 4,
+      "api": "http://189.1.224.165:4676/proxy.php?code=duanwu&target=23fc933b8e7e43be9a41",
+      "searchable": 2,
+      "quickSearch": 0,
+      "changeable": 0
+    },
+    {
+      "key": "mgtv",
+      "name": "芒果TV[官]",
+      "logo": "https://s1.aigei.com/src/img/png/6d/6d3895462f9f4c2cbd8892bef86a7b1b.png?imageMogr2/auto-orient/thumbnail/!282x320r/gravity/Center/crop/282x320/quality/85/%7CimageView2/2/w/282&e=2051020800&token=P7S2Xpzfz11vAkASLTkfHN7Fw-oOZBecqeJaxypL:sU6xC2FswSXb5xSfRw13iAtNaQo=",
+      "type": 4,
+      "api": "http://189.1.224.165:4676/proxy.php?code=duanwu&target=0aa63cda7257d8eabc1e",
+      "searchable": 2,
+      "quickSearch": 0,
+      "changeable": 0
+    },
+    {
+      "key": "shenshou",
+      "name": "神兽[4K]",
+      "type": 4,
+      "api": "http://189.1.224.165:4676/proxy.php?code=duanwu&target=7dfe689efdc889c7aefc",
+      "searchable": 1,
+      "quickSearch": 0,
+      "filterable": 0
+    },
+    {
+      "key": "miaokan_4k",
+      "name": "秒看[4K]",
+      "type": 4,
+      "api": "http://189.1.224.165:4676/proxy.php?code=duanwu&target=063f7be8a0f990abe1de",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "changeable": 0
+    },
+    {
+      "key": "libvio",
+      "name": "立播影视",
+      "type": 4,
+      "api": "http://189.1.224.165:4676/proxy.php?code=duanwu&target=c3b8ad05651861ad6cf2",
+      "searchable": 1,
+      "quickSearch": 0,
+      "changeable": 0,
+      "filterable": 1
+    },
+    {
+      "key": "wbbb_note",
+      "name": "歪比巴卜",
+      "type": 4,
+      "api": "http://189.1.224.165:4676/proxy.php?code=duanwu&target=1f36133513acb0f5aa9b",
+      "searchable": 1,
+      "quickSearch": 1,
+      "changeable": 0
+    },
+    {
+      "key": "gimyai_note",
+      "name": "Gimy[4K]",
+      "logo": "https://gimyai.tw/images/ogimage.png",
+      "type": 4,
+      "api": "http://189.1.224.165:4676/proxy.php?code=duanwu&target=1e174175874826938529",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 0
+    },
+    {
+      "key": "hxq",
+      "name": "韩小圈",
+      "type": 4,
+      "api": "http://189.1.224.165:4676/proxy.php?code=duanwu&target=5cd3f75a24f81b98dcf3",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1
     },
     {
       "key": "夸克云盘",
