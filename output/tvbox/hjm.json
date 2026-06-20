@@ -1,5 +1,5 @@
 {
-  "spider": "https://mpimg.cn/down.php/3360d1b22a3f7d2d1eac89eeace6b0fc.jar",
+  "spider": "https://mpimg.cn/down.php/44c46bfced26a85b348c7df0ee1712ea.jar",
   "logo": "https://fanqienovel.com/page/7621843563495558206",
   "lives": [
     {
@@ -292,16 +292,6 @@
       "type": 3,
       "api": "https://pan.29o.cn/down.php/10b39f7bc2521aea8a4a091a0d86e2da.py",
       "changeable": 1
-    },
-    {
-      "key": "雷子",
-      "name": "️​雷子",
-      "type": 3,
-      "api": "https://pan.29o.cn/down.php/2897f8eeef055ff1cde206111571d8fd.py",
-      "searchable": 1,
-      "quickSearch": 1,
-      "changeable": 1,
-      "filterable": 1
     },
     {
       "key": "路漫漫",
@@ -1304,139 +1294,14 @@
       "quickSearch": 1,
       "filterable": 1,
       "changeable": 1,
-      "timeout": 60,
       "ext": {
         "site": [
+          "https://www.wogg.net",
           "https://wogg.xxooo.cf",
-          "https://woggpan.888484.xyz"
+          "https://woggpan.xxooo.cf"
         ]
-      }
-    },
-    {
-      "key": "木偶",
-      "name": "木偶｜4K",
-      "type": 3,
-      "api": "csp_PanWebShare",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "changeable": 1,
-      "timeout": 60,
-      "ext": {
-        "site": [
-          "https://123.666291.xyz",
-          "https://666.666291.xyz",
-          "https://www.muou.site",
-          "https://www.muou.asia"
-        ]
-      }
-    },
-    {
-      "key": "多多",
-      "name": "多多｜4K",
-      "type": 3,
-      "api": "csp_PanWebShare",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "changeable": 1,
-      "timeout": 60,
-      "ext": {
-        "site": [
-          "https://tv.yydsys.top",
-          "https://tv.yydsys.cc",
-          "https://tv.214521.xyz"
-        ]
-      }
-    },
-    {
-      "key": "蜡笔",
-      "name": "蜡笔｜4K",
-      "type": 3,
-      "api": "csp_PanWebShare",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "changeable": 1,
-      "timeout": 60,
-      "ext": {
-        "site": [
-          "https://www.labi88.sbs",
-          "https://feimao666.fun",
-          "http://feimao888.fun"
-        ]
-      }
-    },
-    {
-      "key": "至臻",
-      "name": "至臻｜4K",
-      "type": 3,
-      "api": "csp_PanWebShare",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "changeable": 1,
-      "timeout": 60,
-      "ext": {
-        "site": [
-          "https://mihdr.top",
-          "https://www.miqk.cc",
-          "https://xiaomiai.site",
-          "https://xiaomi666.fun",
-          "https://www.mihdr.top",
-          "https://www.zhizhenpan.fun"
-        ]
-      }
-    },
-    {
-      "key": "欧歌",
-      "name": "欧歌｜4K",
-      "type": 3,
-      "api": "csp_PanWebShare",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "changeable": 1,
-      "timeout": 60,
-      "ext": {
-        "site": [
-          "https://woog.nxog.eu.org"
-        ]
-      }
-    },
-    {
-      "key": "二小",
-      "name": "二小｜4K",
-      "type": 3,
-      "api": "csp_PanWebShare",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "changeable": 1,
-      "timeout": 60,
-      "ext": {
-        "site": [
-          "https://xhww.net",
-          "https://erxiaofn.site",
-          "https://erxiaofn.click",
-          "https://www.xhww.net"
-        ]
-      }
-    },
-    {
-      "key": "虎斑",
-      "name": "虎斑｜4K",
-      "type": 3,
-      "api": "csp_PanWebShare",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "changeable": 1,
-      "ext": {
-        "site": [
-          "http://103.45.162.207:20720"
-        ]
-      }
+      },
+      "timeout": 60
     },
     {
       "key": "快映",
@@ -1449,13 +1314,14 @@
       "changeable": 1,
       "ext": {
         "site": [
-          "http://xsayang.fun:12512"
+          "http://38.76.197.172:12521"
         ]
-      }
+      },
+      "timeout": 60
     },
     {
-      "key": "闪电",
-      "name": "闪电｜4K",
+      "key": "木偶",
+      "name": "木偶｜4K",
       "type": 3,
       "api": "csp_PanWebShare",
       "searchable": 1,
@@ -1464,68 +1330,121 @@
       "changeable": 1,
       "ext": {
         "site": [
-          "https://sd.sduc.site"
+          "https://123.666291.xyz",
+          "https://666.666291.xyz",
+          "https://www.muou.site",
+          "https://www.muou.asia"
         ]
-      }
-    },
-    {
-      "key": "清影",
-      "name": "清影｜4K",
-      "type": 3,
-      "api": "csp_PanWebShareCloudQY",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "changeable": 1,
-      "ext": {
-        "site": [
-          "http://www.revohd.com"
-        ]
-      }
-    },
-    {
-      "key": "雷鲸",
-      "name": "雷鲸｜4K",
-      "type": 3,
-      "api": "csp_PanWebShareCloudLJ",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "changeable": 1,
-      "style": {
-        "type": "list",
-        "ratio": 1.433
       },
-      "ext": {
-        "site": [
-          "https://www.leijing.xyz",
-          "https://www.leijing1.com",
-          "https://leijing.xyz",
-          "https://leijing1.com"
-        ]
-      }
+      "timeout": 60
     },
     {
-      "key": "海绵",
-      "name": "海绵｜4K",
+      "key": "蜡笔",
+      "name": "蜡笔｜4K",
       "type": 3,
-      "api": "csp_PanWebShareCloudHM",
+      "api": "csp_PanWebShare",
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,
       "changeable": 1,
-      "timeout": 60,
-      "style": {
-        "type": "list",
-        "ratio": 1.433
-      },
       "ext": {
         "site": [
-          "http://haimian.eu.org",
-          "https://www.hmxz.org",
-          "https://www.haimianxz.com"
+          "http://www.xiaocgege.shop",
+          "http://xiaocge.fun",
+          "http://feimo.fun",
+          "http://xiaocgege.shop"
         ]
-      }
+      },
+      "timeout": 60
+    },
+    {
+      "key": "至臻",
+      "name": "至臻｜4K",
+      "type": 3,
+      "api": "csp_PanWebShare",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "changeable": 1,
+      "ext": {
+        "site": [
+          "https://mihdr.top",
+          "https://www.miqk.cc",
+          "https://www.mihdr.top"
+        ]
+      },
+      "timeout": 60
+    },
+    {
+      "key": "多多",
+      "name": "多多｜4K",
+      "type": 3,
+      "api": "csp_PanWebShare",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "changeable": 1,
+      "ext": {
+        "site": [
+          "https://tv.yydsys.top",
+          "https://tv.yydsys.cc",
+          "https://tv.214521.xyz"
+        ]
+      },
+      "timeout": 60
+    },
+    {
+      "key": "欧哥",
+      "name": "欧哥｜4K",
+      "type": 3,
+      "api": "csp_PanWebShare",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "changeable": 1,
+      "ext": {
+        "site": [
+          "https://woog.nxog.eu.org",
+          "https://woog.nxog.fun",
+          "https://woog.nxog.eu.org",
+          "https://woog.430520.xyz"
+        ]
+      },
+      "timeout": 60
+    },
+    {
+      "key": "二小",
+      "name": "二小｜4K",
+      "type": 3,
+      "api": "csp_PanWebShare",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "changeable": 1,
+      "ext": {
+        "site": [
+          "https://www.2xiaopan.top",
+          "https://www.erxiaozhan.top",
+          "https://www.2xiaozhan.top"
+        ]
+      },
+      "timeout": 60
+    },
+    {
+      "key": "虎斑",
+      "name": "虎斑｜4K",
+      "type": 3,
+      "api": "csp_PanWebShare",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "changeable": 1,
+      "ext": {
+        "site": [
+          "http://38.76.197.172:16969"
+        ]
+      },
+      "timeout": 60
     },
     {
       "key": "夸父",
@@ -1731,13 +1650,6 @@
       "changeable": 0
     },
     {
-      "key": "bilibili_video",
-      "name": "哔哩视频[官]",
-      "type": 4,
-      "api": "http://189.1.224.165:4676/proxy.php?code=duanwu&target=43a51c6900799fd673cd",
-      "logo": "http://189.1.224.165:99/png/bili.png"
-    },
-    {
       "key": "iqiyi",
       "name": "爱奇艺[官]",
       "logo": "http://189.1.224.165:99/png/qiyi.png",
@@ -1795,15 +1707,6 @@
       "quickSearch": 0,
       "changeable": 0,
       "filterable": 1
-    },
-    {
-      "key": "wbbb_note",
-      "name": "歪比巴卜",
-      "type": 4,
-      "api": "http://189.1.224.165:4676/proxy.php?code=duanwu&target=1f36133513acb0f5aa9b",
-      "searchable": 1,
-      "quickSearch": 1,
-      "changeable": 0
     },
     {
       "key": "gimyai_note",
