@@ -1,7 +1,7 @@
 {
   "spider": "https://ncstatic.clewm.net/rsrc/2026/0508/10/56d0b667615145949789418bff9f22a5.png;md5;B63A0EB8852BB7AB06500C424CCC3DAE",
   "wallpaper": "https://yydsys.top/bg.php",
-  "logo": "https://img.cdn1.vip/i/69b7546986e71_1773622377.gif",
+  "logo": "https://img.cdn1.vip/i/69e0b8deadf7f_1776335070.gif",
   "lives": [
     {
       "name": "migu(优)",
@@ -83,7 +83,21 @@
       "searchable": 0,
       "changeable": 1,
       "indexs": 1,
-      "ext": "https://yydsys.top/duo/json/douban.json"
+      "ext": "https://www.iyouhun.com/tv/json/json/douban.json"
+    },
+    {
+      "key": "leo弹幕",
+      "name": "⚙️┃弹幕┃配置",
+      "type": 3,
+      "api": "csp_DanmakuSpider",
+      "searchable": 1,
+      "jar": "https://ncstatic.clewm.net/rsrc/2026/0606/11/213bbb9695e34a42a8fb0d2deff41a89.png;md5;38F2621478442352EC0417E3D660B8D8",
+      "ext": {
+        "apiUrl": "https://dm.wodenas.xin/xiatianemby|公益源",
+        "autoPushEnabled": true,
+        "danmakuStyle": "经典模式",
+        "lpAlpha": 0.9
+      }
     },
     {
       "key": "网盘配置",
@@ -185,6 +199,25 @@
       }
     },
     {
+      "key": "养生堂",
+      "name": "🚑️┃养生┃知识",
+      "type": 3,
+      "api": "csp_XBPQ",
+      "jar": "https://ncstatic.clewm.net/rsrc/2026/0418/17/1d9136626610437ab0cac0dbe262d1ed.png;md5;4D860D06EC233DBCB891B76055F099D5",
+      "ext": "https://www.iyouhun.com/tv/json/XBPQ/养生堂.json"
+    },
+    {
+      "key": "央视PY",
+      "name": "🍀┃央视┃栏目",
+      "type": 3,
+      "api": "https://www.iyouhun.com/tv/json/py/央视.py",
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "playerType": 2
+    },
+    {
       "key": "免扫4K",
       "name": "♻┃高清┃秒播",
       "type": 3,
@@ -197,7 +230,7 @@
       "key": "戒",
       "name": "🐌┃视界┃秒播",
       "type": 3,
-      "api": "https://yydsys.top/duo/py/界.py",
+      "api": "https://www.iyouhun.com/tv/json/py/界.py",
       "searchable": 1,
       "quickSearch": 0,
       "filterable": 0,
@@ -252,7 +285,7 @@
         "ratio": 1.733
       },
       "ext": {
-        "json": "https://yydsys.top/duo/json/video_data.json"
+        "json": "https://www.iyouhun.com/tv/json/json/video_data.json"
       }
     },
     {
@@ -269,94 +302,96 @@
       }
     },
     {
-      "key": "咕噜映画",
-      "name": "🐸┃咕噜┃映画",
+      "key": "极影",
+      "name": "⚡️┃极影┃影视",
       "type": 3,
-      "changeable": 0,
-      "api": "https://17264.kstore.space/Appfox.min.js",
+      "api": "https://fastlink.cokey.xyz/f/5lO2Fd/%E6%9E%81%E5%BD%B1.js",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": "http://cmsyun2.qijiyun.vip/api.php/app/"
+    },
+    {
+      "key": "枫叶",
+      "name": "🍁┃枫叶┃影视",
+      "type": 3,
+      "api": "https://www.iyouhun.com/tv/json/py/枫叶.py",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "changeable": 1,
+      "playable": 1
+    },
+    {
+      "key": "Acfun",
+      "name": "😀┃A站┃平台",
+      "type": 3,
+      "api": "https://fastlink.cokey.xyz/f/XB4Oik/Acfun.py"
+    },
+    {
+      "key": "哔哩弹幕",
+      "name": "🅱️┃哔哩┃影视",
+      "type": 3,
+      "api": "csp_Bilimd",
+      "jar": "https://pan.szfx.top/down.php/14fce8ef9e7e8a40719c801ec3077b8c.jar",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
       "ext": {
-        "host": "http://www.yingsw.top",
-        "timeout": 8,
-        "key": "guluyinghua_123",
-        "sign": "679543610991810f19698c187e5e106e"
-      }
-    },
-    {
-      "key": "布布",
-      "name": "🐷┃布布┃影视",
-      "type": 3,
-      "api": "https://gitee.com/monosodium-glutamate/wjwj/raw/master/lib/布布.js",
-      "style": {
-        "type": "rect",
-        "ratio": 1.33
+        "cookie": "SESSDATA=8f3ff69f%2C1794310143%2C53c01%2A52CjBX4vniMP8UbH-FHHxtImWyVMCf_NkAmIFpLXuK3B9TH1uSPOG3A5ST5nKXpP5b06gSVmx2Q2FWY0xPY19yaGxqOUNoRnZuLVhselJhVXU5UWlQb093RnprU2xpLVk5bmpwWjZ6bEhLZWt2RTIwbVpHaFJsYXJVeGtGRnFMcTd1OHRoZ24zN2ZRIIEC; bili_jct=27dfcc874d1a3c0fe39b9651ca436394; DedeUserID=3546629682497943; DedeUserID__ckMd5=b11f007e7707c2a6; rpdid=|(J~lu)lmmlJ0J'u~~mRJJl)~; CURRENT_FNVAL=4048; CURRENT_QUALITY=0; ogv_device_support_dolby=0; ogv_device_support_hdr=0; theme-tip-show=SHOWED; theme-avatar-tip-show=SHOWED; bili_ticket=eyJhbGciOiJIUzI1NiIsImtpZCI6InMwMyIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Nzk2OTI4MzEsImlhdCI6MTc3OTQzMzU3MSwicGx0IjotMX0.N5GA9xfkyd1WuAHIXqi7xtE_xI-GPeSepud6oIPi-34; bili_ticket_expires=1779692771; sid=dgwhna8v; b_lsid=7CB15BAC_19E4E82FA4D;"
       },
-      "changeable": 1
+      "timeout": 10
     },
     {
-      "key": "奇奇",
-      "name": "😋┃奇奇┃影视",
+      "key": "爱看剧",
+      "name": "👓️┃爱看┃影视",
+      "type": 3,
+      "api": "https://pan.szfx.top/down.php/56ac2028f2dd8336dccad017927cbef1.py",
+      "ext": "http://43.248.117.123:4680"
+    },
+    {
+      "key": "猫头鹰",
+      "name": "🦉┃夜猫┃秒播",
       "type": 3,
       "api": "https://gitee.com/monosodium-glutamate/wjwj/raw/master/lib/get.js",
       "searchable": 1,
       "ext": {
-        "host": "http://110.42.67.221:8003/",
-        "key": "123456789abcdefg",
+        "host": "http://103.217.190.91:9999",
+        "key": "zxPtEUDGVllIUhDB",
         "init": "V122",
         "api": 2,
         "ua": "okhttp/3.10.0"
-      },
-      "categories": [
-        "电视剧",
-        "综艺",
-        "短剧",
-        "动漫",
-        "少儿",
-        "学习"
-      ]
-    },
-    {
-      "key": "气球",
-      "name": "🎈┃气球┃影视",
-      "type": 3,
-      "api": "csp_AppGet",
-      "jar": "https://ncstatic.clewm.net/rsrc/2026/0416/12/9c6f4eee384d4e9184f7a751c4d10b16.png;md5;690CD77AEB20B09A8DD8E01DCBE660B6",
-      "ext": {
-        "url": "https://vv.229d.cn",
-        "dataKey": "8888888888888888",
-        "dataIv": "8888888888888888"
       }
     },
     {
-      "key": "缘梦",
-      "name": "🔮┃缘梦┃影视",
+      "key": "农民",
+      "name": "🧿┃农民┃影视",
       "type": 3,
-      "searchable": 1,
-      "changeable": 1,
-      "api": "csp_AppGet",
-      "jar": "https://ncstatic.clewm.net/rsrc/2026/0416/12/9c6f4eee384d4e9184f7a751c4d10b16.png;md5;690CD77AEB20B09A8DD8E01DCBE660B6",
+      "api": "csp_XBPQ",
+      "jar": "https://ncstatic.clewm.net/rsrc/2026/0418/17/1d9136626610437ab0cac0dbe262d1ed.png;md5;4D860D06EC233DBCB891B76055F099D5",
       "ext": {
-        "url": "http://165.99.42.137:5432",
-        "dataKey": "1234567890987654",
-        "dataIv": "1234567890987654"
+        "副标题": "保护正版，人人有责",
+        "请求头": "User-Agent$MOBILE_UA",
+        "编码": "UTF-8",
+        "分类url": "https://vip.wwgz.cn:5200/;;!H"
       }
     },
     {
-      "key": "qiao4k1",
-      "name": "🍓┃草莓┃超清",
+      "key": "狐狸电影",
+      "name": "🦊┃狐狸┃电影",
       "type": 3,
-      "api": "csp_qiao2",
-      "playerType": 2,
-      "jar": "https://ncstatic.clewm.net/rsrc/2025/0725/20/318ccef14687421637f5aa0ba1021e33.png;md5;939FFBC2941A28CA533F2653FA4B449E",
-      "ext": "7lj763gg402i7942412h849jg1558j9jl8g19213il86316k465719lik158491h179312h4934183ig2l05g9"
-    },
-    {
-      "key": "qiao4k2",
-      "name": "🍒┃樱桃┃超清",
-      "type": 3,
-      "api": "csp_qiao2",
-      "playerType": 2,
-      "jar": "https://ncstatic.clewm.net/rsrc/2025/0725/20/318ccef14687421637f5aa0ba1021e33.png;md5;939FFBC2941A28CA533F2653FA4B449E",
-      "ext": "7lj763gg402i7942412h849jg1558j9jl8g19213il86316k465719lik158491h179312hk935886ig2l05g9"
+      "api": "csp_XBPQ",
+      "jar": "https://ncstatic.clewm.net/rsrc/2026/0418/17/1d9136626610437ab0cac0dbe262d1ed.png;md5;4D860D06EC233DBCB891B76055F099D5",
+      "ext": {
+        "副标题": "保护正版，人人有责",
+        "请求头": "User-Agent$MOBILE_UA",
+        "编码": "UTF-8",
+        "主页url": "https://www.budaichuchen.net/label/qq.html",
+        "线路数组": "<i class=\"fa ds-dianying\">&&</span>",
+        "播放数组": "anthology-list-play size\">&&</ul>",
+        "分类url": "https://www.budaichuchen.net/cupfox-list/{cateId}-{area}--{class}-----{catePg}---{year}.html",
+        "分类": "短剧$5#电视剧$2#电影$1#动漫$4#综艺$3"
+      }
     },
     {
       "key": "SVIP影视",
@@ -364,25 +399,13 @@
       "type": 3,
       "api": "csp_XBPQ",
       "jar": "https://ncstatic.clewm.net/rsrc/2026/0418/17/1d9136626610437ab0cac0dbe262d1ed.png;md5;4D860D06EC233DBCB891B76055F099D5",
-      "ext": "https://yydsys.top/duo/json/vip.json"
-    },
-    {
-      "key": "csp_xlys",
-      "name": "🥮┃修罗┃影视",
-      "type": 3,
-      "api": "csp_Bdys01",
-      "searchable": 1,
-      "playerType": 1,
-      "quickSearch": 1,
-      "filterable": 0,
-      "jar": "https://ncstatic.clewm.net/rsrc/2026/0321/14/08ddeb54bc5e4c67b24f9ee0dfa280d2.png;md5;bb437516bc7187c2271e946909156c47",
-      "ext": "7lj763gg402i7942476492jlg94li29kk6gi8448ij"
+      "ext": "https://www.iyouhun.com/tv/json/json/vip.json"
     },
     {
       "key": "py_文才",
       "name": "🖍️┃文才┃影视",
       "type": 3,
-      "api": "https://yydsys.top/duo/py/文才.py",
+      "api": "https://www.iyouhun.com/tv/json/py/文才.py",
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,
@@ -398,7 +421,7 @@
       "type": 3
     },
     {
-      "key": "农民",
+      "key": "旺旺",
       "name": "👶┃旺旺┃影视",
       "type": 3,
       "api": "csp_NongMin",
@@ -407,11 +430,18 @@
       "filterable": 1
     },
     {
-      "key": "瓜子影视",
-      "name": "🌻┃瓜子┃影视",
+      "key": "csp_GuaZi",
+      "name": "🍉┃瓜子┃影视",
       "type": 3,
-      "api": "https://yydsys.top/duo/js/drpy2.min.js",
-      "ext": "https://yydsys.top/duo/js/瓜子影视.js"
+      "api": "csp_GuaziAmns",
+      "searchable": 1,
+      "filterable": 1,
+      "quickSearch": 1,
+      "ext": {
+        "sites": "",
+        "filters": "https://file.icve.com.cn/file_doc/822/528/CD984013F5776F759DFC815995F87BFB.aowu"
+      },
+      "jar": "https://ncstatic.clewm.net/rsrc/2026/0606/11/e73824ddbe2d4f28b3e3ccc699d0f064.png;md5;8C8DA63F7C5D8628D0B40FD03632C3B4"
     },
     {
       "key": "金牌影院",
@@ -431,7 +461,7 @@
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,
-      "ext": "https://yydsys.top/duo/json/韩剧看看.json"
+      "ext": "https://www.iyouhun.com/tv/json/json/韩剧看看.json"
     },
     {
       "key": "韩剧在线",
@@ -442,7 +472,7 @@
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,
-      "ext": "https://yydsys.top/duo/json/韩剧在线.json"
+      "ext": "https://www.iyouhun.com/tv/json/json/韩剧在线.json"
     },
     {
       "key": "永乐XBPQ",
@@ -460,18 +490,6 @@
         "类型": "动作片$6#喜剧片$7#爱情片$8#科幻片$9#奇幻片$10#恐怖片$11#剧情片$12#战争片$20#动画片$26#悬疑片$22#冒险片$23#犯罪片$24#惊悚片$45#歌舞片$46#灾难片$47#网络片$48||国产剧$13#港台剧$14#日剧$15#韩剧$33#欧美剧$16#泰剧$34#新马剧$35#其他剧$25||内地综艺$27#港台综艺$28#日本综艺$29#韩国综艺$36#欧美综艺$30#新马泰综艺$37#其他综艺$38||国产动漫$31#日本动漫$32#韩国动漫$39#港台动漫$40#新马泰动漫$41#欧美动漫$42#其他动漫$43",
         "分类url": "https://www.ylys.tv/vodshow/{cateId}-{area}-{by}-{class}-{lang}-{letter}---{catePg}---{year}.html"
       }
-    },
-    {
-      "key": "悟空",
-      "name": "🐵┃悟空┃影视",
-      "type": 3,
-      "api": "csp_XBPQ",
-      "searchable": 1,
-      "click": "document.querySelector(\"#playleft iframe\").contentWindow.document.querySelector(\"#start\").click();",
-      "quickSearch": 1,
-      "filterable": 1,
-      "jar": "https://ncstatic.clewm.net/rsrc/2026/0418/17/1d9136626610437ab0cac0dbe262d1ed.png;md5;4D860D06EC233DBCB891B76055F099D5",
-      "ext": "https://yydsys.top/duo/json/wukong.json"
     },
     {
       "key": "xiaozhen",
@@ -521,37 +539,6 @@
       }
     },
     {
-      "key": "鹊桥影院",
-      "name": "🐦️┃鹊桥┃影院",
-      "type": 3,
-      "api": "csp_XBPQ",
-      "jar": "https://ncstatic.clewm.net/rsrc/2026/0501/23/d064709f380b4075ac3a4ec302d4244d.png;md5;FD3CEFC7302F3A39A442682F802B11E5",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "ext": {
-        "请求头": "User-Agent$MOBILE_UA",
-        "编码": "UTF-8",
-        "二次截取": "myui-vodlist clearfix\">&&</ul>",
-        "数组": "lazyload&&</li>",
-        "标题": "title=\"&&\"",
-        "图片": "data-original=\"&&\"",
-        "副标题": "right\">&&</span>",
-        "链接": "href=\"&&\"",
-        "播放数组": "playlist clearfix\"&&</ul>",
-        "播放列表": "<a&&a>",
-        "播放链接": "href=\"&&\"",
-        "播放标题": ">&&</",
-        "线路数组": "class=\"stui-vodlist__head\"&&span>",
-        "线路标题": "多多专线",
-        "跳转播放链接": "var player_*\"url\":\"&&\"",
-        "主页url": "http://114bate.com/",
-        "分类url": "http://114bate.com/show/{cateId}-{area}-{by}-{class}-{lang}----{catePg}---{year}.html",
-        "分类": "电影$1#电视剧$2#综艺$3#动漫$4#电影解说$38",
-        "类型": "动作片$7#喜剧片$8#爱情片$9#科幻片$10#恐怖片$11#剧情片$12#犯罪片$29#战争片$13||国产剧$14#港剧$15#台湾剧$16#韩剧$17#日剧$18#泰剧$31#欧美剧$19#海外剧$20||大陆综艺$21#日韩综艺$22#港台综艺$23#欧美综艺$24||国产动漫$25#日本动漫$26#欧美动漫$27#海外动漫$28||空||空"
-      }
-    },
-    {
       "key": "水滴视频",
       "name": "💧┃水滴┃视频",
       "type": 3,
@@ -568,12 +555,6 @@
       }
     },
     {
-      "key": "独播库",
-      "name": "🍄┃独播┃影视",
-      "type": 3,
-      "api": "https://asxav.tprssz.com/image/2026-04-09/8/2042044022836473856#dbokutv.js"
-    },
-    {
       "key": "星芽短剧",
       "name": "🌟┃星芽┃短剧",
       "type": 3,
@@ -587,37 +568,21 @@
       "changeable": 0
     },
     {
-      "key": "南风短剧",
-      "name": "☢️┃南风┃短剧",
-      "type": 3,
-      "api": "csp_Nfdj",
-      "searchable": 1,
-      "quickSearch": 1,
-      "changeable": 1,
-      "timeout": 10
-    },
-    {
       "key": "聚合短剧",
       "name": "✨┃聚合┃短剧",
       "type": 3,
-      "api": "https://yydsys.top/duo/js/聚合短剧.js"
+      "api": "https://www.iyouhun.com/tv/json/js/聚合短剧.js"
     },
     {
       "key": "csp_Bili",
       "name": "🅱️┃哔哩┃合集",
       "type": 3,
-      "api": "csp_BiliJs",
+      "api": "csp_Bili",
       "filterable": 1,
       "searchable": 1,
       "changeable": 0,
-      "jar": "https://ncstatic.clewm.net/rsrc/2026/0601/11/ed8614953ca843e592f6c388b476f02e.png;md5;25001E924EEFF507A008BEF78BFE0F1C",
-      "ext": {
-        "type": "https://yydsys.top/duo/json/bilijihe.json"
-      },
-      "style": {
-        "type": "rect",
-        "ratio": 1.333
-      }
+      "jar": "https://ncstatic.clewm.net/rsrc/2026/0604/20/4f195a9210254fbbb6ade0cb28fd8e17.png;md5;C4448A598C63BA1ABD49034C25B70EE4",
+      "ext": "https://www.iyouhun.com/tv/json/json/bilijihe.json"
     },
     {
       "key": "wogg",
@@ -689,7 +654,7 @@
       "quickSearch": 1,
       "filterable": 1,
       "ext": {
-        "site": "http://feimaoai.site,https://feimao666.fun,http://feimao888.fun"
+        "site": "https://www.labi88.sbs,http://feimaoai.site,https://feimao666.fun,http://feimao888.fun"
       }
     },
     {
@@ -869,7 +834,7 @@
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,
-      "ext": "https://yydsys.top/duo/json/动漫巴士.json",
+      "ext": "https://www.iyouhun.com/tv/json/json/动漫巴士.json",
       "jar": "https://ncstatic.clewm.net/rsrc/2026/0416/12/9c6f4eee384d4e9184f7a751c4d10b16.png;md5;690CD77AEB20B09A8DD8E01DCBE660B6"
     },
     {
@@ -880,7 +845,7 @@
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,
-      "ext": "https://yydsys.top/duo/json/路漫漫.json",
+      "ext": "https://www.iyouhun.com/tv/json/json/路漫漫.json",
       "jar": "https://ncstatic.clewm.net/rsrc/2026/0416/12/9c6f4eee384d4e9184f7a751c4d10b16.png;md5;690CD77AEB20B09A8DD8E01DCBE660B6"
     },
     {
@@ -891,7 +856,7 @@
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,
-      "ext": "https://yydsys.top/duo/json/番茶动漫.json",
+      "ext": "https://www.iyouhun.com/tv/json/json/番茶动漫.json",
       "jar": "https://ncstatic.clewm.net/rsrc/2026/0416/12/9c6f4eee384d4e9184f7a751c4d10b16.png;md5;690CD77AEB20B09A8DD8E01DCBE660B6"
     },
     {
@@ -902,7 +867,7 @@
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,
-      "ext": "https://yydsys.top/duo/json/age.json",
+      "ext": "https://www.iyouhun.com/tv/json/json/age.json",
       "jar": "https://ncstatic.clewm.net/rsrc/2026/0416/12/9c6f4eee384d4e9184f7a751c4d10b16.png;md5;690CD77AEB20B09A8DD8E01DCBE660B6"
     },
     {
@@ -948,27 +913,27 @@
       "key": "csp_huya",
       "name": "🐯┃虎牙┃直播",
       "type": 3,
-      "api": "https://yydsys.top/duo/js/drpy2.min.js",
+      "api": "https://www.iyouhun.com/tv/json/js/drpy2.min.js",
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,
-      "ext": "https://yydsys.top/duo/lib/huya.js"
+      "ext": "https://www.iyouhun.com/tv/json/lib/huya.js"
     },
     {
       "key": "csp_douyu",
       "name": "🦈┃斗鱼┃直播",
       "type": 3,
-      "api": "https://yydsys.top/duo/js/drpy2.min.js",
+      "api": "https://www.iyouhun.com/tv/json/js/drpy2.min.js",
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,
-      "ext": "https://yydsys.top/duo/lib/douyu.js"
+      "ext": "https://www.iyouhun.com/tv/json/lib/douyu.js"
     },
     {
       "key": "js_咖啡",
       "name": "🏆┃咖啡┃直播",
       "type": 3,
-      "api": "https://yydsys.top/duo/js/咖啡直播.js",
+      "api": "https://www.iyouhun.com/tv/json/js/咖啡直播.js",
       "searchable": 1,
       "quickSearch": 0,
       "filterable": 0,
@@ -990,8 +955,8 @@
       "key": "FeiqLive",
       "type": 3,
       "api": "csp_FeiqLiveAmns",
-      "searchable": 1,
-      "quickSearch": 1,
+      "searchable": 0,
+      "quickSearch": 0,
       "changeable": 0,
       "jar": "https://jihulab.com/yoursmile3/TVBox/-/raw/main/custom_spider.jar"
     },
@@ -1039,7 +1004,7 @@
       "quickSearch": 1,
       "filterable": 1,
       "jar": "https://ncstatic.clewm.net/rsrc/2026/0418/17/1d9136626610437ab0cac0dbe262d1ed.png;md5;4D860D06EC233DBCB891B76055F099D5",
-      "ext": "https://yydsys.top/duo/json/aha.json"
+      "ext": "https://www.iyouhun.com/tv/json/json/aha.json"
     },
     {
       "key": "酷狗音乐",
@@ -1058,8 +1023,8 @@
       "key": "戏曲大全",
       "name": "🎭┃戏曲┃合集",
       "type": 3,
-      "api": "https://yydsys.top/duo/js/drpy2.min.js",
-      "ext": "https://yydsys.top/duo/js/戏曲大全.js"
+      "api": "https://www.iyouhun.com/tv/json/js/drpy2.min.js",
+      "ext": "https://www.iyouhun.com/tv/json/js/戏曲大全.js"
     },
     {
       "key": "csp_xq",
@@ -1074,171 +1039,111 @@
       "key": "csp_Biliyy",
       "name": "🅱️┃哔哩┃音乐",
       "type": 3,
-      "api": "csp_BiliJs",
+      "api": "csp_Bili",
       "filterable": 1,
       "searchable": 0,
       "changeable": 0,
-      "jar": "https://ncstatic.clewm.net/rsrc/2026/0601/11/ed8614953ca843e592f6c388b476f02e.png;md5;25001E924EEFF507A008BEF78BFE0F1C",
-      "ext": {
-        "type": "https://yydsys.top/duo/json/biliyy.json"
-      },
-      "style": {
-        "type": "rect",
-        "ratio": 1.333
-      }
+      "jar": "https://ncstatic.clewm.net/rsrc/2026/0604/20/4f195a9210254fbbb6ade0cb28fd8e17.png;md5;C4448A598C63BA1ABD49034C25B70EE4",
+      "ext": "https://www.iyouhun.com/tv/json/json/biliyy.json"
     },
     {
       "key": "csp_mtv",
       "name": "🅱️┃哔哩┃MTV",
       "type": 3,
-      "api": "csp_BiliJs",
+      "api": "csp_Bili",
       "filterable": 1,
       "searchable": 0,
       "changeable": 0,
-      "jar": "https://ncstatic.clewm.net/rsrc/2026/0601/11/ed8614953ca843e592f6c388b476f02e.png;md5;25001E924EEFF507A008BEF78BFE0F1C",
-      "ext": {
-        "type": "https://yydsys.top/duo/json/mtv.json"
-      },
-      "style": {
-        "type": "rect",
-        "ratio": 1.333
-      }
+      "jar": "https://ncstatic.clewm.net/rsrc/2026/0604/20/4f195a9210254fbbb6ade0cb28fd8e17.png;md5;C4448A598C63BA1ABD49034C25B70EE4",
+      "ext": "https://www.iyouhun.com/tv/json/json/mtv.json"
     },
     {
       "key": "csp_bilirt",
       "name": "🅱️┃儿童┃最爱",
       "type": 3,
-      "api": "csp_BiliJs",
+      "api": "csp_Bili",
       "filterable": 1,
       "searchable": 0,
       "changeable": 0,
-      "jar": "https://ncstatic.clewm.net/rsrc/2026/0601/11/ed8614953ca843e592f6c388b476f02e.png;md5;25001E924EEFF507A008BEF78BFE0F1C",
-      "ext": {
-        "type": "https://yydsys.top/duo/json/bilirt.json"
-      },
-      "style": {
-        "type": "rect",
-        "ratio": 1.333
-      }
+      "jar": "https://ncstatic.clewm.net/rsrc/2026/0604/20/4f195a9210254fbbb6ade0cb28fd8e17.png;md5;C4448A598C63BA1ABD49034C25B70EE4",
+      "ext": "https://www.iyouhun.com/tv/json/json/bilirt.json"
     },
     {
       "key": "csp_bilims",
       "name": "🅱️┃喜欢┃美食",
       "type": 3,
-      "api": "csp_BiliJs",
+      "api": "csp_Bili",
       "filterable": 1,
       "searchable": 0,
       "changeable": 0,
-      "jar": "https://ncstatic.clewm.net/rsrc/2026/0601/11/ed8614953ca843e592f6c388b476f02e.png;md5;25001E924EEFF507A008BEF78BFE0F1C",
-      "ext": {
-        "type": "https://yydsys.top/duo/json/bilims.json"
-      },
-      "style": {
-        "type": "rect",
-        "ratio": 1.333
-      }
+      "jar": "https://ncstatic.clewm.net/rsrc/2026/0604/20/4f195a9210254fbbb6ade0cb28fd8e17.png;md5;C4448A598C63BA1ABD49034C25B70EE4",
+      "ext": "https://www.iyouhun.com/tv/json/json/bilims.json"
     },
     {
       "key": "哔哩健身",
       "name": "🅱️┃哔哩┃健身",
       "type": 3,
-      "api": "csp_BiliJs",
+      "api": "csp_Bili",
       "filterable": 1,
       "searchable": 0,
       "changeable": 0,
-      "jar": "https://ncstatic.clewm.net/rsrc/2026/0601/11/ed8614953ca843e592f6c388b476f02e.png;md5;25001E924EEFF507A008BEF78BFE0F1C",
-      "ext": {
-        "type": "https://yydsys.top/duo/json/bili.json"
-      },
-      "style": {
-        "type": "rect",
-        "ratio": 1.333
-      }
+      "jar": "https://ncstatic.clewm.net/rsrc/2026/0604/20/4f195a9210254fbbb6ade0cb28fd8e17.png;md5;C4448A598C63BA1ABD49034C25B70EE4",
+      "ext": "https://www.iyouhun.com/tv/json/json/bili.json"
     },
     {
       "key": "哔哩幼儿",
       "name": "🅱️┃哔哩┃幼儿",
       "type": 3,
-      "api": "csp_BiliJs",
+      "api": "csp_Bili",
       "filterable": 1,
       "searchable": 0,
       "changeable": 0,
-      "jar": "https://ncstatic.clewm.net/rsrc/2026/0601/11/ed8614953ca843e592f6c388b476f02e.png;md5;25001E924EEFF507A008BEF78BFE0F1C",
-      "ext": {
-        "type": "https://yydsys.top/duo/json/yely.json"
-      },
-      "style": {
-        "type": "rect",
-        "ratio": 1.333
-      }
+      "jar": "https://ncstatic.clewm.net/rsrc/2026/0604/20/4f195a9210254fbbb6ade0cb28fd8e17.png;md5;C4448A598C63BA1ABD49034C25B70EE4",
+      "ext": "https://www.iyouhun.com/tv/json/json/yely.json"
     },
     {
       "key": "哔哩少儿",
       "name": "🅱️┃哔哩┃少儿",
       "type": 3,
-      "api": "csp_BiliJs",
+      "api": "csp_Bili",
       "filterable": 1,
       "searchable": 0,
       "changeable": 0,
-      "jar": "https://ncstatic.clewm.net/rsrc/2026/0601/11/ed8614953ca843e592f6c388b476f02e.png;md5;25001E924EEFF507A008BEF78BFE0F1C",
-      "ext": {
-        "type": "https://yydsys.top/duo/json/sejy.json"
-      },
-      "style": {
-        "type": "rect",
-        "ratio": 1.333
-      }
+      "jar": "https://ncstatic.clewm.net/rsrc/2026/0604/20/4f195a9210254fbbb6ade0cb28fd8e17.png;md5;C4448A598C63BA1ABD49034C25B70EE4",
+      "ext": "https://www.iyouhun.com/tv/json/json/sejy.json"
     },
     {
       "key": "哔哩小学",
       "name": "🅱️┃哔哩┃小学",
       "type": 3,
-      "api": "csp_BiliJs",
+      "api": "csp_Bili",
       "filterable": 1,
       "searchable": 0,
       "changeable": 0,
-      "jar": "https://ncstatic.clewm.net/rsrc/2026/0601/11/ed8614953ca843e592f6c388b476f02e.png;md5;25001E924EEFF507A008BEF78BFE0F1C",
-      "ext": {
-        "type": "https://yydsys.top/duo/json/xxkt.json"
-      },
-      "style": {
-        "type": "rect",
-        "ratio": 1.333
-      }
+      "jar": "https://ncstatic.clewm.net/rsrc/2026/0604/20/4f195a9210254fbbb6ade0cb28fd8e17.png;md5;C4448A598C63BA1ABD49034C25B70EE4",
+      "ext": "https://www.iyouhun.com/tv/json/json/xxkt.json"
     },
     {
       "key": "哔哩初中",
       "name": "🅱️┃哔哩┃初中",
       "type": 3,
-      "api": "csp_BiliJs",
+      "api": "csp_Bili",
       "filterable": 1,
       "searchable": 0,
       "changeable": 0,
-      "jar": "https://ncstatic.clewm.net/rsrc/2026/0601/11/ed8614953ca843e592f6c388b476f02e.png;md5;25001E924EEFF507A008BEF78BFE0F1C",
-      "ext": {
-        "type": "https://yydsys.top/duo/json/czkt.json"
-      },
-      "style": {
-        "type": "rect",
-        "ratio": 1.333
-      }
+      "jar": "https://ncstatic.clewm.net/rsrc/2026/0604/20/4f195a9210254fbbb6ade0cb28fd8e17.png;md5;C4448A598C63BA1ABD49034C25B70EE4",
+      "ext": "https://www.iyouhun.com/tv/json/json/czkt.json"
     },
     {
       "key": "哔哩高中",
       "name": "🅱️┃哔哩┃高中",
       "type": 3,
-      "api": "csp_BiliJs",
+      "api": "csp_Bili",
       "filterable": 1,
       "searchable": 0,
       "changeable": 0,
-      "jar": "https://ncstatic.clewm.net/rsrc/2026/0601/11/ed8614953ca843e592f6c388b476f02e.png;md5;25001E924EEFF507A008BEF78BFE0F1C",
-      "ext": {
-        "type": "https://yydsys.top/duo/json/gzkt.json"
-      },
-      "style": {
-        "type": "rect",
-        "ratio": 1.333
-      }
+      "jar": "https://ncstatic.clewm.net/rsrc/2026/0604/20/4f195a9210254fbbb6ade0cb28fd8e17.png;md5;C4448A598C63BA1ABD49034C25B70EE4",
+      "ext": "https://www.iyouhun.com/tv/json/json/gzkt.json"
     },
     {
       "key": "Tgsou",

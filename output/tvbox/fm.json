@@ -1,5 +1,5 @@
 {
-  "spider": "https://img2.gelonghui.com/library/58909-249efa3b-fd70-4cbb-8e73-d5144817aaac.png;md5;589092bcdf976a96e6a49cb7aa64ef9a",
+  "spider": "https://img2.gelonghui.com/library/e2693-9aa941a0-f96a-40c2-ac23-e6af358d19a7.png;md5;e2693c58ebc58abecc7282b721db79ca",
   "wallpaper": "https://深色壁纸.xxooo.cf/",
   "logo": "http://feimao.pro/fm.gif",
   "sites": [
@@ -170,7 +170,7 @@
       "api": "csp_Jianpian",
       "type": 3,
       "playerType": "2",
-      "ext": "https://ev2089.zxbwv.com"
+      "ext": "https://api.ztcgi.com"
     },
     {
       "key": "csp_SaoHuo",
@@ -298,16 +298,20 @@
       }
     },
     {
-      "key": "drpy_js_310直播",
-      "name": "🏀┃体育┃直播",
+      "key": "瓜子",
+      "name": "🏀┃瓜子┃体育",
       "type": 3,
-      "api": "https://gitlab.com/fantaiying/ext/-/raw/main/drpy2.min.js",
-      "changeable": 0,
-      "gridview": 3,
+      "api": "csp_GuaziTY",
       "style": {
-        "type": "list"
+        "type": "rect",
+        "ratio": 1.333
       },
-      "ext": "https://img2.gelonghui.com/library/d6014-7a5d5b19-3fe5-456a-8335-925bc845606fnull"
+      "searchable": 0,
+      "quickSearch": 0,
+      "filterable": 1,
+      "timeout": 12,
+      "order_num": 0,
+      "changeable": 0
     },
     {
       "key": "米搜",
