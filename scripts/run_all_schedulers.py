@@ -3,9 +3,8 @@
 统一调度脚本
 
 功能：
-1. Singbox 配置更新
-2. TVBox 配置更新  
-3. IPTV 频道检测
+1. TVBox 配置更新  
+2. IPTV 频道检测
 
 使用方式:
     python scripts/run_all_schedulers.py
@@ -23,17 +22,6 @@ sys.path.insert(0, project_root)
 from utils.logger import get_logger
 
 logger = get_logger('SCHEDULERS')
-
-
-def singbox_job() -> bool:
-    """执行 Singbox 配置更新任务"""
-    try:
-        from scheduler.singbox_scheduler import singbox_scheduler
-        singbox_scheduler()
-        return True
-    except Exception as e:
-        logger.error(f"Singbox 配置更新失败: {e}", exc_info=True)
-        return False
 
 
 def tvbox_job() -> bool:
@@ -87,7 +75,6 @@ def main():
     
     # 任务配置列表（按执行顺序）
     tasks: List[Tuple[str, Callable[[], bool]]] = [
-        ("Singbox", singbox_job),
         ("TVBox", tvbox_job),
         ("IPTV", iptv_job),
     ]
