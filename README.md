@@ -11,8 +11,6 @@
   - 动态生成 TVBox 配置文件访问接口
   - 支持配置文件 URL 和名称修改
   - 自动映射本地配置文件
-- **后台任务调度**
-  - 每 8 小时自动更新 TVBox 配置
 - **轻量级架构**
   - 基于 FastAPI 构建，性能优异
   - 模块化设计，易于扩展
@@ -22,7 +20,6 @@
 - Python 3.8+
 - FastAPI 0.115.2
 - Uvicorn 0.32.0
-- APScheduler 3.10.4
 - Requests 2.32.3
 
 ## 项目结构
@@ -41,13 +38,24 @@ wan-server/
 │   └── tvbox/           # TVBox 相关 API
 │       └── tvbox_api.py  # TVBox API 接口
 ├── scheduler/           # 调度器模块
-│   └── tvbox_scheduler.py    # TVBox 配置调度
-├── public/              # 静态文件目录
-│   └── tvbox/           # TVBox 配置文件目录
+│   ├── iptv_scheduler.py    # IPTV 配置调度
+│   └── tvbox_scheduler.py   # TVBox 配置调度
+├── scripts/             # 脚本模块
+│   └── run_all_schedulers.py  # 统一调度脚本
+├── utils/               # 工具模块
+│   ├── iptv_config.py   # IPTV 配置
+│   ├── iptv_checker.py  # IPTV 检测器
+│   ├── iptv_utils.py    # IPTV 工具
+│   ├── cache_manager.py # 缓存管理
+│   └── logger.py        # 日志配置
+├── input/               # 输入文件目录
+│   └ iptv_urls.txt      # IPTV URL 配置
+├── output/              # 输出文件目录
+│   ├── iptv/            # IPTV 输出
+│   └── tvbox/           # TVBox 输出
 ├── .github/             # GitHub 配置
+│   └ workflows/         # GitHub Actions 工作流
 ├── .gitignore           # Git 忽略文件
-├── Dockerfile           # Docker 配置
-├── docker-compose.yml   # Docker Compose 配置
 ├── main.py              # 主入口文件
 ├── README.md            # 项目文档
 └── requirements.txt     # 依赖文件
@@ -59,6 +67,7 @@ wan-server/
 
 - Python 3.8 或更高版本
 - pip 包管理工具
+- FFmpeg（用于 IPTV 频道检测）
 
 ### 2. 安装依赖
 
@@ -71,8 +80,6 @@ cd wan-server
 python3 -m venv .venv
 
 # 激活虚拟环境
-# Windows
-transformer_venv\Scripts\activate
 # macOS/Linux
 source .venv/bin/activate
 
@@ -80,92 +87,56 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 3. 配置文件
-
-根据需要修改相关配置：
-
-- `api/iptv/iptv_favorite_utils.py` - IPTV 收藏频道配置
-- `api/iptv/iptv_nas_utils.py` - NAS 播放列表配置
-- `scheduler/tvbox_scheduler.py` - TVBox 配置
-- `public/tvbox/` - TVBox 配置文件目录（放置 JSON 格式的配置文件）
-
-### 4. 运行服务
+### 3. 运行服务
 
 ```bash
 # 直接运行
 python3 main.py
 
 # 或使用 uvicorn
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+uvicorn main:app --host 0.0.0.0 --port 8016
 ```
 
-服务默认运行在 `http://localhost:8000`
+服务默认运行在 `http://localhost:8016`
 
-### 5. Docker 部署
+### 4. 运行定时任务
 
-#### 5.1 使用官方镜像
-
-```bash
-# 拉取镜像
-docker pull docker.io/ethanwwan/wan-server:latest
-
-# 运行容器
-docker run -d \
-  --name wan-server \
-  -p 8000:8000 \
-  docker.io/ethanwwan/wan-server:latest
-```
-
-#### 5.2 使用 Docker Compose
+定时任务通过 GitHub Actions 自动执行，也可以手动运行：
 
 ```bash
-# 编辑 docker-compose.yml 文件（如果需要）
-# 然后运行
-docker-compose up -d
-```
-
-#### 5.3 本地构建镜像
-
-```bash
-# 克隆项目并进入目录
-git clone https://github.com/ethanwwan/wan-server.git
-cd wan-server
-
-# 构建镜像
-docker build -t wan-server .
-
-# 运行容器
-docker run -p 8000:8000 wan-server
+# 手动执行所有调度任务
+python3 scripts/run_all_schedulers.py
 ```
 
 ## API 文档
 
 ### 基础路由
 
-- `GET /` - 服务状态检查
+- `GET /` - 服务状态检查（重定向到文档页面）
 
 ### IPTV 相关路由
 
-- `GET /iptv/favorite.m3u` - 获取 IPTV 收藏频道 M3U 配置
-- `GET /iptv/playlist.m3u` - 获取 IPTV NAS 播放列表
+- `GET /iptv/favlist.m3u` - 获取 IPTV 收藏频道 M3U 配置
+- `GET /iptv/{file_name}` - 获取 IPTV M3U 文件（支持 ott.m3u、playlist.m3u 等）
 
 ### TVBox 相关路由
 
 - `GET /api/tvbox/config.json` - 获取 TVBox 配置文件（特殊处理，修改 URL 和名称）
-- `GET /api/tvbox/{file_name}.json` - 获取 TVBox 配置文件（自动生成的路由，返回原始内容）
+- `GET /api/tvbox/{file_name}.json` - 获取 TVBox 配置文件（支持 config.json、xiaomi.json、duo.json、fm.json 等）
 
 ### API 文档访问
 
 启动服务后，可以通过以下地址访问 API 文档：
 
-- Swagger UI: `http://localhost:8000/docs`
-- ReDoc: `http://localhost:8000/redoc`
+- Swagger UI: `http://localhost:8016/docs`
+- ReDoc: `http://localhost:8016/redoc`
 
-## 后台任务
+## GitHub Actions
 
-服务启动时会自动初始化后台任务调度器：
+项目使用 GitHub Actions 进行定时任务调度：
 
-- 每 8 小时执行一次 TVBox 配置更新
+- **schedule-job.yml** - 每天 22:00（北京时间）执行 TVBox 和 IPTV 配置更新
+- **sync-to-gist.yml** - 手动触发，同步 output 目录到 Gist
 
 ## 开发指南
 
@@ -179,22 +150,14 @@ docker run -p 8000:8000 wan-server
 
 1. 在 `api/` 目录下创建新的模块目录
 2. 创建相应的 API 路由和工具文件
-3. 在 `main.py` 中注册新的路由
-
-### 测试
-
-```bash
-# 运行服务并测试 API 响应
-python3 main.py
-# 然后使用 curl 或浏览器访问 API 端点
-```
+3. 在 `api/base/routes.py` 中注册新的路由
 
 ## 故障排除
 
 ### 常见问题
 
 1. **端口被占用**
-   - 修改 `main.py` 中的端口配置
+   - 修改 `main.py` 中的 `SERVER_PORT` 配置
 
 2. **依赖安装失败**
    - 确保 Python 版本正确
@@ -219,6 +182,13 @@ python3 main.py
 
 ## 更新日志
 
+### v1.2.0
+- 删除 Singbox 相关功能
+- 删除 Docker 部署支持
+- 删除配置文件，改为硬编码配置
+- 定时任务改为 GitHub Actions 执行
+- 优化 IPTV 检测逻辑和缓存策略
+
 ### v1.1.0
 - 新增 TVBox 配置管理功能
   - 动态生成 TVBox 配置文件访问接口
@@ -230,6 +200,4 @@ python3 main.py
 ### v1.0.0
 - 初始版本
 - 实现 IPTV 配置管理功能
-- 实现 Singbox 配置管理功能
 - 集成后台任务调度
-- 支持 Docker 部署
