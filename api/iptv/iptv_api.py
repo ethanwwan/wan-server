@@ -36,10 +36,10 @@ async def get_iptv_favorite_list():
     else:
             print(f"[IPTV] IPTV 收藏请求返回空内容")
 
-# IPTV 文件读取路由
+# IPTV 文件读取路由（主要提供 ott.m3u 和 playlist.m3u）
 @router.get("/{file_name:path}")
 async def get_iptv_file(file_name: str):
-    """获取 IPTV M3U 文件"""
+    """获取 IPTV M3U 文件（支持 ott.m3u、playlist.m3u 等）"""
     # 检查文件是否存在
     file_path = os.path.join(IPTV_DIR, file_name)
     
