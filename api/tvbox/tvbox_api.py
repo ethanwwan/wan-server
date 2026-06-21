@@ -81,7 +81,7 @@ async def get_tvbox_config_json(request: Request):
 # 使用通配符路由处理所有TVBox配置文件请求
 @router.get("/{file_name:path}")
 async def get_tvbox_config_file(file_name: str):
-    """获取TVBox配置文件（支持 config.json、xiaomi.json、duo.json、fm.json 等）"""
+    """获取TVBox配置文件（支持 xiaomi.json、duo.json、fm.json 等）"""
     # 检查文件是否存在
     file_path = os.path.join(TVBOX_DIR, file_name)
     
