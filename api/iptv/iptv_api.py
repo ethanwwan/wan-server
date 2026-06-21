@@ -36,17 +36,16 @@ async def get_iptv_favorite_list():
     else:
             print(f"[IPTV] IPTV 收藏请求返回空内容")
 
-# IPTV 文件读取路由
-@router.get("/{file_name:path}")
-async def get_iptv_file(file_name: str):
-    """获取 IPTV M3U 文件"""
-    # 检查文件是否存在
+# IPTV ott.m3u 文件路由
+@router.get("/ott.m3u", response_class=PlainTextResponse)
+async def get_iptv_ott_file():
+    """获取 IPTV ott.m3u 文件"""
+    file_name = "ott.m3u"
     file_path = os.path.join(IPTV_DIR, file_name)
     
     if not os.path.exists(file_path):
         return not_found_response(msg=f"IPTV 文件 {file_name} 不存在")
     
-    # 读取并返回文件内容
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             content = f.read()
@@ -56,5 +55,5 @@ async def get_iptv_file(file_name: str):
                 }
             )
     except Exception as e:
-        return not_found_response(msg=f"读取 IPTV 文件 {file_name} 失败：{str(e)}")    
+        return not_found_response(msg=f"读取 IPTV 文件 {file_name} 失败：{str(e)}")
     

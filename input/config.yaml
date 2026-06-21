@@ -10,12 +10,6 @@ server:
 
 # 调度任务配置
 scheduler:
-  - id: singbox_job
-    name: Singbox 配置更新
-    func: scheduler.singbox_scheduler.singbox_scheduler
-    hour: 0
-    minute: 0
-  
   - id: tvbox_job
     name: TVBox 配置更新
     func: scheduler.tvbox_scheduler.tvbox_scheduler
@@ -27,16 +21,6 @@ scheduler:
     func: scheduler.iptv_scheduler.iptv_scheduler
     hour: 0
     minute: 20
-
-
-# Singbox 配置
-singbox:
-  url: "https://47.238.198.94/iv/verify_mode.htm?token=9a49f8e2abcce3a0d3fd12e072065cdd"
-  version: "1.12.14"
-  old_version: "1.11.15"
-  ruleset_global: "https://gh-proxy.org/https://raw.githubusercontent.com/ethanwwan/sing-box-rules/refs/heads/main/rule_json/Global_All.json"
-  ruleset_geoip_cn: "https://gh-proxy.com/https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-cn.srs"
-  ruleset_geosite_cn: "https://gh-proxy.com/https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-geolocation-cn.srs"
 
 # TVBox 配置
 tvbox:

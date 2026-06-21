@@ -1,21 +1,17 @@
 # WAN Server
 
-轻量级 API 后端服务，提供 IPTV 配置管理和 Singbox 配置更新等功能。
+轻量级 API 后端服务，提供 IPTV 配置管理和 TVBox 配置更新等功能。
 
 ## 功能特性
 
 - **IPTV 配置管理**
   - 提供收藏频道的 M3U 配置文件访问
   - 支持 NAS 存储的 M3U 播放列表
-- **Singbox 配置管理**
-  - 定时更新 Singbox 配置
-  - 提供配置访问接口
 - **TVBox 配置管理**
   - 动态生成 TVBox 配置文件访问接口
   - 支持配置文件 URL 和名称修改
   - 自动映射本地配置文件
 - **后台任务调度**
-  - 每 8 小时自动更新 Singbox 配置
   - 每 8 小时自动更新 TVBox 配置
 - **轻量级架构**
   - 基于 FastAPI 构建，性能优异
@@ -42,12 +38,9 @@ wan-server/
 │   │   ├── iptv_api.py          # IPTV API 接口
 │   │   ├── iptv_favorite_utils.py  # 收藏频道工具
 │   │   └── iptv_nas_utils.py       # NAS 播放列表工具
-│   ├── singbox/         # Singbox 相关 API
-│   │   └── singbox_api.py  # Singbox API 接口
 │   └── tvbox/           # TVBox 相关 API
 │       └── tvbox_api.py  # TVBox API 接口
 ├── scheduler/           # 调度器模块
-│   ├── singbox_scheduler.py  # Singbox 配置调度
 │   └── tvbox_scheduler.py    # TVBox 配置调度
 ├── public/              # 静态文件目录
 │   └── tvbox/           # TVBox 配置文件目录
@@ -93,7 +86,6 @@ pip install -r requirements.txt
 
 - `api/iptv/iptv_favorite_utils.py` - IPTV 收藏频道配置
 - `api/iptv/iptv_nas_utils.py` - NAS 播放列表配置
-- `scheduler/singbox_scheduler.py` - Singbox 配置
 - `scheduler/tvbox_scheduler.py` - TVBox 配置
 - `public/tvbox/` - TVBox 配置文件目录（放置 JSON 格式的配置文件）
 
@@ -157,10 +149,6 @@ docker run -p 8000:8000 wan-server
 - `GET /iptv/favorite.m3u` - 获取 IPTV 收藏频道 M3U 配置
 - `GET /iptv/playlist.m3u` - 获取 IPTV NAS 播放列表
 
-### Singbox 相关路由
-
-- 详见 `api/singbox/singbox_api.py`
-
 ### TVBox 相关路由
 
 - `GET /api/tvbox/config.json` - 获取 TVBox 配置文件（特殊处理，修改 URL 和名称）
@@ -177,7 +165,6 @@ docker run -p 8000:8000 wan-server
 
 服务启动时会自动初始化后台任务调度器：
 
-- 每 8 小时执行一次 Singbox 配置更新
 - 每 8 小时执行一次 TVBox 配置更新
 
 ## 开发指南

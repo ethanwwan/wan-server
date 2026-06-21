@@ -102,42 +102,6 @@ class ServerConfig:
         return self._config.get('port', 8016)
 
 
-class SingboxConfig:
-    """
-    Singbox 配置类
-    """
-    def __init__(self, config: Dict[str, Any]):
-        self._config = config
-    
-    @property
-    def url(self) -> str:
-        return self._config.get('url', '')
-    
-    @property
-    def version(self) -> str:
-        return self._config.get('version', '')
-    
-    @property
-    def old_version(self) -> str:
-        return self._config.get('old_version', '')
-    
-    @property
-    def global_ruleset_url(self) -> str:
-        return self._config.get('global_ruleset_url', '')
-    
-    @property
-    def ruleset_global(self) -> str:
-        return self._config.get('ruleset_global', '')
-    
-    @property
-    def ruleset_geoip_cn(self) -> str:
-        return self._config.get('ruleset_geoip_cn', '')
-    
-    @property
-    def ruleset_geosite_cn(self) -> str:
-        return self._config.get('ruleset_geosite_cn', '')
-
-
 class TvboxConfig:
     """
     TVBox 配置类
@@ -247,16 +211,6 @@ class Config:
             ServerConfig: 服务器配置
         """
         return ServerConfig(self.get('server', {}))
-    
-    @property
-    def singbox(self) -> SingboxConfig:
-        """
-        获取 Singbox 配置
-        
-        Returns:
-            SingboxConfig: Singbox 配置
-        """
-        return SingboxConfig(self.get('singbox', {}))
     
     @property
     def tvbox(self) -> TvboxConfig:
