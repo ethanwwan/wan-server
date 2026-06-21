@@ -1,5 +1,5 @@
 {
-  "spider": "https://tc-new.z.wiki/autoupload/iYHTWVx6T8RrCmqdGD6MOdiO_OyvX7mIgxFBfDMDErs/20260621/5rOK/fish06210410.jar;md5;9651c83ce3b15fa0596b73057495de7f",
+  "spider": "https://tc-new.z.wiki/autoupload/iYHTWVx6T8RrCmqdGD6MOdiO_OyvX7mIgxFBfDMDErs/20260621/dmNk/fish06212220.jar;md5;affdf181da04ef62bb77911262d53e61",
   "logo": "https://modelscope-resouces.oss-cn-zhangjiakou.aliyuncs.com/avatar%2Ff5309172-1af6-4c4f-a1c5-a4773a1cc718.gif",
   "wallpaper": "http://127.0.0.1:9978/proxy?do=wallpaper",
   "sites": [
@@ -70,6 +70,46 @@
       "searchable": 1,
       "filterable": 1,
       "ext": "AdKB13JYT+KShEXeXshxmMWRT1Sn+ikrYTY0hJJEvllJIC+pfz8pVjudppyXXOaApKEsVd2KKUO83friKPgQW7FlWNT5m25tP2dlrOIZ1IMdqVOK1vOkVMuCcxuN1JU8nUgmJBiD9h1VorEzK4/aNB1Bn2NPZIqE4omLokMXQ/raDxJgoy+8o3bBg7N6YE6rbQo1Z+jCNnjJjxy+9L4JLnXWah6e00b8gXC2hXdpsqCaPmUhk2cY9g+9wB5aUWqwu/hoNd+QJFjvIB1UsJb9tmDqvc7GlNOfX6hs3aXANbfU92sNCLgUT3YyU13w3ZIXFrswsczqpBBWrMnwRoqD8omDLpW3Ckx75e2GJvjhYSTzlaGtkrMMiO78vQZg9Gp2D3RuNAiMyeeFwpXatWpfk2xzNaXSuhCY7ch8n8PlqwWfvEGj4MFhChqaqt5oMiLxGg=="
+    },
+    {
+      "key": "YunDuo",
+      "name": "☁️┃云朵┃4K",
+      "type": 3,
+      "api": "csp_YunDuo",
+      "searchable": 1,
+      "changeable": 1,
+      "filterable": 1,
+      "ext": {
+        "site": [
+          "https://yunduoyingshi.com"
+        ]
+      }
+    },
+    {
+      "key": "CupFox",
+      "name": "☕┃茶杯┃4K",
+      "type": 3,
+      "api": "csp_CupFox",
+      "searchable": 1,
+      "changeable": 1,
+      "filterable": 1,
+      "ext": {
+        "site": "https://www.tjtcdl.com"
+      }
+    },
+    {
+      "key": "BuBu",
+      "name": "🧸┃布布┃4K",
+      "type": 3,
+      "api": "csp_BuBu",
+      "searchable": 1,
+      "changeable": 1,
+      "filterable": 1,
+      "ext": {
+        "site": [
+          "https://asd123sx23xdacsx.top"
+        ]
+      }
     },
     {
       "key": "景仪",
@@ -204,6 +244,21 @@
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 0
+    },
+    {
+      "key": "厌离",
+      "name": "🧨厌离｜APP",
+      "type": 3,
+      "api": "csp_AppGet",
+      "searchable": 1,
+      "changeable": 1,
+      "ext": {
+        "site": "https://yzysap.oss-cn-hangzhou.aliyuncs.com/sss.txt",
+        "key": "wNCwbXzr0Bm6cS2C",
+        "init": "V122",
+        "api": 2,
+        "ua": "okhttp/3.10.0"
+      }
     },
     {
       "key": "思追",
