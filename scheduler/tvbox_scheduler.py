@@ -14,7 +14,7 @@ from utils.logger import get_logger
 
 TVBOX_DIR = os.path.join(PROJECT_ROOT, 'output', 'tvbox')
 TVBOX_URL = "https://www.iyouhun.com/tv/dc"
-TVBOX_ITEM_URL = "https://wan-server.vercel.app/api/tvbox/"
+TVBOX_ITEM_URL = "https://cdn.gh-proxy.org/https://github.com/ethanwwan/wan-server/blob/main/output/tvbox/"
 headers = {"User-Agent": "okhttp/3.12.12", "Accept": "application/json"}
 os.makedirs(TVBOX_DIR, exist_ok=True)
 
