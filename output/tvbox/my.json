@@ -1,5 +1,5 @@
 {
-  "spider": "https://tc-new.z.wiki/autoupload/iYHTWVx6T8RrCmqdGD6MOdiO_OyvX7mIgxFBfDMDErs/20260621/dmNk/fish06212220.jar;md5;affdf181da04ef62bb77911262d53e61",
+  "spider": "https://tc-new.z.wiki/autoupload/iYHTWVx6T8RrCmqdGD6MOdiO_OyvX7mIgxFBfDMDErs/20260623/192Q/fish06231410.jar;md5;845018e388ba0a16766e971a92912d33",
   "logo": "https://modelscope-resouces.oss-cn-zhangjiakou.aliyuncs.com/avatar%2Ff5309172-1af6-4c4f-a1c5-a4773a1cc718.gif",
   "wallpaper": "http://127.0.0.1:9978/proxy?do=wallpaper",
   "sites": [
@@ -78,12 +78,7 @@
       "api": "csp_YunDuo",
       "searchable": 1,
       "changeable": 1,
-      "filterable": 1,
-      "ext": {
-        "site": [
-          "https://yunduoyingshi.com"
-        ]
-      }
+      "filterable": 1
     },
     {
       "key": "CupFox",
@@ -92,10 +87,7 @@
       "api": "csp_CupFox",
       "searchable": 1,
       "changeable": 1,
-      "filterable": 1,
-      "ext": {
-        "site": "https://www.tjtcdl.com"
-      }
+      "filterable": 1
     },
     {
       "key": "BuBu",
@@ -104,12 +96,7 @@
       "api": "csp_BuBu",
       "searchable": 1,
       "changeable": 1,
-      "filterable": 1,
-      "ext": {
-        "site": [
-          "https://asd123sx23xdacsx.top"
-        ]
-      }
+      "filterable": 1
     },
     {
       "key": "景仪",
@@ -259,15 +246,6 @@
         "api": 2,
         "ua": "okhttp/3.10.0"
       }
-    },
-    {
-      "key": "思追",
-      "name": "💭┃思追┃APP",
-      "type": 3,
-      "api": "csp_AppGet",
-      "searchable": 1,
-      "changeable": 1,
-      "ext": "ASKjgwRNiR0Cm6kFKdNzI8WI/ic4PmwK3odgt8MhFQvbl3mhDbShb5bbTFTo7paa8t0h/eK0IaCgWFxjyrk9E3XEhEgnQl4lSED6Aai0eVzXMurDiNGdHxvF3VEUI6e4G/o4FILNazhcr7ECOwLDz/VhNAd/7G/VxdrrL+Dz0oAUiUsfLmy4DiP+aQrY1INXLXmkDb2xN5Ev3pZr7xs6XtM="
     },
     {
       "key": "Libvio",
@@ -605,6 +583,15 @@
       "searchable": 1,
       "quickSearch": 1,
       "genre": "shortdrama",
+      "filterable": 1
+    },
+    {
+      "key": "FanShu",
+      "name": "🍠┃番薯┃动漫",
+      "type": 3,
+      "api": "csp_FanShu",
+      "searchable": 1,
+      "quickSearch": 1,
       "filterable": 1
     },
     {
