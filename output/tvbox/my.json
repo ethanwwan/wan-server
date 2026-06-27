@@ -1,5 +1,5 @@
 {
-  "spider": "https://tc-new.z.wiki/autoupload/iYHTWVx6T8RrCmqdGD6MOdiO_OyvX7mIgxFBfDMDErs/20260626/BKk9/fish06261154.jar;md5;ba8a39c7ea01e2fc16ba43cf9c39d4ed",
+  "spider": "https://tc-new.z.wiki/autoupload/iYHTWVx6T8RrCmqdGD6MOdiO_OyvX7mIgxFBfDMDErs/20260627/XANl/fish06271807.jar;md5;06d26480d8bb715c9927eab913eb1abe",
   "logo": "https://modelscope-resouces.oss-cn-zhangjiakou.aliyuncs.com/avatar%2Ff5309172-1af6-4c4f-a1c5-a4773a1cc718.gif",
   "wallpaper": "http://127.0.0.1:9978/proxy?do=wallpaper",
   "sites": [
@@ -14,12 +14,6 @@
       "ext": "https://tc-new.z.wiki/autoupload/iYHTWVx6T8RrCmqdGD6MOdiO_OyvX7mIgxFBfDMDErs/2026/douban.json"
     },
     {
-      "key": "FishConfig",
-      "name": "🍼┆设置┆中心",
-      "type": 3,
-      "api": "csp_FishConfig"
-    },
-    {
       "key": "YGP",
       "name": "🔔┆新片┆预告",
       "type": 3,
@@ -27,6 +21,24 @@
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1
+    },
+    {
+      "key": "FishConfig",
+      "name": "🍼┆设置┆中心",
+      "type": 3,
+      "api": "csp_FishConfig"
+    },
+    {
+      "key": "Local",
+      "name": "📁┆文件┆浏览",
+      "type": 3,
+      "api": "csp_Local",
+      "searchable": 0,
+      "changeable": 0,
+      "indexs": 0,
+      "style": {
+        "type": "list"
+      }
     },
     {
       "key": "Wogg",
@@ -927,18 +939,6 @@
       }
     },
     {
-      "key": "Local",
-      "name": "📁┆文件┆浏览",
-      "type": 3,
-      "api": "csp_Local",
-      "searchable": 0,
-      "changeable": 0,
-      "indexs": 0,
-      "style": {
-        "type": "list"
-      }
-    },
-    {
       "key": "Market",
       "name": "🛒┆网盘┆市场",
       "type": 3,
@@ -990,9 +990,7 @@
       "name": "superiptv",
       "type": 0,
       "url": "http://127.0.0.1:5266/iptv.m3u",
-      "playerType": 2,
-      "epg": "http://diyp5.112114.xyz/?ch={name}&date={date}",
-      "logo": "https://epg.112114.xyz/logo/{name}.png"
+      "playerType": 2
     }
   ],
   "parses": [],
