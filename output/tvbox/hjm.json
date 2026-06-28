@@ -1,5 +1,5 @@
 {
-  "spider": "https://mpimg.cn/down.php/44c46bfced26a85b348c7df0ee1712ea.jar",
+  "spider": "https://mpimg.cn/down.php/5622006b1fef8f34aa66fc1784a87eef.jar",
   "logo": "https://fanqienovel.com/page/7621843563495558206",
   "lives": [
     {
@@ -171,6 +171,17 @@
       "name": "枫叶",
       "type": 3,
       "api": "https://pan.szfx.top/down.php/48ef3750f0362fb0c02c5066d2ffff92.py",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "changeable": 1,
+      "playable": 1
+    },
+    {
+      "key": "分享1",
+      "name": "枫叶",
+      "type": 3,
+      "api": "https://fastlink.cokey.xyz/f/nZn3Cm/%E6%9E%AB%E5%8F%B6.js",
       "searchable": 1,
       "quickSearch": 1,
       "filterable": 1,
