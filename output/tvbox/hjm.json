@@ -167,6 +167,12 @@
       "changeable": 1
     },
     {
+      "key": "剧迷",
+      "name": "剧迷",
+      "type": 3,
+      "api": "https://pan.szfx.top/down.php/c4bf94222bbe9d9a4157709b2745dba0.py"
+    },
+    {
       "key": "分享",
       "name": "枫叶",
       "type": 3,
@@ -563,12 +569,12 @@
         "副标题": "保护正版，人人有责",
         "请求头": "User-Agent$MOBILE_UA",
         "编码": "UTF-8",
-        "分类url": "https://m.ycblcw.com/;;!H"
+        "分类url": "https://m.ycblcw.com/"
       }
     },
     {
-      "key": "农民",
-      "name": "🧿农民｜影视",
+      "key": "旺旺",
+      "name": "🧿旺旺｜影视",
       "type": 3,
       "api": "csp_XBPQ",
       "jar": "https://wp.kayyw.com/f/bobgtv/%E5%B0%B1%E5%87%A0%E4%B8%AA.jar",
@@ -576,7 +582,7 @@
         "副标题": "保护正版，人人有责",
         "请求头": "User-Agent$MOBILE_UA",
         "编码": "UTF-8",
-        "分类url": "https://vip.wwgz.cn:5200/;;!H"
+        "分类url": "https://vip.wwgz.cn:5200/"
       }
     },
     {
@@ -589,11 +595,9 @@
         "副标题": "保护正版，人人有责",
         "请求头": "User-Agent$MOBILE_UA",
         "编码": "UTF-8",
-        "主页url": "https://www.budaichuchen.net/label/qq.html",
-        "线路数组": "<i class=\"fa ds-dianying\">&&</span>",
-        "播放数组": "anthology-list-play size\">&&</ul>",
-        "分类url": "https://www.budaichuchen.net/cupfox-list/{cateId}-{area}--{class}-----{catePg}---{year}.html",
-        "分类": "短剧$5#电视剧$2#电影$1#动漫$4#综艺$3"
+        "主页url": "https://www.cd-zj.com/label/qq.html",
+        "分类url": "https://www.cd-zj.com/cupfox-list/{cateId}-{area}--{class}-----{catePg}---{year}.html",
+        "分类": "腾讯$5#电视剧$2#电影$1#动漫$4#综艺$3"
       }
     },
     {
@@ -604,12 +608,24 @@
       "jar": "https://wp.kayyw.com/f/bobgtv/%E5%B0%B1%E5%87%A0%E4%B8%AA.jar",
       "ext": {
         "副标题": "保护正版，人人有责",
-        "简介": "请不要相信视频中的广告，以免上当受骗！+description\" content=\"&&\"",
-        "线路标题": "官方线路",
         "请求头": "User-Agent$MOBILE_UA",
         "编码": "UTF-8",
         "分类url": "http://114bate.com/hdshow/{cateId}-{area}-{by}-{class}-{lang}----{catePg}---{year}.html",
         "分类": "电影$1#电视剧$2#综艺$3#动漫$4#短剧$5#日韩$6"
+      }
+    },
+    {
+      "key": "歪比",
+      "name": "歪比巴卜",
+      "type": 3,
+      "api": "csp_XBPQ",
+      "jar": "https://wp.kayyw.com/f/bobgtv/%E5%B0%B1%E5%87%A0%E4%B8%AA.jar",
+      "ext": {
+        "副标题": "保护正版，人人有责",
+        "请求头": "User-Agent$MOBILE_UA",
+        "编码": "UTF-8",
+        "分类url": "https://www.wbbb1.com/",
+        "分类": "电影$1#电视剧$2#动漫$3#综艺$4"
       }
     },
     {
@@ -626,6 +642,7 @@
         "编码": "UTF-8",
         "主页url": "https://cn.agekkkk.com/",
         "线路标题": "动漫",
+        "跳转播放链接": "urlDecode(var player_*\"url\":\"&&\")",
         "简介": "style=\"display: none;\">&&</span>",
         "分类url": "https://cn.agekkkk.com/type/{cateId}-{catePg}.html",
         "分类": "日韩漫$1#国产漫$2#动态漫$5#特摄片$4#欧美漫$3"
