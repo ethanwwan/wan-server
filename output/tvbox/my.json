@@ -1,7 +1,8 @@
 {
-  "spider": "https://tc-new.z.wiki/autoupload/iYHTWVx6T8RrCmqdGD6MOdiO_OyvX7mIgxFBfDMDErs/20260629/nGoJ/fish06291716.jar;md5;b1fdcabb683728b83318563d2669db09",
+  "spider": "https://zhuyu-prod-1256652038.cos.ap-guangzhou.myqcloud.com/GLlwgMOxOwOf/fish06301918.jar;md5;17468f1ada685433609206d93c84743d",
   "logo": "https://modelscope-resouces.oss-cn-zhangjiakou.aliyuncs.com/avatar%2Ff5309172-1af6-4c4f-a1c5-a4773a1cc718.gif",
   "wallpaper": "http://127.0.0.1:9978/proxy?do=wallpaper",
+  "danmaku": "http://127.0.0.1:5266/danmu/webhtv?name={name}&episode={episode}",
   "sites": [
     {
       "key": "Douban",
