@@ -116,30 +116,6 @@
       "api": "https://jsnzkpg.us.ci"
     },
     {
-      "key": "JD",
-      "name": "JD4k采集网盘",
-      "type": 3,
-      "api": "https://mpimg.cn/down.php/99ed736540ae820ae00d67669d22dc90.js",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "changeable": 1,
-      "ext": "https://qp.69mini.com/api.php/app/"
-    },
-    {
-      "key": "四叶草",
-      "name": "四叶草",
-      "type": 3,
-      "api": "https://pan.szfx.top/down.php/08343ea7d5d8d12da1c16f9ccf03040d.js",
-      "ext": {
-        "host": "http://107.151.244.162:6622",
-        "key": "wNCwbXzr0Bm6cS2C",
-        "init": "V122",
-        "api": 2,
-        "ua": "okhttp/3.10.0"
-      }
-    },
-    {
       "key": "极影",
       "name": "极影",
       "type": 3,
@@ -193,13 +169,6 @@
       "filterable": 1,
       "changeable": 1,
       "playable": 1
-    },
-    {
-      "key": "测试v4",
-      "name": "测试丨V4",
-      "type": 3,
-      "api": "https://mpimg.cn/down.php/9a74bfc73bb24b1582d75d4fc1af6bee.py",
-      "ext": "http://v.2video.cc"
     },
     {
       "key": "爱看剧",
@@ -378,28 +347,22 @@
     {
       "key": "腾腾",
       "name": "🐧腾腾┃JX",
-      "jar": "https://pan.szfx.top/down.php/c5c866ed8f092c350477cf7727137bd3.jar",
       "type": 3,
       "api": "http://rihou.cc:88/js/drpy2.min.js",
-      "url": "http://127.0.0.1:6677/proxy?do=parse&key=687474703a2f2f3130332e34352e3136322e3230373a31333133312fe5b08fe8998ee696912e7068703f75726c3d2c687474703a2f2f34332e3133392e39342e39363a383836362f6170692f3f6b65793d37653637616233333165653235353636346632393839636132313731633264642675726c3d2c68747470733a2f2f6e6969756d612e71692d73696d706c652e746f702f6e6e2e7068703f75726c3d&filters=mall,mp4&url=",
       "ext": "http://rihou.cc:88/js/腾腾.js"
     },
     {
       "key": "奇奇",
       "name": "🐴奇奇┃JX",
-      "jar": "https://pan.szfx.top/down.php/c5c866ed8f092c350477cf7727137bd3.jar",
       "type": 3,
       "api": "http://rihou.cc:88/js/drpy2.min.js",
-      "url": "http://127.0.0.1:6677/proxy?do=parse&key=687474703a2f2f3130332e34352e3136322e3230373a31333133312fe5b08fe8998ee696912e7068703f75726c3d2c687474703a2f2f34332e3133392e39342e39363a383836362f6170692f3f6b65793d37653637616233333165653235353636346632393839636132313731633264642675726c3d2c68747470733a2f2f6e6969756d612e71692d73696d706c652e746f702f6e6e2e7068703f75726c3d&filters=mall,mp4&url=",
       "ext": "http://rihou.cc:88/js/奇奇.js"
     },
     {
       "key": "果果",
       "name": "🍋果果┃JX",
-      "jar": "https://pan.szfx.top/down.php/c5c866ed8f092c350477cf7727137bd3.jar",
       "type": 3,
       "api": "http://rihou.cc:88/js/drpy2.min.js",
-      "url": "http://127.0.0.1:6677/proxy?do=parse&key=687474703a2f2f3130332e34352e3136322e3230373a31333133312fe5b08fe8998ee696912e7068703f75726c3d2c687474703a2f2f34332e3133392e39342e39363a383836362f6170692f3f6b65793d37653637616233333165653235353636346632393839636132313731633264642675726c3d2c68747470733a2f2f6e6969756d612e71692d73696d706c652e746f702f6e6e2e7068703f75726c3d&filters=mall,mp4&url=",
       "ext": "http://rihou.cc:88/js/果果.js"
     },
     {
@@ -583,6 +546,18 @@
         "请求头": "User-Agent$MOBILE_UA",
         "编码": "UTF-8",
         "分类url": "https://vip.wwgz.cn:5200/"
+      }
+    },
+    {
+      "key": "枫叶电影1",
+      "name": "枫叶电影",
+      "type": 3,
+      "api": "csp_XBPQ",
+      "jar": "https://wp.kayyw.com/f/bobgtv/%E5%B0%B1%E5%87%A0%E4%B8%AA.jar",
+      "searchable": 1,
+      "quickSearch": 1,
+      "ext": {
+        "分类url": "https://www.guan-feng.com/"
       }
     },
     {
@@ -905,6 +880,12 @@
       "searchable": 1,
       "quickSearch": 1,
       "changeable": 1
+    },
+    {
+      "key": "魔盒",
+      "name": "魔盒子",
+      "type": 3,
+      "api": "https://mpimg.cn/down.php/998083acf06f80a5529f5045ba632640.py"
     },
     {
       "key": "稀饭fm",
@@ -1808,11 +1789,6 @@
       "name": "自动解析",
       "type": 2,
       "url": "Parallel"
-    },
-    {
-      "name": "不太好",
-      "type": 1,
-      "url": "http://127.0.0.1:6677/proxy?do=parse&key=687474703a2f2f3130332e34352e3136322e3230373a31333133312fe5b08fe8998ee696912e7068703f75726c3d2c687474703a2f2f34332e3133392e39342e39363a383836362f6170692f3f6b65793d37653637616233333165653235353636346632393839636132313731633264642675726c3d2c68747470733a2f2f6e6969756d612e71692d73696d706c652e746f702f6e6e2e7068703f75726c3d&filters=mall,mp4&url="
     },
     {
       "name": "不知道谁的",
