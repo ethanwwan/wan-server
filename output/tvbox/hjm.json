@@ -126,6 +126,17 @@
       "ext": "http://cmsyun2.qijiyun.vip/api.php/app/"
     },
     {
+      "key": "山楂",
+      "name": "山楂",
+      "type": 3,
+      "api": "https://mpimg.cn/down.php/e02034214f0705bfe1e5f4d936f0925f.py",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "order_num": 0,
+      "changeable": 0
+    },
+    {
       "key": "Acfun",
       "name": "Acfun",
       "type": 3,
