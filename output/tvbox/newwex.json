@@ -1,5 +1,5 @@
 {
-  "spider": "https://nos.netease.com/ysf/69b23991655007e85f241de1642fb8e5.txt;md5;b230733eb61642912623e40a0535b245",
+  "spider": "https://nos.netease.com/ysf/0b4f27394aaa1e7c3a2e543a6c4d89ff.jar;md5;1262dc40ed916e6d67c9015e6b4af2bd",
   "wallpaper": "http://王二小放牛娃牛逼.999888987.xyz",
   "logo": "https://storage.7x24cc.com/storage-server/presigned/ss1/a6-online-fileupload/newMediaFile/3CEAE9E_773_wexfnw_20250911190012684newMediaFile.gif",
   "sites": [
@@ -15,7 +15,7 @@
     },
     {
       "key": "Doubana",
-      "name": "🐮【更新日期:20260705】🐮",
+      "name": "🐮【更新日期:20260707】🐮",
       "type": 3,
       "api": "csp_NewDouBanGuard",
       "searchable": 0,
@@ -287,6 +287,15 @@
       "type": 3,
       "类型": "短剧",
       "api": "csp_ManJuQiMaoGuard",
+      "searchable": 1,
+      "changeable": 0
+    },
+    {
+      "key": "ManJuXiFan",
+      "name": "🍉漫短┃小喜🍉",
+      "type": 3,
+      "类型": "短剧",
+      "api": "csp_ManJuXiFanGuard",
       "searchable": 1,
       "changeable": 0
     },
