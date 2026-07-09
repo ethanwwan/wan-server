@@ -1,17 +1,23 @@
 {
-  "spider": "https://tc-new.z.wiki/autoupload/iYHTWVx6T8RrCmqdGD6MOdiO_OyvX7mIgxFBfDMDErs/20260708/9zEM/fish07080115.jar;md5;0c8105385e9eb76c619f870748cc1cea",
+  "spider": "https://tc-new.z.wiki/autoupload/iYHTWVx6T8RrCmqdGD6MOdiO_OyvX7mIgxFBfDMDErs/20260709/0572/fish07091010.jar;md5;203c1b3800c609f605ce8b30111d6402",
   "logo": "https://modelscope-resouces.oss-cn-zhangjiakou.aliyuncs.com/avatar%2Ff5309172-1af6-4c4f-a1c5-a4773a1cc718.gif",
   "wallpaper": "http://127.0.0.1:9978/proxy?do=wallpaper",
   "danmaku": "http://127.0.0.1:5266/danmu/webhtv?name={name}&episode={episode}",
   "sites": [
     {
       "key": "Douban",
-      "name": "🚀豆瓣┃热播",
+      "name": "🌕️┆片单┆精选",
       "type": 3,
-      "api": "csp_Douban",
+      "api": "csp_PianDan",
       "indexs": 1,
       "searchable": 0,
-      "filterable": 1
+      "filterable": 1,
+      "ext": {
+        "home": {
+          "douban": "https://6800.kstore.vip/douban.json",
+          "tmdb": "https://6800.kstore.vip/tmdb.json"
+        }
+      }
     },
     {
       "key": "YGP",
