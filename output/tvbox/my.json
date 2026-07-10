@@ -1,5 +1,5 @@
 {
-  "spider": "https://tc-new.z.wiki/autoupload/iYHTWVx6T8RrCmqdGD6MOdiO_OyvX7mIgxFBfDMDErs/20260709/0572/fish07091010.jar;md5;203c1b3800c609f605ce8b30111d6402",
+  "spider": "https://tc-new.z.wiki/autoupload/iYHTWVx6T8RrCmqdGD6MOdiO_OyvX7mIgxFBfDMDErs/20260710/zwC7/0X0/fish07102154.png;md5;01aeca771c222e9a65fae459a9bf0745",
   "logo": "https://modelscope-resouces.oss-cn-zhangjiakou.aliyuncs.com/avatar%2Ff5309172-1af6-4c4f-a1c5-a4773a1cc718.gif",
   "wallpaper": "http://127.0.0.1:9978/proxy?do=wallpaper",
   "danmaku": "http://127.0.0.1:5266/danmu/webhtv?name={name}&episode={episode}",
@@ -890,6 +890,28 @@
       "changeable": 1
     },
     {
+      "key": "TingShijie",
+      "name": "🌍┆听界┆有声",
+      "type": 3,
+      "api": "csp_TingShijie",
+      "searchable": 1,
+      "indexs": 0,
+      "style": {
+        "type": "list"
+      }
+    },
+    {
+      "key": "TingYou",
+      "name": "🎧┆听友┆有声",
+      "type": 3,
+      "api": "csp_TingYou",
+      "searchable": 1,
+      "indexs": 0,
+      "style": {
+        "type": "list"
+      }
+    },
+    {
       "key": "TingBook",
       "name": "📻┆六月┆有声",
       "type": 3,
@@ -910,17 +932,6 @@
       "filterable": 1,
       "indexs": 0,
       "ext": "https://m.ting15.com",
-      "style": {
-        "type": "list"
-      }
-    },
-    {
-      "key": "TingShijie",
-      "name": "🌍┆听界┆有声",
-      "type": 3,
-      "api": "csp_TingShijie",
-      "searchable": 1,
-      "indexs": 0,
       "style": {
         "type": "list"
       }
