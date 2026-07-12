@@ -7,10 +7,10 @@ from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # 添加项目根目录到Python路径
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, PROJECT_ROOT)
 
-from utils.logger import get_logger
+from logger import get_logger
 
 TVBOX_DIR = os.path.join(PROJECT_ROOT, 'output', 'tvbox')
 TVBOX_URL = "https://www.iyouhun.com/tv/dc"

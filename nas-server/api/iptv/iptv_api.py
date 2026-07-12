@@ -7,7 +7,7 @@ import os
 from fastapi import APIRouter
 from fastapi.responses import PlainTextResponse
 from .iptv_utils import fetch_iptv_favorite_list,IPTV_DIR
-from api.base.response import not_found_response
+from ..base.response import not_found_response
 
 
 # 创建路由器

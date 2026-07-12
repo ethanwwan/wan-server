@@ -1,8 +1,11 @@
+import importlib
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
-from api.base.routes import api_router
-from utils.logger import get_logger
+from logger import get_logger
 import uvicorn
+
+routes_module = importlib.import_module("nas-server.api.base.routes")
+api_router = routes_module.api_router
 
 logger = get_logger('APP')
 
@@ -17,6 +20,11 @@ app.include_router(api_router)
 @app.get("/")
 async def root():
     return RedirectResponse(url="/docs")
+
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
 
 
 def start_server():

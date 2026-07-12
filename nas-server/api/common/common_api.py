@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request
 from datetime import datetime
-from api.base.response import success_response
+from ..base.response import success_response
 
 router = APIRouter(prefix="/common", tags=["Common"])
 

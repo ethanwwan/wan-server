@@ -42,26 +42,7 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          
-          # 检查是否有未暂存的更改
-          if ! git diff --quiet; then
-            echo "检测到未暂存更改，先暂存"
-            git stash push -m "auto-stash before pull"
-            HAS_STASH=true
-          else
-            HAS_STASH=false
-          fi
-          
-          # 拉取远程最新代码
-          git pull --rebase origin main
-          
-          # 如果之前有暂存，恢复暂存的更改
-          if [ "$HAS_STASH" = true ]; then
-            git stash pop || echo "恢复暂存失败，可能没有stash"
-          fi
-          
-          # 添加并提交更改
-          git add output/
+          git add iptv-aggregator/output/ tvbox-aggregator/output/
           if git diff --staged --quiet; then
             echo "没有更改，跳过提交"
           else
@@ -70,12 +51,3 @@ jobs:
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: 同步 output 目录到 Gist
-        if: env.GIST_ID != '' && env.GIST_TOKEN != ''
-        run: |
-          python scripts/sync_to_gist.py --gist-id ${{ secrets.GIST_ID }} --token ${{ secrets.GIST_TOKEN }}
-        env:
-          PYTHONPATH: ${{ github.workspace }}
-          GIST_ID: ${{ secrets.GIST_ID }}
-          GIST_TOKEN: ${{ secrets.GIST_TOKEN }}

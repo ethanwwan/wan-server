@@ -4,9 +4,9 @@ API路由管理器
 """
 
 from fastapi import APIRouter
-from api.common.common_api import router as common_router
-from api.iptv.iptv_api import router as iptv_router
-from api.tvbox.tvbox_api import router as tvbox_router
+from ..common.common_api import router as common_router
+from ..iptv.iptv_api import router as iptv_router
+from ..tvbox.tvbox_api import router as tvbox_router
 
 # 所有业务路由统一在此前缀下
 api_router = APIRouter(prefix="/api") 

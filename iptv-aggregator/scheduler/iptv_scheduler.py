@@ -16,10 +16,14 @@ from datetime import datetime
 from typing import List, Dict, Tuple, Optional
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, project_root)
+aggregator_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+project_root = os.path.dirname(aggregator_root)
+for p in [project_root, aggregator_root]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
 
-from utils.logger import get_logger
+from logger import get_logger
+
 from utils.iptv_utils import (
     fetch_url,
     parse_m3u,

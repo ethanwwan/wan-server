@@ -4,18 +4,14 @@ TVBox配置管理API端点
 """
 
 import os
-import sys
 import json
 from fastapi import APIRouter, Request, Response
-from api.base.response import not_found_response
-
-# 添加项目根目录到Python路径
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+from ..base.response import not_found_response
 
 router = APIRouter(prefix="/tvbox", tags=["TVBox"])
 
 # TVBox配置目录
-TVBOX_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'output', 'tvbox')
+TVBOX_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), 'tvbox-aggregator', 'output')
 
 def get_tvbox_local_file(file_name: str):
     """

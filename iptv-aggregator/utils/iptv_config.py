@@ -91,12 +91,12 @@ def get_project_root() -> str:
 
 def get_cache_path() -> str:
     """获取缓存文件路径"""
-    return os.path.join(get_project_root(), 'output', 'iptv', 'cache', 'fail_cache.json')
+    return os.path.join(get_project_root(), 'output', 'cache', 'fail_cache.json')
 
 
 def get_output_dir() -> str:
     """获取输出目录"""
-    return os.path.join(get_project_root(), 'output', 'iptv')
+    return os.path.join(get_project_root(), 'output')
 
 
 def get_input_file_path(filename: str) -> str:
