@@ -1,5 +1,5 @@
 {
-  "spider": "https://nos.netease.com/ysf/40937fbedd6ff4db5cbe26e2999508bd.jar;md5;0128c4c7488204dacb5b6d1d2223b462",
+  "spider": "https://nos.netease.com/ysf/7aec50c47e5248528ba5cb0d6b3d9daf.jar;md5;27c88395474117372bf989c8893c3d12",
   "wallpaper": "http://王二小放牛娃牛逼.999888987.xyz",
   "logo": "https://storage.7x24cc.com/storage-server/presigned/ss1/a6-online-fileupload/newMediaFile/3CEAE9E_773_wexfnw_20250911190012684newMediaFile.gif",
   "sites": [
@@ -391,39 +391,6 @@
       "api": "csp_AListGuard",
       "searchable": 1,
       "changeable": 0
-    },
-    {
-      "key": "bilibiliys",
-      "name": " 🅱‍哔哩NEW影视🅱‍",
-      "type": 3,
-      "api": "csp_WexNewBiLiYSGuard",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "changeable": 0,
-      "ext": "https://support-chat.rongcloud.cn/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBYkU9IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--3083f43a14e6b59f4bfe248478a3a8765b34bfdd/bilisong.txt"
-    },
-    {
-      "key": "bilibili",
-      "name": " 🅱‍哔哩NEW合集🅱‍",
-      "type": 3,
-      "api": "csp_WexNewBiLiGuard",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "changeable": 0,
-      "ext": "https://support-chat.rongcloud.cn/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBYkE9IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--47a8ff0e68559a89a9a75b37d09a2b0854dc5a8a/bili001.txt"
-    },
-    {
-      "key": "biliych",
-      "name": " 🅱‍哔哩NEW歌曲🅱‍",
-      "type": 3,
-      "api": "csp_WexNewBiLiGuard",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "changeable": 0,
-      "ext": "https://support-chat.rongcloud.cn/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBYkU9IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--3083f43a14e6b59f4bfe248478a3a8765b34bfdd/bilisong.txt"
     },
     {
       "key": "Wexbiliys",
