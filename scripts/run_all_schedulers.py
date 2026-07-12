@@ -67,7 +67,7 @@ def main():
 
     tasks = [
         ("TVBox", tvbox_job),
-        ("IPTV", iptv_job),
+        # ("IPTV", iptv_job),
         ("SyncTVBox", sync_job),
     ]
 
