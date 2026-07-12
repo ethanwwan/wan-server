@@ -2,8 +2,8 @@ name: Scheduler JOB
 
 on:
   schedule:
-    # 每天 22 点执行 (UTC 时间 14:00 = 北京时间 22:00)
-    - cron: '0 14 * * *'
+    # 每天 0 点执行 (UTC 时间 16:00 = 北京时间 00:00)
+    - cron: '0 16 * * *'
   workflow_dispatch:  # 允许手动触发
 
 permissions:
@@ -47,6 +47,7 @@ jobs:
             echo "没有更改，跳过提交"
           else
             git commit -m "chore: 自动更新配置 $(TZ=Asia/Shanghai date '+%Y-%m-%d %H:%M:%S')"
+            git pull --rebase origin main
             git push
           fi
         env:

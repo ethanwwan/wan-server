@@ -13,7 +13,8 @@ from logger import get_logger
 logger = get_logger('SCHEDULERS')
 
 tvbox_scheduler = importlib.import_module("tvbox-aggregator.scheduler.tvbox_scheduler")
-iptv_scheduler = importlib.import_module("iptv-aggregator.scheduler.iptv_scheduler")
+iptv = importlib.import_module("iptv-aggregator.scripts.iptv_checker")
+sync_tvbox = importlib.import_module("nas-server.scripts.sync_tvbox_config")
 
 
 def tvbox_job() -> bool:
@@ -27,9 +28,18 @@ def tvbox_job() -> bool:
 
 def iptv_job() -> bool:
     try:
-        return iptv_scheduler.iptv_scheduler()
+        return iptv.iptv_scheduler()
     except Exception as e:
         logger.error(f"IPTV 频道检测失败: {e}", exc_info=True)
+        return False
+
+
+def sync_job() -> bool:
+    try:
+        sync_tvbox.sync_tvbox_config()
+        return True
+    except Exception as e:
+        logger.error(f"TVBox 配置同步失败: {e}", exc_info=True)
         return False
 
 
@@ -58,6 +68,7 @@ def main():
     tasks = [
         ("TVBox", tvbox_job),
         ("IPTV", iptv_job),
+        ("SyncTVBox", sync_job),
     ]
 
     results = [(name, run_task(name, func)) for name, func in tasks]

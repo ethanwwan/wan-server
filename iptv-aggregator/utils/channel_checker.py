@@ -37,7 +37,7 @@ class CheckerConfig:
     SKIP_INVALID_SCHEMES: tuple = ('file', 'ftp', 'mailto')  # 跳过的协议
     MIN_CONTENT_LENGTH: int = 50  # 最小内容长度阈值
 
-class IPTVChecker:
+class ChannelChecker:
     """IPTV 频道检测器（优化版）"""
 
     # 类变量：ffmpeg 可用性缓存
@@ -645,7 +645,7 @@ if __name__ == "__main__":
     print(f"测试 URL: {test_url}")
     print("-" * 60)
 
-    checker = IPTVChecker()
+    checker = ChannelChecker()
     result = checker.check(test_url)  # 修正：原测试代码调用错误（check_channel 返回 Channel 对象，不是字典）
 
     print(f"可用性：{'✓' if result['available'] else '✗'}")
