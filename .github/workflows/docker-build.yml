@@ -2,13 +2,8 @@ name: Docker Build
 
 on:
   push:
-    branches:
-      - main
-    paths:
-      - '**.py'
-      - 'requirements.txt'
-      - 'Dockerfile'
-      - '.github/workflows/docker-build.yml'
+    tags:
+      - 'v*.*.*'
   workflow_dispatch:
 
 jobs:
@@ -29,12 +24,22 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: 提取版本号
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ethanwwan/wan-server
+          tags: |
+            type=semver,pattern={{version}}
+            type=raw,value=latest
+
       - name: 构建并推送
         uses: docker/build-push-action@v6
         with:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ethanwwan/wan-server:latest
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
