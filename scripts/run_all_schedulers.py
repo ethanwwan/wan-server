@@ -12,14 +12,14 @@ from logger import get_logger
 
 logger = get_logger('SCHEDULERS')
 
-tvbox_scheduler = importlib.import_module("tvbox-aggregator.scheduler.tvbox_scheduler")
+tvbox = importlib.import_module("tvbox-aggregator.scripts.tvbox_aggregator")
 iptv = importlib.import_module("iptv-aggregator.scripts.iptv_checker")
 sync_tvbox = importlib.import_module("nas-server.scripts.sync_tvbox_config")
 
 
 def tvbox_job() -> bool:
     try:
-        tvbox_scheduler.tvbox_scheduler()
+        tvbox.tvbox_scheduler()
         return True
     except Exception as e:
         logger.error(f"TVBox 配置更新失败: {e}", exc_info=True)
