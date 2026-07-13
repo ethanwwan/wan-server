@@ -99,24 +99,26 @@ def _fetch_raw(url: str) -> str | None:
         return None
 
 
-def _clean(content_str: str) -> dict | None:
+def _parse_json(content_str: str) -> dict | None:
     if not content_str.strip():
         return None
     try:
-        data = json.loads(content_str)
+        return json.loads(content_str)
     except json.JSONDecodeError:
-        try:
-            cleaned = re.sub(r'/\*.*?\*/', '', content_str, flags=re.DOTALL)
-            lines = cleaned.split('\n')
-            cleaned = '\n'.join(line for line in lines if not line.lstrip().startswith('//'))
-            cleaned = ' '.join(cleaned.split())
-            data = json.loads(cleaned)
-        except (json.JSONDecodeError, Exception):
-            return None
+        pass
+    try:
+        cleaned = re.sub(r'/\*.*?\*/', '', content_str, flags=re.DOTALL)
+        lines = cleaned.split('\n')
+        cleaned = '\n'.join(line for line in lines if not line.lstrip().startswith('//'))
+        cleaned = ' '.join(cleaned.split())
+        return json.loads(cleaned)
+    except Exception:
+        return None
 
+
+def _clean_data(data: dict) -> dict | None:
     sites = data.get('sites', [])
     if not sites:
-        logger.warning("未检测到 sites 字段，跳过")
         return None
 
     if 'warningText' in data:
@@ -127,11 +129,11 @@ def _clean(content_str: str) -> dict | None:
         api_key = site.get('api', '')
         if api_key == "push_agent":
             sites.remove(site)
-            continue
-        for keyword in REPLACE_KEYWORDS:
-            if keyword == api_key:
-                site['name'] = new_name
-                break
+        else:
+            for keyword in REPLACE_KEYWORDS:
+                if keyword == api_key:
+                    site['name'] = new_name
+                    break
 
     return data
 
@@ -144,9 +146,9 @@ def _process_source(name: str, urls: list[str]) -> dict | None:
             logger.warning(f"[{name}] 获取失败: {url}")
             continue
 
-        data = _clean(raw)
+        data = _parse_json(raw)
         if data is None:
-            logger.warning(f"[{name}] 内容解析失败: {url}")
+            logger.warning(f"[{name}] JSON 解析失败: {url}")
             continue
 
         jar_url = _extract_jar_url(data, url)
@@ -156,6 +158,11 @@ def _process_source(name: str, urls: list[str]) -> dict | None:
                 logger.warning(f"[{name}] jar 不可达，尝试下一个 URL")
                 continue
             logger.info(f"[{name}] jar 可用")
+
+        data = _clean_data(data)
+        if data is None:
+            logger.warning(f"[{name}] 内容清洗失败（无 sites）: {url}")
+            continue
 
         logger.info(f"[{name}] 处理成功")
         return data
