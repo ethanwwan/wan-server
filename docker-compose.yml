@@ -1,0 +1,11 @@
+services:
+  wan-server:
+    image: ethanwwan/wan-server:latest
+    container_name: wan-server
+    restart: unless-stopped
+    ports:
+      - "8016:8016"
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./nas-server/output:/app/nas-server/output
