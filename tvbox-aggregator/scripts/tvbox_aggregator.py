@@ -6,135 +6,114 @@ import re
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-# 添加项目根目录到Python路径
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, PROJECT_ROOT)
 
 from logger import get_logger
 
 TVBOX_DIR = os.path.join(PROJECT_ROOT, 'output', 'tvbox')
-TVBOX_URL = "https://www.iyouhun.com/tv/dc"
 TVBOX_ITEM_URL = "https://cdn.gh-proxy.org/https://github.com/ethanwwan/wan-server/blob/main/output/tvbox/"
-headers = {"User-Agent": "okhttp/3.12.12", "Accept": "application/json"}
-os.makedirs(TVBOX_DIR, exist_ok=True)
-
-logger = get_logger('TVBOX')
+INPUT_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'input', 'tvbox_urls.json')
+HEADERS = {"User-Agent": "okhttp/3.12.12", "Accept": "application/json"}
 MAX_WORKERS = 10
-
 REPLACE_KEYWORDS = ['csp_DouDouGuard', 'csp_Douban', 'csp_DouDou', 'csp_DoubanGuard']
 
+logger = get_logger('TVBOX')
+os.makedirs(TVBOX_DIR, exist_ok=True)
 
-def process_single_url(item):
-    """处理单个URL，返回处理结果或None"""
-    item_url = item.get('url', '')
-    if not item_url:
-        logger.warning("跳过空URL")
-        return None
-    
+
+def load_sources() -> dict:
+    """读取 tvbox_urls.json 配置"""
+    if not os.path.exists(INPUT_FILE):
+        logger.error(f"配置文件不存在: {INPUT_FILE}")
+        return {}
+    with open(INPUT_FILE, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+
+def _fetch_and_format(url: str) -> bytes | None:
     try:
-        new_item = item.copy()
-        config_response = requests.get(item_url, headers=headers, timeout=20)
-        config_response.raise_for_status()
-        formatted_content = format_response_content(config_response.content)
-        final_content = replace_content(formatted_content)
-        
-        if final_content is None or len(final_content) == 0:
-            # logger.warning(f"无法格式化响应内容，跳过: {item_url}")
-            return None
-        
-        file_name = item_url.split('/')[-1]
-        if not file_name:
-            logger.warning(f"无法提取文件名，跳过: {item_url}")
-            return None
-        
-        if not file_name.endswith('.json'):
-            file_name += '.json'
-        
+        resp = requests.get(url, headers=HEADERS, timeout=20)
+        resp.raise_for_status()
+        content = _format_content(resp.content)
+        if content and len(content) > 0:
+            return content
+    except Exception:
+        pass
+    return None
+
+
+def _process_source(name: str, urls: list[str]) -> dict | None:
+    """
+    处理一个源：依次尝试 URL 列表，第一个成功则停止
+    返回 config.json 中对应的 item，全部失败返回 None
+    """
+    for url in urls:
+        logger.info(f"正在尝试 [{name}] {url}")
+        raw = _fetch_and_format(url)
+        if raw is None:
+            logger.warning(f"[{name}] 获取失败: {url}")
+            continue
+
+        final = _replace_content(raw)
+        if final is None:
+            logger.warning(f"[{name}] 内容解析失败: {url}")
+            continue
+
+        file_name = f"{name}.json"
         file_path = os.path.join(TVBOX_DIR, file_name)
         with open(file_path, 'wb') as f:
-            f.write(final_content)
-        new_item['url'] = TVBOX_ITEM_URL + file_name
-        new_item['name'] = new_item['name'].replace('游魂', '万家')
-        return new_item
-        
-    except Exception as e:
-        # logger.error(f"处理URL失败: {item_url}, 错误: {str(e)}")
-        return None
+            f.write(final)
+
+        item = {
+            'name': name.replace('游魂', '万家'),
+            'url': TVBOX_ITEM_URL + file_name
+        }
+        logger.info(f"[{name}] 处理成功")
+        return item
+
+    logger.warning(f"[{name}] 所有 URL 均失败，跳过")
+    return None
 
 
-def tvbox_scheduler():
-    logger.info(f"开始更新配置，时间: {datetime.now().isoformat()}")
-    
-    try:
-        response = requests.get(TVBOX_URL, headers=headers, timeout=20)
-        response.raise_for_status()
-        
-        data = response.json()
-        if data is None or 'urls' not in data:
-            logger.error("主接口返回数据格式错误")
-            raise Exception("主接口返回数据格式错误")
-        
-        urls = data.get('urls', [])
-        # logger.info(f"成功获取 {len(urls)} 个配置URL")
-        
-        new_urls = []
-        with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-            futures = {executor.submit(process_single_url, item): item for item in urls}
-            for future in as_completed(futures):
-                result = future.result()
-                if result:
-                    new_urls.append(result)
-        
-        data['urls'] = new_urls
-        with open(os.path.join(TVBOX_DIR, "config.json"), 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
-        
-        logger.info(f"配置更新完成，成功: {len(new_urls)}/{len(urls)}，时间: {datetime.now().isoformat()}")
-        
-    except Exception as e:
-        logger.error(f"更新失败: {str(e)}")
-        raise
-
-
-def format_response_content(content):
+def _format_content(content: bytes) -> bytes | None:
+    """将原始响应内容格式化为标准 JSON"""
     try:
         content_str = content.decode('utf-8-sig')
         if not content_str.strip():
             return None
-        
+
         try:
             data = json.loads(content_str)
             return json.dumps(data, ensure_ascii=False, indent=2).encode('utf-8')
         except json.JSONDecodeError:
             try:
-                cleaned_content = re.sub(r'/\*.*?\*/', '', content_str, flags=re.DOTALL)
-                lines = cleaned_content.split('\n')
-                cleaned_lines = [line for line in lines if not line.lstrip().startswith('//')]
-                cleaned_content = '\n'.join(cleaned_lines)
-                cleaned_content = ' '.join(cleaned_content.split())
-                data = json.loads(cleaned_content)
+                cleaned = re.sub(r'/\*.*?\*/', '', content_str, flags=re.DOTALL)
+                lines = cleaned.split('\n')
+                cleaned = '\n'.join(line for line in lines if not line.lstrip().startswith('//'))
+                cleaned = ' '.join(cleaned.split())
+                data = json.loads(cleaned)
                 return json.dumps(data, ensure_ascii=False, indent=2).encode('utf-8')
-            except json.JSONDecodeError as e:
-                # logger.error(f"清理后解析JSON仍然失败: {e}")
+            except json.JSONDecodeError:
                 return None
-    except Exception as e:
-        # logger.error(f"处理响应内容时发生错误: {e}")
+    except Exception:
         return None
 
 
-def replace_content(content):
+def _replace_content(content: bytes) -> bytes | None:
+    """替换内容中的关键词"""
     try:
         data = json.loads(content)
         sites = data.get('sites', [])
-        
-        if sites is None or len(sites) == 0:
+
+        if not sites:
             return None
-        
+
         if 'warningText' in data:
             del data['warningText']
-        
+
         new_name = "🚀豆瓣┃热播"
-        
+
         for site in sites:
             api_key = site.get('api', '')
             if api_key == "push_agent":
@@ -144,11 +123,36 @@ def replace_content(content):
                 if keyword == api_key:
                     site['name'] = new_name
                     break
-        
+
         return json.dumps(data, ensure_ascii=False, indent=2).encode('utf-8')
-    except Exception as e:
-        # logger.error(f"替换内容失败: {e}")
+    except Exception:
         return None
+
+
+def tvbox_scheduler():
+    logger.info(f"开始更新配置，时间: {datetime.now().isoformat()}")
+
+    sources = load_sources()
+    if not sources:
+        logger.error("未读取到任何源配置")
+        return
+
+    items = []
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        futures = {executor.submit(_process_source, name, urls): name for name, urls in sources.items()}
+        for future in as_completed(futures):
+            result = future.result()
+            if result:
+                items.append(result)
+
+    if items:
+        data = {'urls': items}
+        output_path = os.path.join(TVBOX_DIR, "config.json")
+        with open(output_path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        logger.info(f"配置更新完成，成功: {len(items)}/{len(sources)}")
+    else:
+        logger.warning("没有成功处理任何源")
 
 
 if __name__ == "__main__":
