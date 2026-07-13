@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import time
+from datetime import datetime, timedelta
 import requests
 
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -17,7 +18,7 @@ OUTPUT_FILE = os.path.join(OUTPUT_DIR, 'tvbox.json')
 MAX_RETRIES = 2
 
 
-def run() -> bool:
+def sync() -> bool:
     for attempt in range(1 + MAX_RETRIES):
         try:
             logger.info(f"正在下载 TVBox 配置{' (重试 ' + str(attempt) + '/' + str(MAX_RETRIES) + ')' if attempt > 0 else ''}...")
@@ -39,6 +40,24 @@ def run() -> bool:
             else:
                 logger.error(f"TVBox 配置同步失败 (已重试 {MAX_RETRIES} 次): {e}")
                 return False
+
+
+def _seconds_until(hour: int, minute: int = 0) -> float:
+    now = datetime.now()
+    target = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
+    if target <= now:
+        target += timedelta(days=1)
+    return (target - now).total_seconds()
+
+
+def run():
+    sync()
+
+    while True:
+        seconds = _seconds_until(6, 0)
+        logger.info(f"下次执行: {datetime.now() + timedelta(seconds=seconds)}")
+        time.sleep(seconds)
+        sync()
 
 
 if __name__ == "__main__":

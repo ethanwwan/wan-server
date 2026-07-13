@@ -1,4 +1,5 @@
 import importlib
+import threading
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
@@ -19,7 +20,8 @@ SERVER_PORT = 8016
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("服务启动，执行 NAS 调度任务...")
-    scheduler.run()
+    t = threading.Thread(target=scheduler.run, daemon=True)
+    t.start()
     yield
 
 
