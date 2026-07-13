@@ -9,7 +9,7 @@ from logger import get_logger
 
 logger = get_logger('SYNC_TVBOX')
 
-SOURCE_URL = "https://gh-proxy.org/https://github.com/ethanwwan/wan-server/blob/main/tvbox-aggregator/output/config.json"
+SOURCE_URL = "https://gh-proxy.org/https://raw.githubusercontent.com/ethanwwan/wan-server/refs/heads/main/tvbox-aggregator/output/tvbox.json"
 OUTPUT_DIR = os.path.join(project_root, 'nas-server', 'output')
 OUTPUT_FILE = os.path.join(OUTPUT_DIR, 'tvbox.json')
 
