@@ -11,15 +11,15 @@ sys.path.insert(0, PROJECT_ROOT)
 
 from logger import get_logger
 
-TVBOX_DIR = os.path.join(PROJECT_ROOT, 'output', 'tvbox')
-TVBOX_ITEM_URL = "https://cdn.gh-proxy.org/https://github.com/ethanwwan/wan-server/blob/main/output/tvbox/"
+OUTPUT_DIR = os.path.join(PROJECT_ROOT, 'output')
+OUTPUT_FILE = os.path.join(OUTPUT_DIR, 'tvbox.json')
 INPUT_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'input', 'tvbox_urls.json')
 HEADERS = {"User-Agent": "okhttp/3.12.12", "Accept": "application/json"}
 MAX_WORKERS = 10
 REPLACE_KEYWORDS = ['csp_DouDouGuard', 'csp_Douban', 'csp_DouDou', 'csp_DoubanGuard']
 
 logger = get_logger('TVBOX')
-os.makedirs(TVBOX_DIR, exist_ok=True)
+os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 
 def load_sources() -> dict:
@@ -46,7 +46,7 @@ def _fetch_and_format(url: str) -> bytes | None:
 def _process_source(name: str, urls: list[str]) -> dict | None:
     """
     处理一个源：依次尝试 URL 列表，第一个成功则停止
-    返回 config.json 中对应的 item，全部失败返回 None
+    返回带 name/url 的 item，全部失败返回 None
     """
     for url in urls:
         logger.info(f"正在尝试 [{name}] {url}")
@@ -60,14 +60,9 @@ def _process_source(name: str, urls: list[str]) -> dict | None:
             logger.warning(f"[{name}] 内容解析失败: {url}")
             continue
 
-        file_name = f"{name}.json"
-        file_path = os.path.join(TVBOX_DIR, file_name)
-        with open(file_path, 'wb') as f:
-            f.write(final)
-
         item = {
             'name': name.replace('游魂', '万家'),
-            'url': TVBOX_ITEM_URL + file_name
+            'url': url
         }
         logger.info(f"[{name}] 处理成功")
         return item
@@ -147,10 +142,9 @@ def tvbox_scheduler():
 
     if items:
         data = {'urls': items}
-        output_path = os.path.join(TVBOX_DIR, "config.json")
-        with open(output_path, 'w', encoding='utf-8') as f:
+        with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
-        logger.info(f"配置更新完成，成功: {len(items)}/{len(sources)}")
+        logger.info(f"配置更新完成，成功: {len(items)}/{len(sources)}，输出: {OUTPUT_FILE}")
     else:
         logger.warning("没有成功处理任何源")
 
