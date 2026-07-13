@@ -5,7 +5,6 @@ import requests
 import re
 import base64
 from datetime import datetime
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from urllib.parse import urljoin
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -18,7 +17,6 @@ OUTPUT_FILE = os.path.join(OUTPUT_DIR, 'tvbox.json')
 INPUT_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'input', 'tvbox_urls.json')
 HEADERS = {"User-Agent": "okhttp/3.12.12", "Accept": "application/json"}
 JAR_HEADERS = {"User-Agent": "okhttp/3.12.12"}
-MAX_WORKERS = 10
 REPLACE_KEYWORDS = ['csp_DouDouGuard', 'csp_Douban', 'csp_DouDou', 'csp_DoubanGuard']
 
 logger = get_logger('TVBOX')
@@ -171,17 +169,6 @@ def _process_source(name: str, urls: list[str]) -> dict | None:
     return None
 
 
-def _merge(results: list[dict]) -> dict:
-    merged = {}
-    for data in results:
-        for key, value in data.items():
-            if isinstance(value, list):
-                merged.setdefault(key, []).extend(value)
-            elif key not in merged:
-                merged[key] = value
-    return merged
-
-
 def tvbox_scheduler():
     logger.info(f"开始更新配置，时间: {datetime.now().isoformat()}")
 
@@ -190,22 +177,15 @@ def tvbox_scheduler():
         logger.error("未读取到任何源配置")
         return
 
-    results = []
-    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        futures = {executor.submit(_process_source, name, urls): name for name, urls in sources.items()}
-        for future in as_completed(futures):
-            result = future.result()
-            if result:
-                results.append(result)
+    for name, urls in sources.items():
+        data = _process_source(name, urls)
+        if data:
+            with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+            logger.info(f"配置更新完成，使用源: [{name}]，输出: {OUTPUT_FILE}")
+            return
 
-    if not results:
-        logger.warning("没有成功处理任何源")
-        return
-
-    data = _merge(results)
-    with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-    logger.info(f"配置更新完成，成功: {len(results)}/{len(sources)}，输出: {OUTPUT_FILE}")
+    logger.warning("所有源均失败")
 
 
 if __name__ == "__main__":
