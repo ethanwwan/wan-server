@@ -3,6 +3,7 @@ import sys
 import json
 import requests
 import re
+import base64
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from urllib.parse import urljoin
@@ -66,11 +67,34 @@ def _jar_reachable(url: str, timeout: int = 5) -> bool:
     return False
 
 
+def _decode_response(body: bytes) -> str | None:
+    text = body.decode('utf-8', errors='replace')
+    try:
+        if text.strip().startswith('{'):
+            json.loads(text)
+            return text
+    except json.JSONDecodeError:
+        pass
+    m = re.search(r'[A-Za-z0-9]{8}\*\*', text)
+    if not m:
+        return None
+    after = text[text.index(m.group()) + 10:]
+    try:
+        decoded = base64.b64decode(after)
+        return decoded.decode('utf-8', errors='replace')
+    except Exception:
+        return None
+
+
 def _fetch_raw(url: str) -> str | None:
     try:
         resp = requests.get(url, headers=HEADERS, timeout=20)
         resp.raise_for_status()
-        return resp.content.decode('utf-8-sig')
+        body = resp.content
+        decoded = _decode_response(body)
+        if decoded:
+            return decoded
+        return body.decode('utf-8-sig')
     except Exception:
         return None
 
