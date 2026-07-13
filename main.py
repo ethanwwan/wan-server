@@ -1,4 +1,5 @@
 import importlib
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from logger import get_logger
@@ -7,13 +8,22 @@ import uvicorn
 routes_module = importlib.import_module("nas-server.api.base.routes")
 api_router = routes_module.api_router
 
+scheduler = importlib.import_module("nas-server.schedulers.tvbox_scheduler")
+
 logger = get_logger('APP')
 
-# 硬编码配置
 SERVER_HOST = "0.0.0.0"
 SERVER_PORT = 8016
 
-app = FastAPI(title="Wan API Server")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    logger.info("服务启动，执行 NAS 调度任务...")
+    scheduler.run()
+    yield
+
+
+app = FastAPI(title="Wan API Server", lifespan=lifespan)
 app.include_router(api_router)
 
 
