@@ -2,7 +2,7 @@ import os
 import sys
 import json
 import time
-from datetime import datetime, timedelta
+import schedule
 import requests
 
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -42,22 +42,13 @@ def sync() -> bool:
                 return False
 
 
-def _seconds_until(hour: int, minute: int = 0) -> float:
-    now = datetime.now()
-    target = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
-    if target <= now:
-        target += timedelta(days=1)
-    return (target - now).total_seconds()
-
-
 def run():
     sync()
+    schedule.every().day.at("06:00").do(sync)
 
     while True:
-        seconds = _seconds_until(6, 0)
-        logger.info(f"下次执行: {datetime.now() + timedelta(seconds=seconds)}")
-        time.sleep(seconds)
-        sync()
+        schedule.run_pending()
+        time.sleep(30)
 
 
 if __name__ == "__main__":
