@@ -4,6 +4,7 @@ import json
 import requests
 import re
 import base64
+import time as time_mod
 from datetime import datetime
 from urllib.parse import urljoin
 
@@ -84,17 +85,24 @@ def _decode_response(body: bytes) -> str | None:
         return None
 
 
-def _fetch_raw(url: str) -> str | None:
-    try:
-        resp = requests.get(url, headers=HEADERS, timeout=20)
-        resp.raise_for_status()
-        body = resp.content
-        decoded = _decode_response(body)
-        if decoded:
-            return decoded
-        return body.decode('utf-8-sig')
-    except Exception:
-        return None
+def _fetch_raw(url: str, retries: int = 2) -> str | None:
+    for attempt in range(1 + retries):
+        try:
+            resp = requests.get(url, headers=HEADERS, timeout=20)
+            resp.raise_for_status()
+            body = resp.content
+            decoded = _decode_response(body)
+            if decoded:
+                return decoded
+            return body.decode('utf-8-sig')
+        except Exception as e:
+            if attempt < retries:
+                delay = (attempt + 1) * 2
+                logger.warning(f"获取失败 (重试 {attempt + 1}/{retries}): {url} - {e}")
+                time_mod.sleep(delay)
+            else:
+                logger.warning(f"获取失败 (已重试 {retries} 次): {url} - {e}")
+    return None
 
 
 def _parse_json(content_str: str) -> dict | None:
@@ -136,8 +144,15 @@ def _clean_data(data: dict) -> dict | None:
     return data
 
 
+FALLBACK_DELAY = 3
+
+
 def _process_source(name: str, urls: list[str]) -> dict | None:
-    for url in urls:
+    for idx, url in enumerate(urls):
+        if idx > 0:
+            logger.info(f"等待 {FALLBACK_DELAY}s 后尝试下一个 URL...")
+            time_mod.sleep(FALLBACK_DELAY)
+
         logger.info(f"正在尝试 [{name}] {url}")
         raw = _fetch_raw(url)
         if raw is None:
@@ -177,8 +192,13 @@ def tvbox_scheduler():
         logger.error("未读取到任何源配置")
         return
 
-    for name, urls in sources.items():
-        data = _process_source(name, urls)
+    source_names = list(sources.keys())
+    for idx, name in enumerate(source_names):
+        if idx > 0:
+            logger.info(f"上一源失败，等待 {FALLBACK_DELAY}s 后尝试下一源 [{name}]...")
+            time_mod.sleep(FALLBACK_DELAY)
+
+        data = _process_source(name, sources[name])
         if data:
             with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
