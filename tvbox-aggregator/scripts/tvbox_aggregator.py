@@ -5,6 +5,7 @@ import requests
 import re
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from urllib.parse import urljoin
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, PROJECT_ROOT)
@@ -15,6 +16,7 @@ OUTPUT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file
 OUTPUT_FILE = os.path.join(OUTPUT_DIR, 'tvbox.json')
 INPUT_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'input', 'tvbox_urls.json')
 HEADERS = {"User-Agent": "okhttp/3.12.12", "Accept": "application/json"}
+JAR_HEADERS = {"User-Agent": "okhttp/3.12.12"}
 MAX_WORKERS = 10
 REPLACE_KEYWORDS = ['csp_DouDouGuard', 'csp_Douban', 'csp_DouDou', 'csp_DoubanGuard']
 
@@ -28,6 +30,40 @@ def load_sources() -> dict:
         return {}
     with open(INPUT_FILE, 'r', encoding='utf-8') as f:
         return json.load(f)
+
+
+def _extract_real_url(source_url: str) -> str:
+    m = re.match(r'(https?://[^/]+/)(?:https?://.*)', source_url)
+    if m:
+        real = source_url[len(m.group(1)):]
+        if real.startswith('http://') or real.startswith('https://'):
+            return real
+    return source_url
+
+
+def _extract_jar_url(data: dict, source_url: str) -> str | None:
+    spider = data.get('spider', '')
+    if not spider or not spider.strip():
+        return None
+    jar_path = spider.split(';')[0].strip()
+    if not jar_path:
+        return None
+    if jar_path.startswith('http://') or jar_path.startswith('https://'):
+        return jar_path
+    real_url = _extract_real_url(source_url)
+    return urljoin(real_url, jar_path)
+
+
+def _jar_reachable(url: str, timeout: int = 5) -> bool:
+    for method in ('HEAD', 'GET'):
+        try:
+            resp = requests.request(method, url, headers=JAR_HEADERS,
+                                    timeout=timeout, allow_redirects=True)
+            if resp.ok:
+                return True
+        except Exception:
+            continue
+    return False
 
 
 def _fetch_raw(url: str) -> str | None:
@@ -88,6 +124,14 @@ def _process_source(name: str, urls: list[str]) -> dict | None:
         if data is None:
             logger.warning(f"[{name}] 内容解析失败: {url}")
             continue
+
+        jar_url = _extract_jar_url(data, url)
+        if jar_url is not None:
+            logger.info(f"[{name}] 检测 jar: {jar_url}")
+            if not _jar_reachable(jar_url):
+                logger.warning(f"[{name}] jar 不可达，尝试下一个 URL")
+                continue
+            logger.info(f"[{name}] jar 可用")
 
         logger.info(f"[{name}] 处理成功")
         return data
