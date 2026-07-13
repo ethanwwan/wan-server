@@ -2,9 +2,11 @@ name: Scheduler JOB
 
 on:
   schedule:
-    # 每天 0 点执行 (UTC 时间 16:00 = 北京时间 00:00)
+    # 每天 0 点执行 (UTC 16:00 = 北京时间 00:00)
     - cron: '0 16 * * *'
-  workflow_dispatch:  # 允许手动触发
+    # 每天 6 点执行 (UTC 22:00 = 北京时间 06:00)
+    - cron: '0 22 * * *'
+  workflow_dispatch:
 
 permissions:
   contents: write  # 允许推送更改到仓库
@@ -32,9 +34,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       
-      - name: 执行统一调度任务
+      - name: 执行聚合任务
         run: |
           python scripts/run_all_schedulers.py
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+      
+      - name: 同步配置到 NAS 目录
+        run: |
+          python nas-server/schedulers/tvbox_scheduler.py
         env:
           PYTHONPATH: ${{ github.workspace }}
       
@@ -42,7 +50,7 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add iptv-aggregator/output/ tvbox-aggregator/output/
+          git add iptv-aggregator/output/ tvbox-aggregator/output/ nas-server/output/
           if git diff --staged --quiet; then
             echo "没有更改，跳过提交"
           else

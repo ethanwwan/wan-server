@@ -9,7 +9,7 @@ sys.path.insert(0, project_root)
 
 from logger import get_logger
 
-logger = get_logger('SYNC_TVBOX')
+logger = get_logger('NAS_TVBOX')
 
 SOURCE_URL = "https://gh-proxy.org/https://raw.githubusercontent.com/ethanwwan/wan-server/refs/heads/main/tvbox-aggregator/output/tvbox.json"
 OUTPUT_DIR = os.path.join(project_root, 'nas-server', 'output')
@@ -17,7 +17,7 @@ OUTPUT_FILE = os.path.join(OUTPUT_DIR, 'tvbox.json')
 MAX_RETRIES = 2
 
 
-def sync_tvbox_config() -> bool:
+def run() -> bool:
     for attempt in range(1 + MAX_RETRIES):
         try:
             logger.info(f"正在下载 TVBox 配置{' (重试 ' + str(attempt) + '/' + str(MAX_RETRIES) + ')' if attempt > 0 else ''}...")
@@ -42,4 +42,4 @@ def sync_tvbox_config() -> bool:
 
 
 if __name__ == "__main__":
-    sync_tvbox_config()
+    run()
