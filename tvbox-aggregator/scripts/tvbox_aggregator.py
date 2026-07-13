@@ -184,7 +184,7 @@ def _process_source(name: str, urls: list[str]) -> dict | None:
     return None
 
 
-def tvbox_scheduler():
+def aggregate():
     logger.info(f"开始更新配置，时间: {datetime.now().isoformat()}")
 
     sources = load_sources()
@@ -209,4 +209,4 @@ def tvbox_scheduler():
 
 
 if __name__ == "__main__":
-    tvbox_scheduler()
+    aggregate()

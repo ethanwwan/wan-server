@@ -19,7 +19,7 @@ sync_tvbox = importlib.import_module("nas-server.scripts.sync_tvbox_config")
 
 def tvbox_job() -> bool:
     try:
-        tvbox.tvbox_scheduler()
+        tvbox.aggregate()
         return True
     except Exception as e:
         logger.error(f"TVBox 配置更新失败: {e}", exc_info=True)
