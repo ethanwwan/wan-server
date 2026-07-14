@@ -10,26 +10,21 @@ for p in [project_root, iptv_root]:
     if p not in sys.path:
         sys.path.insert(0, p)
 
-from core.iptv_utils import parse_url, classify_channels
-from core.iptv_checker import IPTVChecker
+from iptv_utils import parse_url, classify_channels
+from iptv_checker import IPTVChecker
 
 INPUT_FILE = os.path.join(iptv_root, 'input', 'iptv_urls.txt')
 
-checker = IPTVChecker(
-    fps_min=0,
-    bitrate_min=0,
-    max_workers=100
-)
+checker = IPTVChecker(max_workers=100)
 
 
 def fetch_and_parse(url: str) -> list[dict]:
     try:
         r = requests.get(url, timeout=30)
         r.raise_for_status()
-        channels = parse_url(url, r.text)
-        return classify_channels(channels, keep_unmatched=True)
+        return classify_channels(parse_url(url, r.text), keep_unmatched=False)
     except Exception as e:
-        print(f"  ⚠️  获取/解析失败: {e}")
+        print(f"  ! 获取/解析失败: {e}")
         return []
 
 
@@ -37,63 +32,76 @@ def stats():
     with open(INPUT_FILE, 'r') as f:
         urls = [line.strip() for line in f if line.strip() and not line.startswith('#')]
 
-    print(f"共 {len(urls)} 个源\n")
-    print(f"{'#':<4} {'URL':<75} {'总数':<6} {'成功':<6} {'失败':<6} {'成功率':<8} {'失败率':<8}")
+    threshold = f"阈值: {checker.width_min}x{checker.height_min} / {checker.fps_min}fps / {checker.bitrate_min}kbps"
+    print(f"共 {len(urls)} 个源 ({threshold})\n")
+    print(f"{'#':<4} {'URL':<72} {'总数':>5} {'可用':>5} {'流畅':>5} {'失败':>5} {'可用率':>6} {'流畅率':>6}")
     print("-" * 115)
 
-    all_results = []
+    all_data = []
 
     for idx, url in enumerate(urls, 1):
-        short = url if len(url) <= 73 else url[:70] + "..."
-        print(f"{idx:<4} {short:<75}", end="", flush=True)
+        short = url if len(url) <= 70 else url[:67] + "..."
+        print(f"{idx:<4} {short:<72}", end="", flush=True)
 
         channels = fetch_and_parse(url)
         if not channels:
-            print(f"{'0':<6} {'0':<6} {'0':<6} {'0%':<8} {'0%':<8}")
+            print(f"{'0':>5} {'0':>5} {'0':>5} {'0':>5} {'0%':>6} {'0%':>6}")
+            all_data.append((url, 0, 0, 0, []))
             continue
 
-        urls_list = [(ch.get('channel_name', ''), ch.get('url', '')) for ch in channels]
-        total = len(urls_list)
+        total = len(channels)
+        ok = fail = fluent = 0
+        fluent_channels = []
 
-        ch_map = {ch['url']: ch for ch in channels}
-        success = []
-        fail = 0
         with ThreadPoolExecutor(max_workers=min(100, total or 1)) as executor:
-            fut_map = {executor.submit(checker.check, u): u for _, u in urls_list}
-            for fut in as_completed(fut_map):
-                u = fut_map[fut]
+            futs = {executor.submit(checker.check, ch['url']): ch for ch in channels}
+            for fut in as_completed(futs):
+                ch = futs[fut]
                 try:
-                    result = fut.result()
-                    if result.get('available'):
-                        success.append(ch_map.get(u, {'channel_name': '?', 'url': u, 'group_title': '其他'}))
+                    r = fut.result()
+                    if r.get('fluent'):
+                        fluent += 1
+                        ok += 1
+                        fluent_channels.append(ch)
+                    elif r.get('available'):
+                        ok += 1
                     else:
                         fail += 1
                 except Exception:
                     fail += 1
 
-        ok = len(success)
         ng = total - ok
-        pct_ok = ok / total * 100 if total else 0
-        pct_ng = ng / total * 100 if total else 0
-        print(f"{total:<6} {ok:<6} {ng:<6} {pct_ok:<7.1f}% {pct_ng:<7.1f}%")
+        pa = ok / total * 100 if total else 0
+        pf = fluent / total * 100 if total else 0
+        print(f"{total:>5} {ok:>5} {fluent:>5} {ng:>5} {pa:>5.1f}% {pf:>5.1f}%")
 
-        all_results.append((url, success))
+        all_data.append((url, total, ok, fluent, fluent_channels))
 
-    print("\n" + "=" * 115)
+    print()
+    print("-" * 115)
 
-    for url, success in all_results:
-        if not success:
+    total_sum = sum(d[1] for d in all_data)
+    avail_sum = sum(d[2] for d in all_data)
+    fluent_sum = sum(d[3] for d in all_data)
+    fail_sum = total_sum - avail_sum
+    pa = avail_sum / total_sum * 100 if total_sum else 0
+    pf = fluent_sum / total_sum * 100 if total_sum else 0
+    print(f"{'':<4} {'合计':<72} {total_sum:>5} {avail_sum:>5} {fluent_sum:>5} {fail_sum:>5} {pa:>5.1f}% {pf:>5.1f}%")
+    if avail_sum:
+        print(f"{'':<4} {'流畅率(占原始)':<72} {pf:>5.1f}%")
+        print(f"{'':<4} {'流畅率(占可用)':<72} {fluent_sum/avail_sum*100:>5.1f}%")
+    print()
+
+    for idx, (url, _, _, _, fluent_channels) in enumerate(all_data, 1):
+        if not fluent_channels:
             continue
-        classified = classify_channels(success, keep_unmatched=True)
-        groups = Counter(ch.get('group_title', '其他') for ch in classified)
+        groups = Counter(ch.get('group_title', '其他') for ch in fluent_channels)
         top5 = groups.most_common(5)
-
-        print(f"\n📺 {url}")
-        print(f"  成功频道: {len(success)} 个")
+        print(f"#{idx} {url}")
+        print(f"  流畅频道: {len(fluent_channels)} 个")
         print(f"  TOP5 GROUP:")
         for g, cnt in top5:
-            pct = cnt / len(success) * 100
-            print(f"    {g:<20} {cnt:>4}  ({pct:.1f}%)")
+            print(f"    {g:<20} {cnt:>4}  ({cnt/len(fluent_channels)*100:.1f}%)")
 
 
 if __name__ == "__main__":

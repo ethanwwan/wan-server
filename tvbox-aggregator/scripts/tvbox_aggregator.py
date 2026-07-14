@@ -14,7 +14,7 @@ sys.path.insert(0, PROJECT_ROOT)
 from logger import get_logger
 
 OUTPUT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'output')
-OUTPUT_FILE = os.path.join(OUTPUT_DIR, 'tvbox.json')
+OUTPUT_FILE = os.path.join(OUTPUT_DIR, 'config.json')
 INPUT_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'input', 'tvbox_urls.json')
 HEADERS = {"User-Agent": "okhttp/3.12.12", "Accept": "application/json"}
 JAR_HEADERS = {"User-Agent": "okhttp/3.12.12"}
