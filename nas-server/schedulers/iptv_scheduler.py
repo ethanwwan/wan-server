@@ -12,10 +12,24 @@ from logger import get_logger
 
 logger = get_logger('NAS_IPTV')
 
-_config = json.load(open(os.path.join(project_root, 'nas-server', 'input', 'config.json')))
-_proxies = _config['proxy_domains']
-_TIMEOUT = _config['request_timeout']
-cfg = _config['iptv']
+try:
+    _raw = json.load(open(os.path.join(project_root, 'nas-server', 'input', 'config.json')))
+except Exception:
+    _raw = {
+        "request_timeout": 10,
+        "proxy_domains": ["https://gh-proxy.org", "https://v4.gh-proxy.org", "https://v6.gh-proxy.org", "https://cdn.gh-proxy.org"],
+        "iptv": {
+            "source_url": "https://raw.githubusercontent.com/ethanwwan/wan-server/refs/heads/main/iptv-aggregator/output/playlist.m3u",
+            "use_proxy": True,
+            "output_dir": "iptv",
+            "output_file": "playlist.m3u",
+            "schedule_time": "06:30"
+        }
+    }
+    logger.warning("无法加载 config.json，使用默认配置")
+_proxies = _raw['proxy_domains']
+_TIMEOUT = _raw['request_timeout']
+cfg = _raw['iptv']
 SOURCE_URL = cfg['source_url']
 OUTPUT_DIR = os.path.join(project_root, 'nas-server', 'output', cfg['output_dir'])
 OUTPUT_FILE = os.path.join(OUTPUT_DIR, cfg['output_file'])

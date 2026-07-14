@@ -12,9 +12,29 @@ from logger import get_logger
 
 logger = get_logger('NAS_SINGBOX')
 
-_config = json.load(open(os.path.join(project_root, 'nas-server', 'input', 'config.json')))
-_proxies = _config['proxy_domains']
-cfg = _config['singbox']
+try:
+    _raw = json.load(open(os.path.join(project_root, 'nas-server', 'input', 'config.json')))
+except Exception:
+    _raw = {
+        "request_timeout": 10,
+        "proxy_domains": ["https://gh-proxy.org", "https://v4.gh-proxy.org", "https://v6.gh-proxy.org", "https://cdn.gh-proxy.org"],
+        "singbox": {
+            "source_url": "https://47.76.155.27/iv/verify_mode.htm?token=9a49f8e2abcce3a0d3fd12e072065cdd",
+            "use_proxy": False,
+            "version": "1.12.14",
+            "old_version": "1.11.15",
+            "proxy_ruleset": "https://raw.githubusercontent.com/ethanwwan/sing-box-rules/refs/heads/main/rule_json/Global_All.json",
+            "geoip_cn": "https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-cn.srs",
+            "geosite_cn": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-geolocation-cn.srs",
+            "output_dir": "singbox",
+            "output_file": "proxy.json",
+            "old_output_file": "proxy_old.json",
+            "schedule_time": "07:00"
+        }
+    }
+    logger.warning("无法加载 config.json，使用默认配置")
+_proxies = _raw['proxy_domains']
+cfg = _raw['singbox']
 SINGBOX_URL = cfg['source_url']
 VERSIONS = [
     (cfg['version'], cfg['output_file']),
@@ -25,7 +45,7 @@ GEOIP_CN = cfg['geoip_cn']
 GEOSITE_CN = cfg['geosite_cn']
 OUTPUT_DIR = os.path.join(project_root, 'nas-server', 'output', cfg['output_dir'])
 SCHEDULE_TIME = cfg['schedule_time']
-REQUEST_TIMEOUT = _config['request_timeout']
+REQUEST_TIMEOUT = _raw['request_timeout']
 
 
 def _build_url(base: str, proxy_idx: int = None) -> str:
