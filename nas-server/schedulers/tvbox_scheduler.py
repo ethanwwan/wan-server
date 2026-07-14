@@ -12,21 +12,7 @@ from logger import get_logger
 
 logger = get_logger('NAS_TVBOX')
 
-try:
-    _raw = json.load(open(os.path.join(project_root, 'nas-server', 'input', 'config.json')))
-except Exception:
-    _raw = {
-        "request_timeout": 10,
-        "proxy_domains": ["https://gh-proxy.org", "https://v4.gh-proxy.org", "https://v6.gh-proxy.org", "https://cdn.gh-proxy.org"],
-        "tvbox": {
-            "source_url": "https://raw.githubusercontent.com/ethanwwan/wan-server/refs/heads/main/tvbox-aggregator/output/config.json",
-            "use_proxy": True,
-            "output_dir": "tvbox",
-            "output_file": "config.json",
-            "schedule_time": "06:00"
-        }
-    }
-    logger.warning("无法加载 config.json，使用默认配置")
+_raw = json.load(open(os.path.join(project_root, 'nas-server', 'input', 'config.json')))
 _proxies = _raw['proxy_domains']
 _TIMEOUT = _raw['request_timeout']
 cfg = _raw['tvbox']
