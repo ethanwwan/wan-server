@@ -22,8 +22,6 @@ GEOIP_CN_URL = cfg['geoip_cn_url']
 GEOSITE_CN_URL = cfg['geosite_cn_url']
 OUTPUT_DIR = os.path.join(project_root, 'nas-server', 'output', cfg['output_dir'])
 OUTPUT_FILE = os.path.join(OUTPUT_DIR, cfg['output_file'])
-DOCKER_DIR = os.path.join(project_root, 'nas-server', 'output', cfg['docker_output_dir'])
-DOCKER_FILE = os.path.join(DOCKER_DIR, cfg['docker_output_file'])
 SCHEDULE_TIME = cfg['schedule_time']
 REQUEST_TIMEOUT = cfg['request_timeout']
 
@@ -57,18 +55,6 @@ def add_route_rules(config: dict) -> dict:
     return config
 
 
-def generate_docker_config(config: dict):
-    docker_config = config.copy()
-    docker_config['inbounds'] = [
-        inbound for inbound in docker_config.get('inbounds', [])
-        if inbound.get('type') != 'tun'
-    ]
-    os.makedirs(DOCKER_DIR, exist_ok=True)
-    with open(DOCKER_FILE, 'w', encoding='utf-8') as f:
-        json.dump(docker_config, f, ensure_ascii=False, indent=4)
-    logger.info(f"Docker 配置已生成到 {DOCKER_FILE}")
-
-
 def sync() -> bool:
     if cfg['use_proxy']:
         attempts = list(range(len(_proxies)))
@@ -93,8 +79,6 @@ def sync() -> bool:
             with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
                 json.dump(config, f, ensure_ascii=False, indent=4)
             logger.info(f"Singbox 配置已同步到 {OUTPUT_FILE}")
-
-            generate_docker_config(config)
             return True
         except Exception as e:
             is_last = idx == attempts[-1]

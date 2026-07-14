@@ -29,8 +29,6 @@
     "geosite_cn_url": "https://gh-proxy.com/https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-geolocation-cn.srs",
     "output_dir": "singbox",
     "output_file": "config.json",
-    "docker_output_dir": "singbox/docker",
-    "docker_output_file": "config.json",
     "schedule_time": "07:00",
     "request_timeout": 20
   }
