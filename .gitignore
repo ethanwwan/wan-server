@@ -56,6 +56,5 @@ test/
 # 自动生成的输出文件
 iptv-aggregator/output/
 server/input/
-/input/
 output/
 tvbox-aggregator/output/
