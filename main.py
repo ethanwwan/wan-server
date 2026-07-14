@@ -11,6 +11,7 @@ api_router = routes_module.api_router
 
 tvbox_scheduler = importlib.import_module("nas-server.schedulers.tvbox_scheduler")
 iptv_scheduler = importlib.import_module("nas-server.schedulers.iptv_scheduler")
+singbox_scheduler = importlib.import_module("nas-server.schedulers.singbox_scheduler")
 
 logger = get_logger('APP')
 
@@ -21,7 +22,7 @@ SERVER_PORT = 8016
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("服务启动，执行 NAS 调度任务...")
-    for sched in (tvbox_scheduler, iptv_scheduler):
+    for sched in (tvbox_scheduler, iptv_scheduler, singbox_scheduler):
         t = threading.Thread(target=sched.run, daemon=True)
         t.start()
     yield
