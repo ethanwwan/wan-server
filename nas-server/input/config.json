@@ -1,5 +1,5 @@
 {
-  "request_timeout": 20,
+  "request_timeout": 10,
   "proxy_domains": [
     "https://gh-proxy.org",
     "https://v4.gh-proxy.org",
