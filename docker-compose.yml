@@ -8,4 +8,4 @@ services:
     environment:
       - TZ=Asia/Shanghai
     volumes:
-      - ./nas-server/output:/app/nas-server/output
+      - ./server/output:/app/server/output

@@ -6,12 +6,12 @@ from fastapi.responses import RedirectResponse
 from logger import get_logger
 import uvicorn
 
-routes_module = importlib.import_module("nas-server.api.base.routes")
+routes_module = importlib.import_module("server.api.base.routes")
 api_router = routes_module.api_router
 
-tvbox_scheduler = importlib.import_module("nas-server.schedulers.tvbox_scheduler")
-iptv_scheduler = importlib.import_module("nas-server.schedulers.iptv_scheduler")
-singbox_scheduler = importlib.import_module("nas-server.schedulers.singbox_scheduler")
+tvbox_scheduler = importlib.import_module("server.schedulers.tvbox_scheduler")
+iptv_scheduler = importlib.import_module("server.schedulers.iptv_scheduler")
+singbox_scheduler = importlib.import_module("server.schedulers.singbox_scheduler")
 
 logger = get_logger('APP')
 

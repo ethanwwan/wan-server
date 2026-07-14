@@ -55,6 +55,6 @@ test/
 
 # 自动生成的输出文件
 iptv-aggregator/output/
-nas-server/input/
-nas-server/output/
+server/input/
+server/output/
 tvbox-aggregator/output/
