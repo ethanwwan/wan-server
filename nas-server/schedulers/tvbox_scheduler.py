@@ -14,6 +14,7 @@ logger = get_logger('NAS_TVBOX')
 
 _config = json.load(open(os.path.join(project_root, 'nas-server', 'input', 'config.json')))
 _proxies = _config['proxy_domains']
+_TIMEOUT = _config['request_timeout']
 cfg = _config['tvbox']
 SOURCE_URL = cfg['source_url']
 OUTPUT_DIR = os.path.join(project_root, 'nas-server', 'output', cfg['output_dir'])
@@ -36,7 +37,7 @@ def sync() -> bool:
         label = f" (代理 {idx + 1}/{len(attempts)})" if cfg['use_proxy'] and idx > 0 else ""
         try:
             logger.info(f"正在下载 TVBox 配置{label}...")
-            resp = requests.get(url, timeout=30)
+            resp = requests.get(url, timeout=_TIMEOUT)
             resp.raise_for_status()
             data = resp.json()
 

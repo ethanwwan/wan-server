@@ -23,7 +23,7 @@ GEOSITE_CN_URL = cfg['geosite_cn_url']
 OUTPUT_DIR = os.path.join(project_root, 'nas-server', 'output', cfg['output_dir'])
 OUTPUT_FILE = os.path.join(OUTPUT_DIR, cfg['output_file'])
 SCHEDULE_TIME = cfg['schedule_time']
-REQUEST_TIMEOUT = cfg['request_timeout']
+REQUEST_TIMEOUT = _config['request_timeout']
 
 
 def _build_url(base: str, proxy_idx: int = None) -> str:
