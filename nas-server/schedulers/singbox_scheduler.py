@@ -17,7 +17,7 @@ _proxies = _config['proxy_domains']
 cfg = _config['singbox']
 SINGBOX_URL = cfg['source_url']
 SINGBOX_VERSION = cfg['version']
-GLOBAL_RULESET_URL = cfg['global_ruleset_url']
+PROXY_RULESET_URL = cfg['proxy_ruleset_url']
 GEOIP_CN_URL = cfg['geoip_cn_url']
 GEOSITE_CN_URL = cfg['geosite_cn_url']
 OUTPUT_DIR = os.path.join(project_root, 'nas-server', 'output', cfg['output_dir'])
@@ -40,11 +40,11 @@ def add_route_rules(config: dict) -> dict:
                          if rs.get("tag") not in ("geoip-cn", "geosite-cn")]
     route['rule_set'].extend([
         {"type": "remote", "tag": "geoip-cn", "format": "binary",
-         "url": GEOIP_CN_URL, "download_detour": "direct"},
+         "url": _build_url(GEOIP_CN_URL, 0), "download_detour": "direct"},
         {"type": "remote", "tag": "geosite-cn", "format": "binary",
-         "url": GEOSITE_CN_URL, "download_detour": "direct"},
+         "url": _build_url(GEOSITE_CN_URL, 0), "download_detour": "direct"},
         {"type": "remote", "tag": "Global", "format": "source",
-         "url": _build_url(GLOBAL_RULESET_URL, 0), "download_detour": "direct"},
+         "url": _build_url(PROXY_RULESET_URL, 0), "download_detour": "direct"},
     ])
     route.setdefault('rules', [])
     route['rules'].insert(0, {
