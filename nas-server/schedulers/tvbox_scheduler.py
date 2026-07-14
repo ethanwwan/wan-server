@@ -13,19 +13,30 @@ from logger import get_logger
 logger = get_logger('NAS_TVBOX')
 
 _config = json.load(open(os.path.join(project_root, 'nas-server', 'input', 'config.json')))
+_proxies = _config['proxy_domains']
 cfg = _config['tvbox']
 SOURCE_URL = cfg['source_url']
 OUTPUT_DIR = os.path.join(project_root, 'nas-server', 'output', cfg['output_dir'])
 OUTPUT_FILE = os.path.join(OUTPUT_DIR, cfg['output_file'])
 SCHEDULE_TIME = cfg['schedule_time']
-MAX_RETRIES = _config['max_retries']
+
+
+def _build_url(proxy_idx: int) -> str:
+    return _proxies[proxy_idx] + '/' + SOURCE_URL
 
 
 def sync() -> bool:
-    for attempt in range(1 + MAX_RETRIES):
+    if cfg['use_proxy']:
+        attempts = list(range(len(_proxies)))
+    else:
+        attempts = [None]
+
+    for idx in attempts:
+        url = _build_url(idx) if idx is not None else SOURCE_URL
+        label = f" (代理 {idx + 1}/{len(attempts)})" if cfg['use_proxy'] and idx > 0 else ""
         try:
-            logger.info(f"正在下载 TVBox 配置{' (重试 ' + str(attempt) + '/' + str(MAX_RETRIES) + ')' if attempt > 0 else ''}...")
-            resp = requests.get(SOURCE_URL, timeout=30)
+            logger.info(f"正在下载 TVBox 配置{label}...")
+            resp = requests.get(url, timeout=30)
             resp.raise_for_status()
             data = resp.json()
 
@@ -36,12 +47,10 @@ def sync() -> bool:
             logger.info(f"TVBox 配置已同步到 {OUTPUT_FILE}")
             return True
         except Exception as e:
-            if attempt < MAX_RETRIES:
-                delay = (attempt + 1) * 2
-                logger.warning(f"同步失败 (重试 {attempt + 1}/{MAX_RETRIES}): {e}")
-                time.sleep(delay)
-            else:
-                logger.error(f"TVBox 配置同步失败 (已重试 {MAX_RETRIES} 次): {e}")
+            is_last = idx == attempts[-1]
+            logger.warning(f"同步失败{label}: {e}{', 切换代理...' if not is_last else ''}")
+            if is_last:
+                logger.error(f"TVBox 配置同步失败 (已用完全部代理)")
                 return False
 
 

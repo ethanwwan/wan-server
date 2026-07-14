@@ -13,6 +13,7 @@ from logger import get_logger
 logger = get_logger('NAS_SINGBOX')
 
 _config = json.load(open(os.path.join(project_root, 'nas-server', 'input', 'config.json')))
+_proxies = _config['proxy_domains']
 cfg = _config['singbox']
 SINGBOX_URL = cfg['source_url']
 SINGBOX_VERSION = cfg['version']
@@ -24,8 +25,13 @@ OUTPUT_FILE = os.path.join(OUTPUT_DIR, cfg['output_file'])
 DOCKER_DIR = os.path.join(project_root, 'nas-server', 'output', cfg['docker_output_dir'])
 DOCKER_FILE = os.path.join(DOCKER_DIR, cfg['docker_output_file'])
 SCHEDULE_TIME = cfg['schedule_time']
-MAX_RETRIES = _config['max_retries']
 REQUEST_TIMEOUT = cfg['request_timeout']
+
+
+def _build_url(base: str, proxy_idx: int = None) -> str:
+    if proxy_idx is not None:
+        return _proxies[proxy_idx] + '/' + base
+    return base
 
 
 def add_route_rules(config: dict) -> dict:
@@ -40,7 +46,7 @@ def add_route_rules(config: dict) -> dict:
         {"type": "remote", "tag": "geosite-cn", "format": "binary",
          "url": GEOSITE_CN_URL, "download_detour": "direct"},
         {"type": "remote", "tag": "Global", "format": "source",
-         "url": GLOBAL_RULESET_URL, "download_detour": "direct"},
+         "url": _build_url(GLOBAL_RULESET_URL, 0), "download_detour": "direct"},
     ])
     route.setdefault('rules', [])
     route['rules'].insert(0, {
@@ -64,13 +70,20 @@ def generate_docker_config(config: dict):
 
 
 def sync() -> bool:
-    for attempt in range(1 + MAX_RETRIES):
+    if cfg['use_proxy']:
+        attempts = list(range(len(_proxies)))
+    else:
+        attempts = [None]
+
+    for idx in attempts:
+        url = _build_url(SINGBOX_URL, idx) if idx is not None else SINGBOX_URL
+        label = f" (代理 {idx + 1}/{len(attempts)})" if cfg['use_proxy'] and idx > 0 else ""
         try:
-            logger.info(f"正在下载 Singbox 配置{' (重试 ' + str(attempt) + '/' + str(MAX_RETRIES) + ')' if attempt > 0 else ''}...")
+            logger.info(f"正在下载 Singbox 配置{label}...")
             session = requests.Session()
             session.verify = False
             headers = {"User-Agent": f"SFA/1.1{SINGBOX_VERSION} (595; sing-box {SINGBOX_VERSION}; language zh_CN)"}
-            resp = session.get(SINGBOX_URL, headers=headers, timeout=REQUEST_TIMEOUT)
+            resp = session.get(url, headers=headers, timeout=REQUEST_TIMEOUT)
             resp.raise_for_status()
             config = resp.json()
 
@@ -84,12 +97,10 @@ def sync() -> bool:
             generate_docker_config(config)
             return True
         except Exception as e:
-            if attempt < MAX_RETRIES:
-                delay = (attempt + 1) * 2
-                logger.warning(f"同步失败 (重试 {attempt + 1}/{MAX_RETRIES}): {e}")
-                time.sleep(delay)
-            else:
-                logger.error(f"Singbox 配置同步失败 (已重试 {MAX_RETRIES} 次): {e}")
+            is_last = idx == attempts[-1]
+            logger.warning(f"同步失败{label}: {e}{', 切换代理...' if not is_last else ''}")
+            if is_last:
+                logger.error(f"Singbox 配置同步失败 (已用完全部代理)")
                 return False
 
 
