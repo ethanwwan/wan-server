@@ -9,7 +9,8 @@ import uvicorn
 routes_module = importlib.import_module("nas-server.api.base.routes")
 api_router = routes_module.api_router
 
-scheduler = importlib.import_module("nas-server.schedulers.tvbox_scheduler")
+tvbox_scheduler = importlib.import_module("nas-server.schedulers.tvbox_scheduler")
+iptv_scheduler = importlib.import_module("nas-server.schedulers.iptv_scheduler")
 
 logger = get_logger('APP')
 
@@ -20,8 +21,9 @@ SERVER_PORT = 8016
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("服务启动，执行 NAS 调度任务...")
-    t = threading.Thread(target=scheduler.run, daemon=True)
-    t.start()
+    for sched in (tvbox_scheduler, iptv_scheduler):
+        t = threading.Thread(target=sched.run, daemon=True)
+        t.start()
     yield
 
 
