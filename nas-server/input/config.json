@@ -29,7 +29,7 @@
     "geoip_cn_url": "https://gh-proxy.com/https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-cn.srs",
     "geosite_cn_url": "https://gh-proxy.com/https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-geolocation-cn.srs",
     "output_dir": "singbox",
-    "output_file": "config.json",
+    "output_file": "proxy.json",
     "schedule_time": "07:00"
   }
 }

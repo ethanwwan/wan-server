@@ -12,7 +12,7 @@ from logger import get_logger
 
 logger = get_logger('NAS_SINGBOX')
 
-_config = json.load(open(os.path.join(project_root, 'nas-server', 'input', 'proxy.json')))
+_config = json.load(open(os.path.join(project_root, 'nas-server', 'input', 'config.json')))
 _proxies = _config['proxy_domains']
 cfg = _config['singbox']
 SINGBOX_URL = cfg['source_url']
