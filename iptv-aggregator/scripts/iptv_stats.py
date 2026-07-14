@@ -11,11 +11,11 @@ for p in [project_root, iptv_root]:
         sys.path.insert(0, p)
 
 from utils.iptv_utils import parse_url, classify_channels
-from utils.channel_checker import ChannelChecker
+from utils.iptv_checker import IPTVChecker
 
 INPUT_FILE = os.path.join(iptv_root, 'input', 'iptv_urls.txt')
 
-checker = ChannelChecker(
+checker = IPTVChecker(
     fps_min=0,
     bitrate_min=0,
     max_workers=100
