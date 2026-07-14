@@ -5,7 +5,7 @@ from ..base.response import not_found_response
 
 router = APIRouter(prefix="/iptv", tags=["IPTV"])
 
-IPTV_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))), 'output', 'iptv')
+IPTV_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'output', 'iptv')
 
 
 @router.get("/playlist.m3u", response_class=PlainTextResponse)
