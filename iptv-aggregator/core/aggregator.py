@@ -13,16 +13,16 @@ for p in [project_root, aggregator_root]:
 
 from logger import get_logger
 
-from utils.iptv_utils import (
+from .iptv_utils import (
     save_file,
     fetch_channels,
     parse_m3u,
     build_m3u,
     sort_channels
 )
-from utils.iptv_checker import IPTVChecker
-from utils.cache_manager import get_cache_manager
-from utils.iptv_config import get_input_file_path, IPTV_CONFIG, get_output_dir
+from .iptv_checker import IPTVChecker
+from .cache_manager import get_cache_manager
+from .iptv_config import get_input_file_path, IPTV_CONFIG, get_output_dir
 
 logger = get_logger('IPTV')
 _iptv_checker = IPTVChecker()

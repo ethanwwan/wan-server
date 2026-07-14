@@ -10,8 +10,8 @@ for p in [project_root, iptv_root]:
     if p not in sys.path:
         sys.path.insert(0, p)
 
-from utils.iptv_utils import parse_url, classify_channels
-from utils.iptv_checker import IPTVChecker
+from core.iptv_utils import parse_url, classify_channels
+from core.iptv_checker import IPTVChecker
 
 INPUT_FILE = os.path.join(iptv_root, 'input', 'iptv_urls.txt')
 
