@@ -51,8 +51,9 @@ Dockerfile.local
 *.temp
 .cache/
 
-# 允许提交缓存目录（用于跨运行共享失败记录）
-!output/iptv/cache/
-!output/iptv/cache/*
-
 test/
+
+# 自动生成的输出文件
+iptv-aggregator/output/
+nas-server/output/
+tvbox-aggregator/output/
