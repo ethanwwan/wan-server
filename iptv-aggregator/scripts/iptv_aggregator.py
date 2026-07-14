@@ -7,9 +7,9 @@ for p in [project_root, iptv_root]:
     if p not in sys.path:
         sys.path.insert(0, p)
 
-from core.aggregator import fetch_playlist, fetch_ott, iptv_scheduler
+from core.aggregator import fetch_playlist
 
-__all__ = ['fetch_playlist', 'fetch_ott', 'iptv_scheduler']
+__all__ = ['fetch_playlist']
 
 
 if __name__ == "__main__":

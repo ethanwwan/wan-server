@@ -14,10 +14,9 @@ for p in [project_root, aggregator_root]:
 from logger import get_logger
 
 from utils.iptv_utils import (
-    fetch_url,
-    parse_m3u,
     save_file,
     fetch_channels,
+    parse_m3u,
     build_m3u,
     sort_channels
 )
@@ -27,9 +26,6 @@ from utils.iptv_config import get_input_file_path, IPTV_CONFIG, get_output_dir
 
 logger = get_logger('IPTV')
 _iptv_checker = IPTVChecker()
-
-# 硬编码配置
-OTT_URL = "https://live.ottiptv.cc/iptv.m3u?userid=7755950497&sign=b7578005974939b989b3895b921110bcb06c83ed6f42b7139ba8b94c719484c980303585b7a1ffcc75c631fb0e9e8cd3983d6dc87447c558c9dc7770f76795671c177a0ad46048&auth_token=17b0d6712a2beb7e9bfea802dc9d33a3"
 
 
 def get_optimal_workers(default_workers: int = IPTV_CONFIG.DEFAULT_WORKERS) -> int:
@@ -66,36 +62,6 @@ def get_optimal_workers(default_workers: int = IPTV_CONFIG.DEFAULT_WORKERS) -> i
     return workers
 
 
-def _fetch_and_save(name: str, url: str, filename: str) -> bool:
-    """
-    通用函数：获取 URL 内容并保存
-
-    Args:
-        name: 来源名称（用于日志）
-        url: 源 URL
-        filename: 保存的文件名
-
-    Returns:
-        bool: 是否成功
-    """
-    if not url:
-        logger.warning(f"{name} URL 未配置，跳过")
-        return False
-
-    logger.info(f"正在获取 {name} 播放列表...")
-    content = fetch_url(url)
-
-    if not content:
-        logger.warning(f"{name} 播放列表获取失败，跳过")
-        return False
-
-    if save_file(filename, content):
-        channel_count = len(parse_m3u(content))
-        logger.info(f"{name} 播放列表获取完成，共 {channel_count} 个频道")
-        return True
-    return False
-
-
 def _check_single_channel(channel: Dict) -> Tuple[Dict, Dict]:
     """
     检测频道可用性（无重试机制，失败即加入缓存）
@@ -120,49 +86,6 @@ def _check_single_channel(channel: Dict) -> Tuple[Dict, Dict]:
         error_key = f"exception_{error_type}"
         logger.debug(f"[检测策略] 检测异常: {name} - 异常类型: {error_key}")
         return (channel, {'available': False, 'fluent': False, 'error': error_key})
-
-
-def _generate_report(total_count: int, valid_count: int, failed_count: int, total_time: float):
-    """
-    生成检测统计报告
-
-    Args:
-        total_count: 总检测频道数
-        valid_count: 可用频道数
-        failed_count: 失败频道数
-        total_time: 总耗时（秒）
-    """
-    success_rate = (valid_count / total_count) * 100 if total_count > 0 else 0
-
-    minutes = int(total_time // 60)
-    seconds = int(total_time % 60)
-
-    report = f"""
-╔══════════════════════════════════════════════════════════════════════════╗
-║                    IPTV 频道检测统计报告                                 ║
-╠══════════════════════════════════════════════════════════════════════════╣
-║ 检测时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}                   ║
-╠══════════════════════════════════════════════════════════════════════════╣
-║ 【频道统计】                                                             ║
-║   总检测频道: {total_count:>6d} 个                                       ║
-║   可用频道:   {valid_count:>6d} 个                                       ║
-║   失败频道:   {failed_count:>6d} 个                                       ║
-║   成功率:     {success_rate:>6.2f}%                                     ║
-╠══════════════════════════════════════════════════════════════════════════╣
-║ 【性能统计】                                                             ║
-║   总耗时:     {minutes:>3d}分{seconds:>2d}秒                            ║
-║   平均耗时:   {(total_time / total_count):>6.2f}秒/频道                  ║
-╠══════════════════════════════════════════════════════════════════════════╣
-║ 【策略执行】                                                             ║
-║   ✓ 缓存策略: 单例模式 + 批量更新                                         ║
-║   ✓ 检测策略: 动态并发控制，无重试机制                                     ║
-╚══════════════════════════════════════════════════════════════════════════╝
-"""
-
-    if save_file('playlist_report.txt', report):
-        logger.info(f"[检测策略] 统计报告已保存到 output/iptv/playlist_report.txt")
-    else:
-        logger.warning("[检测策略] 统计报告保存失败")
 
 
 def _fetch_and_check_channels(urls: List[str], limit: Optional[int] = None) -> str:
@@ -264,18 +187,9 @@ def _fetch_and_check_channels(urls: List[str], limit: Optional[int] = None) -> s
 
     logger.info(f"[检测策略] 检测完成，可用频道: {len(valid_channels)}/{total_count}，失败: {failed_count}，总耗时: {time_str}")
 
-    # 保存缓存到磁盘
     cache_manager.save_to_disk()
 
-    # 生成统计报告
-    _generate_report(total_count, len(valid_channels), failed_count, total_time)
-
     return build_m3u(valid_channels)
-
-
-def fetch_ott() -> bool:
-    """获取 OTT 播放列表"""
-    return _fetch_and_save("OTT", OTT_URL, 'ott.m3u')
 
 
 def fetch_playlist(limit: Optional[int] = None) -> bool:
@@ -321,45 +235,4 @@ def fetch_playlist(limit: Optional[int] = None) -> bool:
         return False
 
 
-def iptv_scheduler(limit: Optional[int] = None) -> bool:
-    """
-    IPTV 配置更新调度器
 
-    Args:
-        limit: 限制获取的频道数量（可选）
-
-    Returns:
-        bool: 是否成功
-    """
-    start_time = datetime.now()
-    logger.info(f"开始更新配置，时间：{start_time.isoformat()}")
-
-    try:
-        ott_success = fetch_ott()
-        if ott_success:
-            logger.info("OTT 播放列表获取成功")
-        else:
-            logger.warning("OTT 播放列表获取失败")
-
-        playlist_success = fetch_playlist(limit)
-        if playlist_success:
-            logger.info("Playlist 播放列表获取和检测成功")
-        else:
-            logger.warning("Playlist 播放列表获取和检测失败")
-
-        end_time = datetime.now()
-        duration = (end_time - start_time).total_seconds()
-        minutes = int(duration // 60)
-        seconds = int(duration % 60)
-        time_str = f"{minutes}分{seconds}秒" if minutes > 0 else f"{duration:.2f}秒"
-
-        if ott_success or playlist_success:
-            logger.info(f"配置更新完成，时间：{end_time.isoformat()}，耗时：{time_str}")
-            return True
-        else:
-            logger.error(f"所有播放列表获取失败，时间：{end_time.isoformat()}，耗时：{time_str}")
-            return False
-
-    except Exception as e:
-        logger.error(f"调度器执行错误: {e}")
-        return False
