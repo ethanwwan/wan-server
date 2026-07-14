@@ -12,7 +12,7 @@ from logger import get_logger
 
 logger = get_logger('NAS_IPTV')
 
-_config = json.load(open(os.path.join(project_root, 'nas-server', 'input', 'config.json')))
+_config = json.load(open(os.path.join(project_root, 'nas-server', 'input', 'proxy.json')))
 _proxies = _config['proxy_domains']
 _TIMEOUT = _config['request_timeout']
 cfg = _config['iptv']
