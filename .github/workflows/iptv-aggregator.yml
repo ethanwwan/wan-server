@@ -40,7 +40,7 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add iptv-aggregator/output/
+          git add -f iptv-aggregator/output/
           if git diff --staged --quiet; then
             echo "没有更改，跳过提交"
           else
