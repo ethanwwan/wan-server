@@ -12,10 +12,13 @@ from logger import get_logger
 
 logger = get_logger('NAS_TVBOX')
 
-SOURCE_URL = "https://gh-proxy.org/https://raw.githubusercontent.com/ethanwwan/wan-server/refs/heads/main/tvbox-aggregator/output/config.json"
-OUTPUT_DIR = os.path.join(project_root, 'nas-server', 'output', 'tvbox')
-OUTPUT_FILE = os.path.join(OUTPUT_DIR, 'config.json')
-MAX_RETRIES = 2
+_config = json.load(open(os.path.join(project_root, 'nas-server', 'input', 'config.json')))
+cfg = _config['tvbox']
+SOURCE_URL = cfg['source_url']
+OUTPUT_DIR = os.path.join(project_root, 'nas-server', 'output', cfg['output_dir'])
+OUTPUT_FILE = os.path.join(OUTPUT_DIR, cfg['output_file'])
+SCHEDULE_TIME = cfg['schedule_time']
+MAX_RETRIES = _config['max_retries']
 
 
 def sync() -> bool:
@@ -44,7 +47,7 @@ def sync() -> bool:
 
 def run():
     sync()
-    schedule.every().day.at("06:00").do(sync)
+    schedule.every().day.at(SCHEDULE_TIME).do(sync)
 
     while True:
         schedule.run_pending()

@@ -12,18 +12,20 @@ from logger import get_logger
 
 logger = get_logger('NAS_SINGBOX')
 
-SINGBOX_URL = "https://47.76.155.27/iv/verify_mode.htm?token=9a49f8e2abcce3a0d3fd12e072065cdd"
-SINGBOX_VERSION = "1.12.14"
-GLOBAL_RULESET_URL = "https://gh-proxy.org/https://raw.githubusercontent.com/ethanwwan/sing-box-rules/refs/heads/main/rule_json/Global_All.json"
-GEOIP_CN_URL = "https://gh-proxy.com/https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-cn.srs"
-GEOSITE_CN_URL = "https://gh-proxy.com/https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-geolocation-cn.srs"
-
-OUTPUT_DIR = os.path.join(project_root, 'nas-server', 'output', 'singbox')
-OUTPUT_FILE = os.path.join(OUTPUT_DIR, 'config.json')
-DOCKER_DIR = os.path.join(OUTPUT_DIR, 'docker')
-DOCKER_FILE = os.path.join(DOCKER_DIR, 'config.json')
-MAX_RETRIES = 2
-REQUEST_TIMEOUT = 20
+_config = json.load(open(os.path.join(project_root, 'nas-server', 'input', 'config.json')))
+cfg = _config['singbox']
+SINGBOX_URL = cfg['source_url']
+SINGBOX_VERSION = cfg['version']
+GLOBAL_RULESET_URL = cfg['global_ruleset_url']
+GEOIP_CN_URL = cfg['geoip_cn_url']
+GEOSITE_CN_URL = cfg['geosite_cn_url']
+OUTPUT_DIR = os.path.join(project_root, 'nas-server', 'output', cfg['output_dir'])
+OUTPUT_FILE = os.path.join(OUTPUT_DIR, cfg['output_file'])
+DOCKER_DIR = os.path.join(project_root, 'nas-server', 'output', cfg['docker_output_dir'])
+DOCKER_FILE = os.path.join(DOCKER_DIR, cfg['docker_output_file'])
+SCHEDULE_TIME = cfg['schedule_time']
+MAX_RETRIES = _config['max_retries']
+REQUEST_TIMEOUT = cfg['request_timeout']
 
 
 def add_route_rules(config: dict) -> dict:
@@ -93,7 +95,7 @@ def sync() -> bool:
 
 def run():
     sync()
-    schedule.every().day.at("07:00").do(sync)
+    schedule.every().day.at(SCHEDULE_TIME).do(sync)
 
     while True:
         schedule.run_pending()
