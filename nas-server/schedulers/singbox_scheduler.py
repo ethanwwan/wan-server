@@ -55,9 +55,9 @@ def add_route_rules(config: dict) -> dict:
                 ".cdn77.org", ".91selfie.com", ".rmhfrtnd.com",
                 ".btc620.com", ".jads.co", ".kwai.net", ".killcovid2021.com"
             ],
-            "outbound": "\U0001f680 \u8282\u70b9\u9009\u62e9"
+            "outbound": "🚀 节点选择"
         },
-        {"rule_set": "Global", "outbound": "\U0001f680 \u8282\u70b9\u9009\u62e9"},
+        {"rule_set": "Global", "outbound": "🚀 节点选择"},
     ])
     config['route'] = route
     return config
