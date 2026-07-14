@@ -6,7 +6,7 @@ from ..base.response import not_found_response
 router = APIRouter(prefix="/tvbox", tags=["TVBox"])
 
 TVBOX_FILE = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))),
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
     'output', 'tvbox', 'config.json'
 )
 

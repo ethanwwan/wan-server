@@ -12,7 +12,7 @@ from logger import get_logger
 
 logger = get_logger('NAS_SINGBOX')
 
-_raw = json.load(open(os.path.join(project_root, 'input', 'config.json')))
+_raw = json.load(open(os.path.join(project_root, 'server', 'input', 'config.json')))
 _proxies = _raw['proxy_domains']
 cfg = _raw['singbox']
 SINGBOX_URL = cfg['source_url']
@@ -23,7 +23,7 @@ VERSIONS = [
 PROXY_RULESET = cfg['proxy_ruleset']
 GEOIP_CN = cfg['geoip_cn']
 GEOSITE_CN = cfg['geosite_cn']
-OUTPUT_DIR = os.path.join(project_root, 'output', cfg['output_dir'])
+OUTPUT_DIR = os.path.join(project_root, 'server', 'output', cfg['output_dir'])
 SCHEDULE_TIME = cfg['schedule_time']
 REQUEST_TIMEOUT = _raw['request_timeout']
 
