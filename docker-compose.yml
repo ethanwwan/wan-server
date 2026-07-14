@@ -8,4 +8,5 @@ services:
     environment:
       - TZ=Asia/Shanghai
     volumes:
+      - ./server/input:/app/server/input
       - ./server/output:/app/server/output
