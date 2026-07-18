@@ -3013,5 +3013,20 @@
   "http://183.11.239.36:808/hls/53/index.m3u8": "fail",
   "https://ali-m-l.cztv.com/channels/lantian/channel12/720p.m3u8": "low_quality",
   "http://file.ysxtv.cn/cms/videos/nmip-media/channellive/channel4/playlist.m3u8": "low_quality",
-  "http://l.cztvcloud.com/channels/lantian/SXshengzhou1/720p.m3u8?zzhed": "low_quality"
+  "http://l.cztvcloud.com/channels/lantian/SXshengzhou1/720p.m3u8?zzhed": "low_quality",
+  "https://ali-m-l.cztv.com/channels/lantian/channel010/1080p.m3u8": "fail",
+  "http://play1-qk.nmtv.cn/live/2326general.m3u8": "fail",
+  "http://175.155.106.72:89/live1/live1.m3u8?zsicd": "low_quality",
+  "http://l.cztvcloud.com/channels/lantian/SXshangyu1/720p.m3u8": "fail",
+  "http://222.169.85.8:9901/tsfile/live/0003_1.m3u8": "fail",
+  "http://74.91.26.218:82/live/cctv17hd.m3u8": "low_quality",
+  "http://183.11.239.36:808/hls/169/index.m3u8": "fail",
+  "http://222.169.85.8:9901/tsfile/live/0130_1.m3u8": "fail",
+  "http://222.169.85.8:9901/tsfile/live/0017_1.m3u8": "fail",
+  "http://222.169.85.8:9901/tsfile/live/0132_1.m3u8": "fail",
+  "http://182.150.23.74:808/hls/2/index.m3u8": "fail",
+  "http://222.169.85.8:9901/tsfile/live/0127_1.m3u8": "fail",
+  "http://124.116.183.146:9901/tsfile/live/0005_1.m3u8": "fail",
+  "http://cssbyd.imwork.net:8082/hls/48/index.m3u8": "fail",
+  "http://124.116.183.146:9901/tsfile/live/0009_1.m3u8": "low_quality"
 }
