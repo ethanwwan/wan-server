@@ -1,6 +1,6 @@
 services:
   wan-server:
-    image: ethanwwan/wan-server:latest
+    image: ghcr.1ms.run/ethanwwan/wan-server:latest
     container_name: wan-server
     restart: unless-stopped
     ports:
