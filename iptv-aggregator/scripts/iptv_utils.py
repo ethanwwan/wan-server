@@ -94,7 +94,8 @@ class CacheManager:
     def __init__(self):
         if self._initialized:
             return
-        self._cache: Dict[str, str] = {}
+        # 白名单：只保存成功的频道（机场的稳定节点通常不会失效）
+        self._whitelist: set = set()
         self._load_cache()
         self._initialized = True
 
@@ -103,42 +104,47 @@ class CacheManager:
             cache_path = get_cache_path()
             if os.path.exists(cache_path):
                 with open(cache_path, 'r', encoding='utf-8') as f:
-                    self._cache = json.load(f)
-            logger.info(f"[缓存] 加载 {len(self._cache)} 条失败记录")
+                    data = json.load(f)
+                # 兼容旧的 fail_cache 格式（dict）和新的白名单格式（list）
+                if isinstance(data, list):
+                    self._whitelist = set(data)
+                elif isinstance(data, dict):
+                    # 旧的失败缓存格式，直接清空（重新检测）
+                    logger.info("[缓存] 旧格式缓存已清空，重新检测")
+                    self._whitelist = set()
+            logger.info(f"[缓存] 加载 {len(self._whitelist)} 条成功白名单")
         except Exception as e:
             logger.error(f"[缓存] 加载失败: {e}")
-            self._cache = {}
+            self._whitelist = set()
 
     def save_to_disk(self):
         try:
             cache_path = get_cache_path()
             os.makedirs(os.path.dirname(cache_path), exist_ok=True)
             with open(cache_path, 'w', encoding='utf-8') as f:
-                json.dump(self._cache, f, ensure_ascii=False, indent=2)
-            logger.info(f"[缓存] 保存 {len(self._cache)} 条记录")
+                json.dump(sorted(self._whitelist), f, ensure_ascii=False, indent=2)
+            logger.info(f"[缓存] 保存 {len(self._whitelist)} 条白名单记录")
         except Exception as e:
             logger.error(f"[缓存] 保存失败: {e}")
 
-    def get_cache(self) -> Dict[str, str]:
-        return self._cache
+    def get_whitelist(self) -> set:
+        return self._whitelist
 
-    def is_in_cache(self, url: str) -> bool:
-        return url in self._cache
+    def is_in_whitelist(self, url: str) -> bool:
+        return url in self._whitelist
 
     def batch_update(self, successes: tuple, failures: tuple):
-        removed = sum(1 for url in successes if url in self._cache and self._cache.pop(url, None) is not None)
+        """只更新白名单：成功的加入白名单"""
         added = 0
-        for url, fail_type in failures:
-            if url not in self._cache:
-                self._cache[url] = fail_type
+        for url in successes:
+            if url not in self._whitelist:
+                self._whitelist.add(url)
                 added += 1
-        if removed:
-            logger.info(f"[缓存] 移除 {removed} 条成功记录")
         if added:
-            logger.info(f"[缓存] 添加 {added} 条失败记录")
+            logger.info(f"[缓存] 添加 {added} 条成功白名单")
 
     def clear_all(self):
-        self._cache = {}
+        self._whitelist.clear()
         logger.info("[缓存] 已清空")
 
 
@@ -261,11 +267,10 @@ def filter_channels(channels: List[Dict]) -> List[Dict]:
         if url in seen_urls:
             continue
         seen_urls.add(url)
-        if cache_manager.is_in_cache(url):
-            skipped += 1
-            continue
+        # 白名单中的频道不跳过（让检测决定）— 改为：不过滤，让所有频道都被检测
+        # 保留白名单逻辑用于其他场景（如快速通过）
         filtered.append(ch)
-    logger.info(f"[缓存] 过滤: {len(channels)}→{len(filtered)}, 跳过缓存 {skipped}")
+    logger.info(f"[频道] 总数: {len(channels)}→{len(filtered)}")
     return filtered
 
 

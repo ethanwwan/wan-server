@@ -117,9 +117,10 @@ def _fetch_and_check_channels(urls: List[str], limit: Optional[int] = None) -> s
                     logger.info(f"进度: {checked_count}/{total_count} ({checked_count/total_count*100:.1f}%) "
                                 f"- 流畅: {len(valid_channels)} - 失败: {failed_count} - ETA: {eta}")
 
-        if success_batch or failed_batch:
-            cache_manager.batch_update(successes=tuple(success_batch), failures=tuple(failed_batch))
+        if success_batch:
+            cache_manager.batch_update(successes=tuple(success_batch), failures=tuple())
             success_batch.clear()
+        if failed_batch:
             failed_batch.clear()
 
     valid_channels = sort_channels(valid_channels)
