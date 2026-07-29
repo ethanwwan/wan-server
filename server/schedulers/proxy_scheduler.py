@@ -21,6 +21,8 @@ cfg = _raw['proxy']
 PROXY_URLS: List[str] = [cfg['proxy_url1']]
 if cfg.get('proxy_url2'):
     PROXY_URLS.append(cfg['proxy_url2'])
+if cfg.get('proxy_url3'):
+    PROXY_URLS.append(cfg['proxy_url3'])
 SINGBOX_VERSIONS = [
     (cfg['singbox_version'], cfg['singbox_output_filename']),
     (cfg['singbox_old_version'], cfg['singbox_old_output_filename']),
@@ -121,11 +123,17 @@ def get_node_country_info(server: str, tag: str) -> Tuple[Optional[str], str, Op
     return new_tag, ip, country
 
 
-def process_outbounds(config: dict) -> dict:
+def _check_and_tag_servers(config: dict, ip_cache: dict = None, country_cache: dict = None) -> bool:
+    """
+    一次性完成 DNS 检测 + 节点国家标签处理（避免重复 DNS 解析）
+    可通过 ip_cache/country_cache 复用之前的结果
+    返回 True 表示至少有一个 server 可用，False 表示全部不可用
+    """
     outbounds = config.get('outbounds', [])
     if not outbounds:
-        return config
+        return True
 
+    # 收集所有需要处理的节点（添加 tag 信息）
     nodes_to_process = []
     for i, item in enumerate(outbounds):
         item_type = item.get('type')
@@ -135,37 +143,62 @@ def process_outbounds(config: dict) -> dict:
             nodes_to_process.append((i, server, tag))
 
     if not nodes_to_process:
-        return config
+        return True
+
+    # 区分缓存命中和需要重新解析的节点
+    def resolve_country(server: str, tag: str):
+        """DNS 解析 + IP 地理位置查询（带缓存）"""
+        if ip_cache is not None and server in ip_cache:
+            ip = ip_cache[server]
+        else:
+            ip = get_server_ip(server)
+            if ip_cache is not None:
+                ip_cache[server] = ip
+        if not ip:
+            return None, ip, None
+        if country_cache is not None and ip in country_cache:
+            country = country_cache[ip]
+        else:
+            country = get_ip_location(ip)
+            if country_cache is not None:
+                country_cache[ip] = country
+        if not country:
+            return None, ip, None
+        new_tag = f"{tag}-{country}"
+        return new_tag, ip, country
 
     tag_map = {}
     total = len(nodes_to_process)
+    available_count = 0
     max_workers = min(MAX_WORKERS, total)
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
         future_to_node = {
-            executor.submit(get_node_country_info, server, tag): (i, tag)
+            executor.submit(resolve_country, server, tag): (i, tag)
             for i, server, tag in nodes_to_process
         }
         for future in concurrent.futures.as_completed(future_to_node):
             i, old_tag = future_to_node[future]
             try:
                 new_tag, ip, country = future.result()
-                if new_tag:
+                if ip:
+                    available_count += 1
+                if new_tag and new_tag != old_tag:
                     outbounds[i]['tag'] = new_tag
                     tag_map[old_tag] = new_tag
             except Exception as e:
                 logger.error(f"处理节点失败: {e}")
 
+    # 更新 selector/urltest 中的节点引用
     for item in outbounds:
         item_type = item.get('type')
         if item_type in ('selector', 'urltest'):
             old_outbounds = item.get('outbounds', [])
-            new_outbounds = []
-            for old_tag in old_outbounds:
-                new_outbounds.append(tag_map.get(old_tag, old_tag))
+            new_outbounds = [tag_map.get(t, t) for t in old_outbounds]
             if new_outbounds != old_outbounds:
                 item['outbounds'] = new_outbounds
 
-    return config
+    logger.info(f"DNS 检测: {available_count}/{total} 个节点可用")
+    return available_count > 0
 
 
 def add_route_rules(config: dict) -> dict:
@@ -200,7 +233,6 @@ def add_route_rules(config: dict) -> dict:
 
 def process_config(config: dict) -> dict:
     config = add_route_rules(config)
-    config = process_outbounds(config)
     return config
 
 
@@ -214,40 +246,6 @@ def get_config_json(is_latest: bool = True) -> dict:
     except Exception as e:
         logger.error(f"读取配置文件失败: {e}")
     return {}
-
-
-def _check_all_servers_available(config: dict) -> bool:
-    """
-    检查配置中所有节点的 server DNS 是否可解析
-    返回 True 表示至少有一个 server 可用，False 表示全部不可用
-    """
-    outbounds = config.get('outbounds', [])
-    nodes_to_check = []
-    for item in outbounds:
-        item_type = item.get('type')
-        server = item.get('server')
-        if item_type in ('hysteria2', 'tuic', 'vless') and server:
-            nodes_to_check.append(server)
-
-    if not nodes_to_check:
-        # 没有需要检测的节点，认为是有效的
-        return True
-
-    total = len(nodes_to_check)
-    available_count = 0
-    max_workers = min(MAX_WORKERS, total)
-    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
-        futures = {executor.submit(get_server_ip, server): server for server in nodes_to_check}
-        for future in concurrent.futures.as_completed(futures):
-            try:
-                ip = future.result()
-                if ip:
-                    available_count += 1
-            except Exception as e:
-                logger.warning(f"DNS 检测异常: {e}")
-
-    logger.info(f"DNS 检测: {available_count}/{total} 个节点可用")
-    return available_count > 0
 
 
 def _fetch_config(url: str, user_agent: str) -> Optional[dict]:
@@ -264,7 +262,8 @@ def _fetch_config(url: str, user_agent: str) -> Optional[dict]:
         return None
 
 
-def _download_singbox(version: str, file_name: str, start_idx: int = 0) -> bool:
+def _download_singbox(version: str, file_name: str, start_idx: int = 0,
+                     ip_cache: dict = None, country_cache: dict = None) -> bool:
     """下载 Singbox 配置，支持 url1 和 url2 切换"""
     user_agent = f"SFA/1.1{version} (595; sing-box {version}; language zh_CN)"
 
@@ -278,9 +277,9 @@ def _download_singbox(version: str, file_name: str, start_idx: int = 0) -> bool:
             logger.warning(f"Singbox {url_label} 下载失败，尝试下一个 URL")
             continue
 
-        # 检测所有节点的 DNS 是否可用
+        # 一次性完成 DNS 检测 + 节点国家标签处理（避免重复 DNS 解析）
         logger.info(f"检测 Singbox {url_label} 中所有节点的 DNS...")
-        if not _check_all_servers_available(config):
+        if not _check_and_tag_servers(config, ip_cache=ip_cache, country_cache=country_cache):
             logger.warning(f"Singbox {url_label} 所有节点 DNS 检测失败，尝试下一个 URL")
             continue
 
@@ -314,9 +313,10 @@ def _fetch_clash_config(url: str, user_agent: str) -> Optional[dict]:
         return None
 
 
-def _check_clash_servers_available(config: dict) -> bool:
+def _check_clash_servers_available(config: dict, ip_cache: dict = None) -> bool:
     """
     检查 Clash 配置中所有 proxy 的 server DNS 是否可解析
+    可通过 ip_cache 复用之前的解析结果
     返回 True 表示至少有一个 server 可用，False 表示全部不可用
     """
     proxies = config.get('proxies', [])
@@ -331,11 +331,19 @@ def _check_clash_servers_available(config: dict) -> bool:
     if not nodes_to_check:
         return True
 
+    def resolve(server):
+        if ip_cache is not None and server in ip_cache:
+            return ip_cache[server]
+        ip = get_server_ip(server)
+        if ip_cache is not None:
+            ip_cache[server] = ip
+        return ip
+
     total = len(nodes_to_check)
     available_count = 0
     max_workers = min(MAX_WORKERS, total)
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
-        futures = {executor.submit(get_server_ip, server): server for server in nodes_to_check}
+        futures = {executor.submit(resolve, server): server for server in nodes_to_check}
         for future in concurrent.futures.as_completed(futures):
             try:
                 ip = future.result()
@@ -348,16 +356,39 @@ def _check_clash_servers_available(config: dict) -> bool:
     return available_count > 0
 
 
-def _process_clash_groups(config: dict) -> dict:
+def _process_clash_groups(config: dict, ip_cache: dict = None, country_cache: dict = None) -> dict:
     """
     处理 Clash 配置的 proxies，给节点名称添加国家代码后缀
     同时更新 proxy-groups 中引用的名称
+    可通过 ip_cache/country_cache 复用之前的解析结果
     """
     proxies = config.get('proxies', [])
     proxy_groups = config.get('proxy-groups', [])
 
     if not proxies:
         return config
+
+    # 区分缓存命中和需要重新解析的节点
+    def resolve_country(server: str, name: str):
+        """DNS 解析 + IP 地理位置查询（带缓存）"""
+        if ip_cache is not None and server in ip_cache:
+            ip = ip_cache[server]
+        else:
+            ip = get_server_ip(server)
+            if ip_cache is not None:
+                ip_cache[server] = ip
+        if not ip:
+            return None, ip, None
+        if country_cache is not None and ip in country_cache:
+            country = country_cache[ip]
+        else:
+            country = get_ip_location(ip)
+            if country_cache is not None:
+                country_cache[ip] = country
+        if not country:
+            return None, ip, None
+        new_name = f"{name}-{country}"
+        return new_name, ip, country
 
     # 收集需要处理的节点
     nodes_to_process = []
@@ -376,7 +407,7 @@ def _process_clash_groups(config: dict) -> dict:
     max_workers = min(MAX_WORKERS, total)
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
         future_to_node = {
-            executor.submit(get_node_country_info, server, name): (i, name)
+            executor.submit(resolve_country, server, name): (i, name)
             for i, server, name in nodes_to_process
         }
         for future in concurrent.futures.as_completed(future_to_node):
@@ -497,20 +528,20 @@ def _add_clash_rules(config: dict) -> dict:
     return config
 
 
-def _process_clash_config(config: dict) -> dict:
+def _process_clash_config(config: dict, ip_cache: dict = None, country_cache: dict = None) -> dict:
     """处理 Clash 配置：节点标签 + 通用规则"""
-    config = _process_clash_groups(config)
+    config = _process_clash_groups(config, ip_cache=ip_cache, country_cache=country_cache)
     config = _add_clash_rules(config)
     return config
 
 
-def _download_clash() -> bool:
+def _download_clash(start_idx: int = 0, ip_cache: dict = None, country_cache: dict = None) -> bool:
     """下载 Clash 配置，支持 url1 和 url2 切换"""
     # 使用标准的 Clash User-Agent，包含 "clash" 关键字以获取机场响应头
     user_agent = "clash-verge/2.0.0"
     file_name = CLASH_OUTPUT_FILENAME
 
-    for idx in range(len(PROXY_URLS)):
+    for idx in range(start_idx, len(PROXY_URLS)):
         url = PROXY_URLS[idx]
         url_label = f"url{idx + 1}"
         logger.info(f"正在下载 Clash ({url_label})...")
@@ -522,12 +553,12 @@ def _download_clash() -> bool:
 
         # 检测所有 proxy 的 server DNS 是否可用
         logger.info(f"检测 Clash {url_label} 中所有 proxy 的 DNS...")
-        if not _check_clash_servers_available(config):
+        if not _check_clash_servers_available(config, ip_cache=ip_cache):
             logger.warning(f"Clash {url_label} 所有 proxy DNS 检测失败，尝试下一个 URL")
             continue
 
         # 处理配置（添加国家标签 + 通用规则）
-        config = _process_clash_config(config)
+        config = _process_clash_config(config, ip_cache=ip_cache, country_cache=country_cache)
 
         # 保存为 YAML 格式
         file_path = os.path.join(OUTPUT_DIR, file_name)
@@ -546,6 +577,10 @@ def sync() -> bool:
     start_idx = 0
     success_count = 0
     REQUEST_INTERVAL = 2  # 每次下载之间的间隔（秒）
+    # 共享 DNS 解析缓存：所有版本的 singbox 和 clash 共用
+    # 同一组 server 只解析一次，避免重复请求
+    ip_cache: Dict[str, Optional[str]] = {}
+    country_cache: Dict[str, Optional[str]] = {}
 
     for i, (ver, fname) in enumerate(SINGBOX_VERSIONS):
         # 第一次下载不需要等待，后续下载前需要等待避免请求过快
@@ -553,7 +588,7 @@ def sync() -> bool:
             logger.info(f"等待 {REQUEST_INTERVAL} 秒后继续...")
             time.sleep(REQUEST_INTERVAL)
 
-        result = _download_singbox(ver, fname, start_idx)
+        result = _download_singbox(ver, fname, start_idx, ip_cache=ip_cache, country_cache=country_cache)
         if result >= 0:
             success_count += 1
             start_idx = result  # 下次从成功使用的 URL 开始
@@ -561,10 +596,10 @@ def sync() -> bool:
             # 下载失败，重置为从 url1 开始（给 url1 一次重试机会）
             start_idx = 0
 
-    # Clash 下载前也等待一下
+    # Clash 下载前也等待一下（复用 singbox 已检测的缓存）
     logger.info(f"等待 {REQUEST_INTERVAL} 秒后下载 Clash 配置...")
     time.sleep(REQUEST_INTERVAL)
-    clash_result = _download_clash()
+    clash_result = _download_clash(start_idx, ip_cache=ip_cache, country_cache=country_cache)
     if clash_result:
         success_count += 1
 
@@ -584,5 +619,5 @@ def run():
 
 
 if __name__ == "__main__":
-    # run()
-    _download_clash()
+    run()
+    # _download_clash()
