@@ -20,8 +20,8 @@ class IPTVConfig:
     FFMPEG_TIMEOUT: int = 15
     MIN_FPS: int = 20
     MIN_BITRATE: int = 1000
-    MIN_RESOLUTION_WIDTH: int = 1920
-    MIN_RESOLUTION_HEIGHT: int = 1080
+    MIN_RESOLUTION_WIDTH: int = 1280
+    MIN_RESOLUTION_HEIGHT: int = 720
     GROUP_MAPPING: Dict[str, List[str]] = None
     CHANNEL_MAPPING: Dict[str, List[str]] = None
 

@@ -12,7 +12,7 @@ sys.path.insert(0, project_root)
 
 from logger import get_logger
 
-logger = get_logger('NAS_SINGBOX')
+logger = get_logger('NAS_PROXY')
 
 _raw = json.load(open(os.path.join(project_root, 'server', 'input', 'config.json')))
 _proxies = _raw['proxy_domains']
