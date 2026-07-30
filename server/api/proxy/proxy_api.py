@@ -31,3 +31,18 @@ async def get_singbox_old():
         return FileResponse(file_path, media_type="application/json")
     except Exception as e:
         return not_found_response(msg=f"读取 singbox_old.json 失败：{str(e)}")
+
+
+@router.get("/clash.yaml")
+async def get_clash():
+    file_path = os.path.join(OUTPUT_DIR, 'clash.yaml')
+    if not os.path.exists(file_path):
+        return not_found_response(msg="clash.yaml 不存在")
+    try:
+        return FileResponse(
+            file_path,
+            media_type="application/x-yaml",
+            headers={"Content-Disposition": "inline; filename=clash.yaml"}
+        )
+    except Exception as e:
+        return not_found_response(msg=f"读取 clash.yaml 失败：{str(e)}")
