@@ -1,0 +1,38 @@
+{
+  "request_timeout": 10,
+  "proxy_domains": [
+    "https://gh-proxy.org",
+    "https://v4.gh-proxy.org",
+    "https://v6.gh-proxy.org",
+    "https://cdn.gh-proxy.org"
+  ],
+  "tvbox": {
+    "source_url": "https://raw.githubusercontent.com/ethanwwan/wan-server/refs/heads/main/tvbox-aggregator/output/config.json",
+    "use_proxy": true,
+    "output_dir": "tvbox",
+    "output_file": "config.json",
+    "schedule_time": "06:00"
+  },
+  "iptv": {
+    "source_url": "https://raw.githubusercontent.com/ethanwwan/wan-server/refs/heads/main/iptv-aggregator/output/playlist.m3u",
+    "use_proxy": true,
+    "output_dir": "iptv",
+    "output_file": "playlist.m3u",
+    "schedule_time": "06:30"
+  },
+  "proxy": {
+    "proxy_url1": "http://8.148.151.188:33666/s/514fea6693f5e4384a09c80a4e801392",
+    "proxy_url2": "https://47.76.155.27/iv/verify_mode.htm?token=9a49f8e2abcce3a0d3fd12e072065cdd",
+    "singbox_version": "1.14.0",
+    "singbox_old_version": "1.11.0",
+    "singbox_proxy_ruleset": "https://raw.githubusercontent.com/ethanwwan/sing-box-rules/refs/heads/main/rule_json/Global_All.json",
+    "singbox_geoip_cn": "https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-cn.srs",
+    "singbox_geosite_cn": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-geolocation-cn.srs",
+    "singbox_output_filename": "singbox.json",
+    "singbox_old_output_filename": "singbox_old.json",
+    "clash_output_filename": "clash.yaml",
+    "output_dir": "proxy",
+    "schedule_time": "07:00",
+    "fixed_listen_port": 7890
+  }
+}

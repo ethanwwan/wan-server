@@ -1,20 +1,20 @@
 # ============================================================
-# Stage 1: Builder - 安装依赖到独立目录
+# Stage 1: Builder - 在标准目录编译安装依赖
 # ============================================================
 FROM python:3.12-alpine AS builder
 
 WORKDIR /build
 
-# 系统依赖（编译阶段需要 gcc/musl-dev，运行时不需要）
+# 编译工具（运行时丢弃）
 RUN apk add --no-cache gcc musl-dev
 
-# 先复制 requirements.txt，利用 Docker 缓存（依赖不变就不重装）
+# 复制并安装依赖
 COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir --user -r requirements.txt
+    pip install --no-cache-dir -r requirements.txt
 
 # ============================================================
-# Stage 2: Runtime - 仅复制必要的 Python 包和代码
+# Stage 2: Runtime - 标准 Python 环境
 # ============================================================
 FROM python:3.12-alpine
 
@@ -22,19 +22,17 @@ WORKDIR /app
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONPATH=/app \
-    TZ=Asia/Shanghai \
-    PATH=/home/user/.local/bin:$PATH
+    TZ=Asia/Shanghai
 
-# 从 builder 阶段复制已安装的 Python 包（避免重新安装系统依赖）
-COPY --from=builder /root/.local /home/user/.local
+# Alpine 时区数据
+RUN apk add --no-cache tzdata
+
+# 从 builder 阶段复制系统 site-packages（标准位置 /usr/local/lib/python3.12/...）
+COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
 
 # 复制项目代码
 COPY . .
-
-# 创建非 root 用户运行（安全最佳实践）
-RUN adduser -D -u 1000 appuser && \
-    chown -R appuser:appuser /app
-USER appuser
 
 EXPOSE 8016
 
