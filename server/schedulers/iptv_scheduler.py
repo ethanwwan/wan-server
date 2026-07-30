@@ -47,11 +47,19 @@ def sync() -> bool:
 
             logger.info(f"IPTV 配置已同步到 {OUTPUT_FILE}")
             return True
+        except requests.exceptions.HTTPError as e:
+            # 404 等状态码错误：源文件不存在，所有代理结果一致，无需继续切换
+            status = e.response.status_code if e.response is not None else 'N/A'
+            logger.error(
+                f"同步失败{label}: HTTP {status} - {url} | "
+                f"源文件不存在，跳过剩余代理"
+            )
+            return False
         except Exception as e:
             is_last = idx == attempts[-1]
-            logger.warning(f"同步失败{label}: {e}{', 切换代理...' if not is_last else ''}")
+            logger.warning(f"同步失败{label}: {e} | 切换代理..." if not is_last else f"同步失败{label}: {e}")
             if is_last:
-                logger.error(f"IPTV 配置同步失败 (已用完全部代理)")
+                logger.error("IPTV 配置同步失败 (已用完全部代理)")
                 return False
 
 

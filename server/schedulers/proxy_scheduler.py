@@ -202,8 +202,12 @@ def get_server_ip(server: str, log_warning: bool = True) -> Optional[str]:
     获取 server 的 IP 地址
 
     策略（多级降级）：
-      1. UDP 查询 4 个公共 DNS（Google/Cloudflare/阿里/Quad9）并发
-      2. 系统 socket.getaddrinfo 兜底
+      1. 系统 socket.getaddrinfo（走 docker /etc/resolv.conf 的本地 DNS）
+         - 在 docker 内会自动使用容器配置的 nameserver
+         - 通常是宿主机的 DNS 转发，可靠且快
+      2. UDP 查询 4 个公共 DNS（Google/Cloudflare/阿里/Quad9）并发
+         - 仅在系统 DNS 失败时降级
+         - docker 网络下 UDP/53 可能被防火墙拦截
       3. 返回 None
     """
     DNS_SERVERS = ['8.8.8.8', '1.1.1.1', '223.5.5.5', '9.9.9.9']
@@ -223,22 +227,22 @@ def get_server_ip(server: str, log_warning: bool = True) -> Optional[str]:
             return None
         return None
 
-    # 阶段 1: UDP 并发查询
+    # 阶段 1: 系统 getaddrinfo（走本地 DNS，docker 内走容器 DNS 配置）
+    try:
+        socket.setdefaulttimeout(3)
+        infos = socket.getaddrinfo(server, None, type=socket.SOCK_STREAM)
+        if infos:
+            return infos[0][4][0]
+    except Exception:
+        pass
+
+    # 阶段 2: UDP 并发查询公网 DNS（系统 DNS 失败时降级）
     try:
         with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
             futs = {executor.submit(_dns_udp_query, dns): dns for dns in DNS_SERVERS}
             for fut in concurrent.futures.as_completed(futs):
                 if fut.result():
                     return fut.result()
-    except Exception:
-        pass
-
-    # 阶段 2: 系统 getaddrinfo 兜底
-    try:
-        socket.setdefaulttimeout(3)
-        infos = socket.getaddrinfo(server, None, type=socket.SOCK_STREAM)
-        if infos:
-            return infos[0][4][0]
     except Exception:
         pass
 
@@ -320,7 +324,7 @@ def get_ip_location(ip: str) -> Optional[str]:
 
 
 # ============================================================
-# 模块 2: URL 可用性检测（TCP 抽样）
+# 模块 2: URL 可用性检测（全量探测，短路返回）
 # ============================================================
 
 def _tcp_probe(server: str, port: int = 443, timeout: float = 3.0) -> bool:
@@ -341,48 +345,107 @@ def _tcp_probe(server: str, port: int = 443, timeout: float = 3.0) -> bool:
         return False
 
 
-def _check_node_available(server: str, port: int, timeout: float = 3.0) -> bool:
-    """节点可用性检测：DNS 可解析 或 TCP 可达，任一通过即认为可用"""
-    # 1. DNS 解析（宽松）
-    if get_server_ip(server, log_warning=False):
-        return True
-    # 2. TCP 端口连通（严格）
-    return _tcp_probe(server, port, timeout)
+def _udp_probe(server: str, port: int = 443, timeout: float = 3.0) -> bool:
+    """UDP 端口可达性探测（用于 hysteria2 / tuic 等 QUIC 协议节点）
+
+    原理：通过 connect() 将 UDP socket 关联到目标地址，这样内核会把收到的
+    ICMP Port Unreachable / Network Unreachable / Host Unreachable 等错误
+    以 ConnectionRefusedError / OSError 形式投递给下一次 send/recv。
+
+    判定规则：
+      - send 后 recv 收到 UDP 响应 → False（端口有人在响应非预期包，不算 hysteria2）
+      - ConnectionRefusedError → False（明确收到 ICMP Port Unreachable，端口未监听）
+      - 其他 OSError（network/host unreachable）→ False（IP 层不可达）
+      - socket.timeout → True（未收到任何响应，视为网络层可达）
+        注：防火墙静默丢包也会走到这里，因此本探测存在"防火墙假阳性"
+    """
+    sock = None
+    try:
+        socket.setdefaulttimeout(timeout)
+        infos = socket.getaddrinfo(server, port, type=socket.SOCK_DGRAM)
+        if not infos:
+            return False
+        ip = infos[0][4][0]
+
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.settimeout(timeout)
+        sock.connect((ip, port))  # 关键：connect 后内核关联 ICMP 错误
+        sock.send(b'\x00')
+
+        try:
+            data = sock.recv(64)
+            # 收到任何 UDP 响应都算"端口在监听但协议不对"，判失败
+            return False
+        except socket.timeout:
+            # 超时 = 没收到 ICMP 也没收到 UDP 响应，视为可达
+            return True
+    except ConnectionRefusedError:
+        # 明确收到 ICMP Port Unreachable → 端口未监听 → 不可达
+        return False
+    except OSError:
+        # 其他网络错误（host unreachable / network unreachable） → 不可达
+        return False
+    except Exception:
+        return False
+    finally:
+        if sock is not None:
+            try:
+                sock.close()
+            except Exception:
+                pass
 
 
 def _check_url_available(
     config: dict,
-    sample_size: int = 3,
     timeout: float = 3.0,
 ) -> Tuple[bool, int, int]:
     """
-    检测 URL 是否可用（抽样测试前 N 个节点）
+    检测 URL 是否可用（协议感知全量探测，任意一个通过即短路返回）
+
+    协议探测策略：
+      - hysteria2 / tuic : UDP 探测
+      - 其他 TCP 协议    : TCP 探测
 
     Returns:
-        (是否可用, 抽样可用数, 抽样总数)
+        (是否可用, 已发现的可用数, 节点总数)
     """
     outbounds = config.get('outbounds', [])
-    nodes = [
-        (ob.get('server'), ob.get('server_port', 443))
-        for ob in outbounds
-        if ob.get('type') in ('hysteria2', 'tuic', 'vless')
-        and ob.get('server')
-    ]
+    UDP_TYPES = {'hysteria2', 'tuic'}
+
+    udp_nodes = []
+    tcp_nodes = []
+    for ob in outbounds:
+        ob_type = ob.get('type')
+        server = ob.get('server')
+        port = ob.get('server_port', 443)
+        if not server:
+            continue
+        if ob_type in UDP_TYPES:
+            udp_nodes.append((server, port))
+        elif ob_type in ('vless', 'vmess', 'trojan', 'ss', 'ssr', 'http', 'https', 'socks5'):
+            tcp_nodes.append((server, port))
+
+    nodes = udp_nodes + tcp_nodes
     if not nodes:
         return True, 0, 0
 
-    samples = nodes[:sample_size]
     available = 0
-    with concurrent.futures.ThreadPoolExecutor(max_workers=len(samples)) as executor:
-        futs = {
-            executor.submit(_check_node_available, srv, port, timeout): srv
-            for srv, port in samples
-        }
+    with concurrent.futures.ThreadPoolExecutor(max_workers=len(nodes)) as executor:
+        futs = {}
+        for srv, port in udp_nodes:
+            futs[executor.submit(_udp_probe, srv, port, timeout)] = srv
+        for srv, port in tcp_nodes:
+            futs[executor.submit(_tcp_probe, srv, port, timeout)] = srv
+
         for fut in concurrent.futures.as_completed(futs):
             if fut.result():
                 available += 1
+                # 短路：任意一个通过即可，立即取消剩余探测
+                for pending in futs:
+                    pending.cancel()
+                break
 
-    return available >= 1, available, len(samples)
+    return available >= 1, available, len(nodes)
 
 
 # ============================================================
@@ -1229,12 +1292,12 @@ def _download_singbox(
             logger.warning(f"Singbox {url_label} 下载失败，尝试下一个 URL")
             continue
 
-        # 模块 A: URL 可用性检测（TCP 抽样）
-        available, avail_cnt, total_cnt = _check_url_available(config, sample_size=3, timeout=3.0)
+        # 模块 A: URL 可用性检测（协议感知 + 短路返回）
+        available, avail_cnt, total_cnt = _check_url_available(config, timeout=3.0)
         if available:
-            logger.info(f"URL 抽样检测: {avail_cnt}/{total_cnt} 节点可达")
+            logger.info(f"URL 可用性检测: {avail_cnt}/{total_cnt} 节点协议可达（短路）")
         else:
-            logger.warning(f"Singbox {url_label} 抽样全部失败，尝试下一个 URL")
+            logger.warning(f"Singbox {url_label} 全部节点协议不可达，尝试下一个 URL")
             continue
 
         # 模块 B: 添加国家标签（独立、失败不影响主流程）
@@ -1267,27 +1330,57 @@ def _fetch_clash_config(url: str, user_agent: str) -> Optional[dict]:
 
 
 def _check_clash_url_available(config: dict) -> bool:
-    """检查 Clash URL 是否可用（TCP 抽样探测）"""
+    """检查 Clash URL 是否可用（协议感知探测，任意一个通过即短路）
+
+    协议探测策略：
+      - hysteria2 / tuic : UDP 探测（QUIC 协议，TCP 探测无效）
+      - 其他 TCP 协议    : TCP 探测
+    """
     proxies = config.get('proxies', [])
-    nodes = [
-        (p.get('server'), p.get('port', 443))
-        for p in proxies
-        if p.get('server')
-        and p.get('type') in ('http', 'https', 'socks5', 'ss', 'ssr',
-                                'vmess', 'trojan', 'vless', 'hysteria2', 'tuic')
-    ]
+    # 协议分类：type -> [probe_fn]
+    UDP_TYPES = {'hysteria2', 'tuic'}
+    TCP_TYPES = {'http', 'https', 'socks5', 'ss', 'ssr',
+                 'vmess', 'trojan', 'vless'}
+
+    udp_nodes = []  # (server, port)
+    tcp_nodes = []  # (server, port)
+    for p in proxies:
+        ptype = p.get('type')
+        server = p.get('server')
+        port = p.get('port', 443)
+        if not server:
+            continue
+        if ptype in UDP_TYPES:
+            udp_nodes.append((server, port))
+        elif ptype in TCP_TYPES:
+            tcp_nodes.append((server, port))
+
+    nodes = udp_nodes + tcp_nodes  # 合并用于统计总数
     if not nodes:
         return True
 
-    samples = nodes[:3]
     available = 0
-    with concurrent.futures.ThreadPoolExecutor(max_workers=len(samples)) as executor:
-        futs = {executor.submit(_tcp_probe, srv, port, 3.0): srv for srv, port in samples}
+    probed = 0
+    with concurrent.futures.ThreadPoolExecutor(max_workers=len(nodes)) as executor:
+        futs = {}
+        for srv, port in udp_nodes:
+            futs[executor.submit(_udp_probe, srv, port, 3.0)] = ('udp', srv)
+        for srv, port in tcp_nodes:
+            futs[executor.submit(_tcp_probe, srv, port, 3.0)] = ('tcp', srv)
+
         for fut in concurrent.futures.as_completed(futs):
+            probed += 1
             if fut.result():
                 available += 1
+                # 短路：任意一个节点协议层可达即返回，取消剩余探测
+                for pending in futs:
+                    pending.cancel()
+                break
 
-    logger.info(f"Clash URL 抽样检测: {available}/{len(samples)} 节点 TCP 可达")
+    logger.info(
+        f"Clash URL 可用性检测: {available}/{len(nodes)} 节点协议可达 "
+        f"(UDP:{len(udp_nodes)} TCP:{len(tcp_nodes)}, 短路)"
+    )
     return available >= 1
 
 
@@ -1476,7 +1569,7 @@ def _download_clash(
 
         # URL 可用性检测
         if not _check_clash_url_available(config):
-            logger.warning(f"Clash {url_label} URL 抽样检测失败，尝试下一个 URL")
+            logger.warning(f"Clash {url_label} URL 可用性检测失败，尝试下一个 URL")
             continue
 
         # 处理配置
