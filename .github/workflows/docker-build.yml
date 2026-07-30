@@ -8,50 +8,74 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Tag to build (e.g. v1.4.5)'
-        required: true
+        description: 'Tag to build (e.g. v1.4.5). Leave empty to build main HEAD.'
+        required: false
         type: string
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository_owner }}/wan-server
 
-permissions:
-  contents: read
-  packages: write
-
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v4
+
       - uses: docker/setup-buildx-action@v3
+
       - uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=raw,value=${{ github.event.inputs.tag || github.ref_name }}
-            type=raw,value=latest,enable=${{ !contains(github.ref_name, '-') && !contains(github.event.inputs.tag, '-') }}
-            type=raw,value=latest-prerelease,enable=${{ contains(github.ref_name, '-') || contains(github.event.inputs.tag, '-') }}
-          labels: |
-            org.opencontainers.image.title=wan-server
-            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+      # 算镜像 tag：去掉 ref name / 输入 tag 的 'v' 前缀
+      #   push tag v1.4.7       → image 1.4.7 + latest
+      #   workflow_dispatch v1.4.8 → image 1.4.8 + latest
+      #   workflow_dispatch empty → image sha-<7>
+      - name: Compute image tag
+        id: img
+        run: |
+          if [ -n "${{ github.event.inputs.tag }}" ]; then
+            RAW_TAG="${{ github.event.inputs.tag }}"
+          else
+            RAW_TAG="${GITHUB_REF_NAME}"
+          fi
+          # 去掉 v 前缀 (v1.4.7 → 1.4.7)
+          SEMVER="${RAW_TAG#v}"
+          # 是否 prerelease: 含 '-'
+          if [[ "${SEMVER}" == *-* ]]; then
+            IS_PRERELEASE="true"
+          else
+            IS_PRERELEASE="false"
+          fi
+          echo "semver=${SEMVER}"       >> "$GITHUB_OUTPUT"
+          echo "is_prerelease=${IS_PRERELEASE}" >> "$GITHUB_OUTPUT"
+          echo ">> image tag will be: ${SEMVER} (prerelease=${IS_PRERELEASE})"
 
-      - uses: docker/build-push-action@v5
+      # 直接用 buildx --push，明确指定 tag，无 metadata-action 黑盒
+      #   镜像 1: <semver>            (必推)
+      #   镜像 2: latest              (非 prerelease 时)
+      #   镜像 3: latest-prerelease   (prerelease 时)
+      - name: Build and push to GHCR
+        uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          # tags: 多行字符串会被自动按行分割为 tag 列表
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.img.outputs.semver }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest${{ steps.img.outputs.is_prerelease == 'true' && '-prerelease' || '' }}
+          labels: |
+            org.opencontainers.image.title=wan-server
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.version=${{ steps.img.outputs.semver }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -75,10 +99,10 @@ jobs:
               docker run -d \
                 --name wan-server \
                 -p 8016:8016 \
-                -v $(pwd)/input:/app/input \
-                -v $(pwd)/output:/app/output \
+                -v $(pwd)/server/input:/app/server/input \
+                -v $(pwd)/server/output:/app/server/output \
                 --restart unless-stopped \
-                ghcr.io/${{ github.repository_owner }}/wan-server:${{ github.ref_name }}
+                ghcr.io/${{ github.repository_owner }}/wan-server:${{ steps.img.outputs.semver }}
             ```
 
             **访问地址**：`http://localhost:8016`
