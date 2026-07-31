@@ -358,13 +358,38 @@ def get_file_content(filename: str, input_dir: str = None) -> str:
         return ""
 
 
+def _quality_score(name: str) -> int:
+    """
+    提取质量等级（数字越大质量越好）
+      4K     → 40
+      1080p  → 30
+      720p   → 20
+      8K     → 50
+      SD     → 10
+      无后缀 → 0
+    """
+    # 优先级从高到低判断（先匹配 8K/4K，再匹配 1080/720/SD）
+    if re.search(r'8K', name, re.IGNORECASE):
+        return 50
+    if re.search(r'4K', name, re.IGNORECASE):
+        return 40
+    if re.search(r'1080[pi]?', name, re.IGNORECASE):
+        return 30
+    if re.search(r'720[pi]?', name, re.IGNORECASE):
+        return 20
+    if re.search(r'\bSD\b', name, re.IGNORECASE):
+        return 10
+    return 0
+
+
 def sort_channels(channels: List[Dict]) -> List[Dict]:
     """
     频道排序规则：
       1. 分组按 GROUP_ORDER 顺序
-      2. 央视频道：按数字顺序（CCTV1, CCTV2, ..., CCTV11, CCTV12, ...）
+      2. 央视频道：按 CCTV 数字顺序（CCTV1, CCTV2, ..., CCTV11, CCTV12, ...）
       3. 卫视频道：优先排列 浙江卫视 > 湖南卫视 > 江苏卫视/苏州4K，其余按首字母
       4. 其他分组：按频道名首字母顺序
+      5. 同频道多源：按质量排序（4K > 1080p > 720p > SD > 普通）
     """
     group_order = ['央视频道', '卫视频道', '地方频道', '电影电视', '体育赛事',
                    '少儿教育', '综艺娱乐', '纪录纪实', '国际全球', '港澳台',
@@ -383,6 +408,10 @@ def sort_channels(channels: List[Dict]) -> List[Dict]:
         m = re.search(r'CCTV-?(\d+)', name, re.IGNORECASE)
         return int(m.group(1)) if m else 9999
 
+    def _normalize_satellite_name(name: str) -> str:
+        """去掉质量后缀得到基础名：'湖南卫视 (4K)' → '湖南卫视'"""
+        return re.sub(r'\s*[\(（].*?[\)）]\s*$', '', name).strip()
+
     def sort_key(ch):
         group = ch.get('group_title', '其他')
         name = ch.get('channel_name', '')
@@ -391,16 +420,19 @@ def sort_channels(channels: List[Dict]) -> List[Dict]:
         except ValueError:
             g_idx = len(group_order)
 
-        # 央视频道：按 CCTV 数字排序
+        quality = _quality_score(name)
+
+        # 央视频道：按 CCTV 数字排序（同频道多源按质量降序）
         if group == '央视频道':
-            return (g_idx, 0, _cctv_num(name), name)
+            return (g_idx, _cctv_num(name), -quality, name)
 
-        # 卫视频道：优先频道置顶，其余按首字母
+        # 卫视频道：优先频道置顶（按归一化名匹配），同频道多源按质量降序
         if group == '卫视频道':
-            priority = satellite_priority.get(name, 9999)
-            return (g_idx, priority, 0, name)
+            base_name = _normalize_satellite_name(name)
+            priority = satellite_priority.get(base_name, 9999)
+            return (g_idx, priority, -quality, name)
 
-        # 其他分组：按首字母
-        return (g_idx, 0, 0, name)
+        # 其他分组：按首字母 + 质量降序
+        return (g_idx, 0, -quality, name)
 
     return sorted(channels, key=sort_key)
