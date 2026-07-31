@@ -25,6 +25,7 @@ class IPTVConfig:
     GROUP_MAPPING: Dict[str, List[str]] = None
     CHANNEL_MAPPING: Dict[str, List[str]] = None
     CHANNEL_NAME_MAPPING: Dict[str, str] = None  # CCTV/CETV 频道号 → 完整名
+    CACHE_FILENAME: str = None  # 白名单缓存文件名
 
     @classmethod
     def build(cls) -> 'IPTVConfig':
@@ -91,7 +92,8 @@ class IPTVConfig:
                 'CETV3': 'CETV-3 北京',
                 'CETV4': 'CETV-4 职业教育',
                 'CETV早教': 'CETV 早期教育',
-            }
+            },
+            CACHE_FILENAME='whitelist_cache.json',
         )
 
 
@@ -103,7 +105,7 @@ def get_project_root() -> str:
 
 
 def get_cache_path() -> str:
-    return os.path.join(get_project_root(), 'output', 'cache', 'fail_cache.json')
+    return os.path.join(get_project_root(), 'output', 'cache', IPTV_CONFIG.CACHE_FILENAME)
 
 
 def get_output_dir() -> str:
@@ -134,6 +136,25 @@ class CacheManager:
     def _load_cache(self):
         try:
             cache_path = get_cache_path()
+            # 兼容旧文件名 fail_cache.json：自动迁移到新名
+            if not os.path.exists(cache_path):
+                old_path = os.path.join(os.path.dirname(cache_path), 'fail_cache.json')
+                if os.path.exists(old_path):
+                    with open(old_path, 'r', encoding='utf-8') as f:
+                        data = json.load(f)
+                    if isinstance(data, list):
+                        self._whitelist = set(data)
+                        # 迁移到新文件
+                        with open(cache_path, 'w', encoding='utf-8') as f:
+                            json.dump(data, f, ensure_ascii=False, indent=2)
+                        os.remove(old_path)
+                        logger.info(f"[缓存] 已从 fail_cache.json 迁移 {len(self._whitelist)} 条到 {IPTV_CONFIG.CACHE_FILENAME}")
+                        return
+                    elif isinstance(data, dict):
+                        # 旧格式（dict），清空
+                        logger.info("[缓存] 旧 fail_cache.json 格式已废弃，已删除")
+                        os.remove(old_path)
+                        return
             if os.path.exists(cache_path):
                 with open(cache_path, 'r', encoding='utf-8') as f:
                     data = json.load(f)
