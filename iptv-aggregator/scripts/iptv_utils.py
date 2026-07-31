@@ -24,6 +24,7 @@ class IPTVConfig:
     MIN_RESOLUTION_HEIGHT: int = 720
     GROUP_MAPPING: Dict[str, List[str]] = None
     CHANNEL_MAPPING: Dict[str, List[str]] = None
+    CHANNEL_NAME_MAPPING: Dict[str, str] = None  # CCTV/CETV 频道号 → 完整名
 
     @classmethod
     def build(cls) -> 'IPTVConfig':
@@ -59,6 +60,37 @@ class IPTVConfig:
                 'NewTV': ['NewTV'],
                 'iHOT': ['IHOT'],
                 'iPanda': ['ipanda']
+            },
+            # 频道号 → 完整名称（用于归一化显示）
+            CHANNEL_NAME_MAPPING={
+                # CCTV 主频道
+                '1': 'CCTV-1 综合',
+                '2': 'CCTV-2 财经',
+                '3': 'CCTV-3 综艺',
+                '4': 'CCTV-4 中文国际',
+                '5': 'CCTV-5 体育',
+                '5+': 'CCTV-5+ 体育赛事',
+                '6': 'CCTV-6 电影',
+                '7': 'CCTV-7 国防军事',
+                '8': 'CCTV-8 电视剧',
+                '9': 'CCTV-9 纪录',
+                '10': 'CCTV-10 科教',
+                '11': 'CCTV-11 戏曲',
+                '12': 'CCTV-12 社会与法',
+                '13': 'CCTV-13 新闻',
+                '14': 'CCTV-14 少儿',
+                '15': 'CCTV-15 音乐',
+                '16': 'CCTV-16 奥林匹克',
+                '17': 'CCTV-17 农业农村',
+                # CCTV 独立频道
+                '4K': 'CCTV-4K 超高清',
+                '8K': 'CCTV-8K 超高清',
+                # CETV 中国教育电视台
+                'CETV1': 'CETV-1 综合教育',
+                'CETV2': 'CETV-2 教学',
+                'CETV3': 'CETV-3 北京',
+                'CETV4': 'CETV-4 职业教育',
+                'CETV早教': 'CETV 早期教育',
             }
         )
 
@@ -250,7 +282,9 @@ def build_m3u(channels: List[Dict]) -> str:
             v = ch.get(k, '')
             if v:
                 parts.append(f'{k.replace("_", "-")}="{v}"')
-        lines.append(f'#EXTINF:-1 {" ".join(parts)},{ch.get("channel_name", "")}')
+        # 归一化频道名为官方完整名
+        display_name = _normalize_channel_name(ch.get('channel_name', ''))
+        lines.append(f'#EXTINF:-1 {" ".join(parts)},{display_name}')
         lines.append(url)
     return '\n'.join(lines)
 
@@ -358,6 +392,48 @@ def get_file_content(filename: str, input_dir: str = None) -> str:
         return ""
 
 
+def _normalize_channel_name(name: str) -> str:
+    """
+    归一化频道名为官方完整名
+
+    规则：
+      - CCTV1 / CCTV-1 / CCTV1综合 → CCTV-1 综合
+      - CCTV-2 (720p) / CCTV2财经 → CCTV-2 财经
+      - CCTV-4K / CCTV-8K → 独立频道名
+      - CETV1 / CETV-1 → CETV-1 综合教育
+      - 其他频道原样返回
+    """
+    if not name:
+        return name
+
+    # 去除质量后缀
+    base = re.sub(r'\s*[\(（].*?[\)）]\s*$', '', name).strip()
+
+    mapping = IPTV_CONFIG.CHANNEL_NAME_MAPPING
+
+    # CCTV-4K / CCTV-8K 独立频道
+    m = re.match(r'^CCTV[-]?(4K|8K)\b', base, re.IGNORECASE)
+    if m:
+        return mapping.get(m.group(1).upper(), base)
+
+    # CETV 频道（CETV1 / CETV-1 / CETV1综合 → 完整名）
+    m = re.match(r'^CETV[-]?(\d+|早教)', base, re.IGNORECASE)
+    if m:
+        key = f'CETV{m.group(1)}'
+        return mapping.get(key, base)
+
+    # CCTV 数字频道（CCTV1 / CCTV-1 / CCTV-2 (720p) / CCTV2财经）
+    m = re.match(r'^CCTV[-]?(\d+)', base, re.IGNORECASE)
+    if m:
+        key = m.group(1)
+        full_name = mapping.get(key)
+        if full_name:
+            # 直接返回 mapping 定义的官方名
+            return full_name
+
+    return base
+
+
 def _quality_score(name: str) -> int:
     """
     提取质量等级（数字越大质量越好）
@@ -405,17 +481,31 @@ def sort_channels(channels: List[Dict]) -> List[Dict]:
 
     def _cctv_num(name: str) -> int:
         """
-        提取 CCTV 后的数字（CCTV1 → 1, CCTV-10 → 10, CCTV11戏曲 → 11）
-
-        注意：CCTV-4K / CCTV-8K 是独立频道（4K/8K 是频道名而非数字），
-        不参与数字排序，独立返回 9000+ 让它们排在 CCTV-17 之后
+        提取频道编号用于排序：
+          - CCTV 1-17 → 1-17
+          - CCTV-4K → 9001, CCTV-8K → 9002 (独立频道，排在 17 之后)
+          - CETV 1-4 → 9100-9104 (教育频道，排在 CCTV-8K 之后)
+          - CETV 早教 → 9105
+          - 其他 → 9999 (兜底)
         """
-        # 4K / 8K 是独立频道，不参与数字排序
-        if re.search(r'CCTV[-]?(4K|8K)\b', name, re.IGNORECASE):
-            # 8K 排在 4K 之后
+        # CCTV-4K / CCTV-8K 独立频道
+        if re.search(r'CCTV[-]?(4K|8K)', name, re.IGNORECASE):
             if re.search(r'8K', name, re.IGNORECASE):
                 return 9002
             return 9001
+
+        # CETV 教育频道
+        m = re.search(r'CETV-?(\d+|早教)', name, re.IGNORECASE)
+        if m:
+            num_str = m.group(1)
+            if num_str == '早教':
+                return 9105
+            try:
+                return 9100 + int(num_str)
+            except ValueError:
+                return 9199
+
+        # CCTV 数字频道
         m = re.search(r'CCTV-?(\d+)', name, re.IGNORECASE)
         return int(m.group(1)) if m else 9999
 
