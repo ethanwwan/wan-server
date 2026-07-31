@@ -435,6 +435,11 @@ def _normalize_channel_name(name: str) -> str:
             # 直接返回 mapping 定义的官方名
             return full_name
 
+    # 卫视 4K 归一：东方卫视4K → 东方卫视（质量评分仍会让 4K 排最前）
+    m = re.match(r'^(.+卫视)4K$', base)
+    if m:
+        return m.group(1)
+
     return base
 
 
