@@ -28,10 +28,11 @@ async def lifespan(app: FastAPI):
     common_api.set_app(app)
 
     # 启动调度器（每个 scheduler 独立线程）
+    # schedule_time 由各 scheduler 内部从配置文件读取（scheduler.cfg['schedule_time']），
+    # 此处不再传 kwargs，避免 run() 收到未知参数
     for sched in (tvbox_scheduler, iptv_scheduler, proxy_scheduler):
         t = threading.Thread(
             target=getattr(sched, 'run', None),
-            kwargs={'schedule_time': '03:00:00'},
             daemon=True,
         )
         t.start()
