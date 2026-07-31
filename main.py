@@ -22,8 +22,18 @@ SERVER_PORT = 8016
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("服务启动，执行 NAS 调度任务...")
+
+    # 注入 FastAPI app 到 common_api（用于动态路由统计）
+    from server.api.common import common_api
+    common_api.set_app(app)
+
+    # 启动调度器（每个 scheduler 独立线程）
     for sched in (tvbox_scheduler, iptv_scheduler, proxy_scheduler):
-        t = threading.Thread(target=sched.run, daemon=True)
+        t = threading.Thread(
+            target=getattr(sched, 'run', None),
+            kwargs={'schedule_time': '03:00:00'},
+            daemon=True,
+        )
         t.start()
     yield
 

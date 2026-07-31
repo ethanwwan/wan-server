@@ -1,14 +1,16 @@
+"""
+TVBox API - 提供 TVBox 配置文件下载
+"""
 import os
 from fastapi import APIRouter
 from fastapi.responses import FileResponse
+
 from ..base.response import not_found_response
+from server.utils.file_resolver import get_output_file
 
 router = APIRouter(prefix="/tvbox", tags=["TVBox"])
 
-TVBOX_FILE = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-    'output', 'tvbox', 'config.json'
-)
+TVBOX_FILE = get_output_file('tvbox', 'config.json')
 
 
 @router.get("/config.json")

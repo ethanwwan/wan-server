@@ -1,75 +1,57 @@
+"""
+IPTV Scheduler - IPTV 订阅同步
+
+每天下载一次 IPTV 播放列表（m3u），原样保存。
+"""
 import os
-import sys
-import json
-import time
-import schedule
 import requests
 
-project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-sys.path.insert(0, project_root)
-
-from logger import get_logger
-
-logger = get_logger('NAS_IPTV')
-
-_raw = json.load(open(os.path.join(project_root, 'server', 'input', 'config.json')))
-_proxies = _raw['proxy_domains']
-_TIMEOUT = _raw['request_timeout']
-cfg = _raw['iptv']
-SOURCE_URL = cfg['source_url']
-OUTPUT_DIR = os.path.join(project_root, 'server', 'output', cfg['output_dir'])
-OUTPUT_FILE = os.path.join(OUTPUT_DIR, cfg['output_file'])
-SCHEDULE_TIME = cfg['schedule_time']
+from server.utils.scheduler_base import SchedulerBase
+from server.utils.text_downloader import fetch_text
 
 
-def _build_url(proxy_idx: int) -> str:
-    return _proxies[proxy_idx] + '/' + SOURCE_URL
+class IptvScheduler(SchedulerBase):
+    name = 'NAS_IPTV'
 
+    def __init__(self):
+        super().__init__()
+        self.cfg = self.config['iptv']
+        self.source_url: str = self.cfg['source_url']
+        self.use_proxy: bool = self.cfg.get('use_proxy', False)
+        self.output_dir: str = self.output_path(self.cfg['output_dir'])
+        self.output_file: str = os.path.join(self.output_dir, self.cfg['output_file'])
 
-def sync() -> bool:
-    if cfg['use_proxy']:
-        attempts = list(range(len(_proxies)))
-    else:
-        attempts = [None]
+    def sync(self) -> bool:
+        if self.use_proxy:
+            attempts = list(range(len(self.proxies)))
+        else:
+            attempts = [None]
 
-    for idx in attempts:
-        url = _build_url(idx) if idx is not None else SOURCE_URL
-        label = f" (代理 {idx + 1}/{len(attempts)})" if cfg['use_proxy'] and idx > 0 else ""
-        try:
-            logger.info(f"正在下载 IPTV 配置{label}...")
-            resp = requests.get(url, timeout=_TIMEOUT)
-            resp.raise_for_status()
-            content = resp.text
+        for idx in attempts:
+            url = self.build_proxied_url(self.source_url, idx) if idx is not None else self.source_url
+            label = f" (代理 {idx + 1}/{len(attempts)})" if self.use_proxy and idx and idx > 0 else ""
 
-            os.makedirs(OUTPUT_DIR, exist_ok=True)
-            with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
-                f.write(content)
+            content = fetch_text(url, timeout=self.timeout)
+            if content is not None:
+                os.makedirs(self.output_dir, exist_ok=True)
+                with open(self.output_file, 'w', encoding='utf-8') as f:
+                    f.write(content)
+                self.logger.info(f"IPTV 配置已同步到 {self.output_file}")
+                return True
 
-            logger.info(f"IPTV 配置已同步到 {OUTPUT_FILE}")
-            return True
-        except requests.exceptions.HTTPError as e:
-            # 404 等状态码错误：源文件不存在，所有代理结果一致，无需继续切换
-            status = e.response.status_code if e.response is not None else 'N/A'
-            logger.error(
-                f"同步失败{label}: HTTP {status} - {url} | "
-                f"源文件不存在，跳过剩余代理"
-            )
-            return False
-        except Exception as e:
+            # 失败处理
             is_last = idx == attempts[-1]
-            logger.warning(f"同步失败{label}: {e} | 切换代理..." if not is_last else f"同步失败{label}: {e}")
             if is_last:
-                logger.error("IPTV 配置同步失败 (已用完全部代理)")
+                self.logger.error("IPTV 配置同步失败 (已用完全部代理)")
                 return False
+            self.logger.warning(f"同步失败{label}，切换代理...")
+
+        return False
 
 
 def run():
-    sync()
-    schedule.every().day.at(SCHEDULE_TIME).do(sync)
-
-    while True:
-        schedule.run_pending()
-        time.sleep(30)
+    scheduler = IptvScheduler()
+    scheduler.run(scheduler.cfg['schedule_time'])
 
 
 if __name__ == "__main__":

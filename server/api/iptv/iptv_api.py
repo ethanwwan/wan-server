@@ -1,11 +1,16 @@
+"""
+IPTV API - 提供 IPTV 配置文件下载
+"""
 import os
 from fastapi import APIRouter
 from fastapi.responses import PlainTextResponse
+
 from ..base.response import not_found_response
+from server.utils.file_resolver import get_output_path
 
 router = APIRouter(prefix="/iptv", tags=["IPTV"])
 
-IPTV_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'output', 'iptv')
+IPTV_DIR = get_output_path('iptv')
 
 
 @router.get("/playlist.m3u", response_class=PlainTextResponse)
@@ -36,7 +41,7 @@ async def get_iptv_file(file_name: str):
         return PlainTextResponse(
             content=content,
             media_type="text/x-mpegURL",
-            headers={"Content-Disposition": 'inline; filename="' + file_name + '"'}
+            headers={"Content-Disposition": f'inline; filename="{file_name}"'}
         )
     except Exception as e:
         return not_found_response(msg=f"读取 IPTV 文件 {file_name} 失败：{str(e)}")
