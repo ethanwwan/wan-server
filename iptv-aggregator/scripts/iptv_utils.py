@@ -359,13 +359,48 @@ def get_file_content(filename: str, input_dir: str = None) -> str:
 
 
 def sort_channels(channels: List[Dict]) -> List[Dict]:
+    """
+    频道排序规则：
+      1. 分组按 GROUP_ORDER 顺序
+      2. 央视频道：按数字顺序（CCTV1, CCTV2, ..., CCTV11, CCTV12, ...）
+      3. 卫视频道：优先排列 浙江卫视 > 湖南卫视 > 江苏卫视/苏州4K，其余按首字母
+      4. 其他分组：按频道名首字母顺序
+    """
     group_order = ['央视频道', '卫视频道', '地方频道', '电影电视', '体育赛事',
                    '少儿教育', '综艺娱乐', '纪录纪实', '国际全球', '港澳台',
                    '咪视界', 'NewTV', 'iHOT', 'iPanda', '其他']
+
+    # 卫视优先级（数字越小越靠前）
+    satellite_priority = {
+        '浙江卫视': 1,
+        '湖南卫视': 2,
+        '江苏卫视': 3,
+        '苏州4K': 4,
+    }
+
+    def _cctv_num(name: str) -> int:
+        """提取 CCTV 后的数字（CCTV1 → 1, CCTV-10 → 10, CCTV11戏曲 → 11）"""
+        m = re.search(r'CCTV-?(\d+)', name, re.IGNORECASE)
+        return int(m.group(1)) if m else 9999
+
     def sort_key(ch):
         group = ch.get('group_title', '其他')
+        name = ch.get('channel_name', '')
         try:
-            return (group_order.index(group), ch.get('channel_name', ''))
+            g_idx = group_order.index(group)
         except ValueError:
-            return (len(group_order), ch.get('channel_name', ''))
+            g_idx = len(group_order)
+
+        # 央视频道：按 CCTV 数字排序
+        if group == '央视频道':
+            return (g_idx, 0, _cctv_num(name), name)
+
+        # 卫视频道：优先频道置顶，其余按首字母
+        if group == '卫视频道':
+            priority = satellite_priority.get(name, 9999)
+            return (g_idx, priority, 0, name)
+
+        # 其他分组：按首字母
+        return (g_idx, 0, 0, name)
+
     return sorted(channels, key=sort_key)
