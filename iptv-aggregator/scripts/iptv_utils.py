@@ -404,7 +404,18 @@ def sort_channels(channels: List[Dict]) -> List[Dict]:
     }
 
     def _cctv_num(name: str) -> int:
-        """提取 CCTV 后的数字（CCTV1 → 1, CCTV-10 → 10, CCTV11戏曲 → 11）"""
+        """
+        提取 CCTV 后的数字（CCTV1 → 1, CCTV-10 → 10, CCTV11戏曲 → 11）
+
+        注意：CCTV-4K / CCTV-8K 是独立频道（4K/8K 是频道名而非数字），
+        不参与数字排序，独立返回 9000+ 让它们排在 CCTV-17 之后
+        """
+        # 4K / 8K 是独立频道，不参与数字排序
+        if re.search(r'CCTV[-]?(4K|8K)\b', name, re.IGNORECASE):
+            # 8K 排在 4K 之后
+            if re.search(r'8K', name, re.IGNORECASE):
+                return 9002
+            return 9001
         m = re.search(r'CCTV-?(\d+)', name, re.IGNORECASE)
         return int(m.group(1)) if m else 9999
 
