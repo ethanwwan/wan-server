@@ -408,9 +408,15 @@ def sort_channels(channels: List[Dict]) -> List[Dict]:
         m = re.search(r'CCTV-?(\d+)', name, re.IGNORECASE)
         return int(m.group(1)) if m else 9999
 
-    def _normalize_satellite_name(name: str) -> str:
-        """去掉质量后缀得到基础名：'湖南卫视 (4K)' → '湖南卫视'"""
+    def _strip_quality_suffix(name: str) -> str:
+        """去掉质量后缀：(720p), (1080p), (4K) 等"""
         return re.sub(r'\s*[\(（].*?[\)）]\s*$', '', name).strip()
+
+    def _normalize_name(name: str) -> str:
+        """归一化频道名（去质量后缀 + 去掉 CCTV 后的横杠 + 去掉 4K/8K 后的 4K/8K 标识）"""
+        n = _strip_quality_suffix(name)
+        n = re.sub(r'CCTV-', 'CCTV', n, flags=re.IGNORECASE)
+        return n
 
     def sort_key(ch):
         group = ch.get('group_title', '其他')
@@ -424,15 +430,15 @@ def sort_channels(channels: List[Dict]) -> List[Dict]:
 
         # 央视频道：按 CCTV 数字排序（同频道多源按质量降序）
         if group == '央视频道':
-            return (g_idx, _cctv_num(name), -quality, name)
+            return (g_idx, _cctv_num(name), -quality, _normalize_name(name), name)
 
         # 卫视频道：优先频道置顶（按归一化名匹配），同频道多源按质量降序
         if group == '卫视频道':
-            base_name = _normalize_satellite_name(name)
+            base_name = _strip_quality_suffix(name)
             priority = satellite_priority.get(base_name, 9999)
-            return (g_idx, priority, -quality, name)
+            return (g_idx, priority, -quality, base_name, name)
 
         # 其他分组：按首字母 + 质量降序
-        return (g_idx, 0, -quality, name)
+        return (g_idx, 0, -quality, _normalize_name(name), name)
 
     return sorted(channels, key=sort_key)
