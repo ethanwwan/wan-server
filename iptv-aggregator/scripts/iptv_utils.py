@@ -13,8 +13,8 @@ logger = logging.getLogger("IPTV_UTILS")
 
 @dataclass(frozen=True)
 class IPTVConfig:
-    DEFAULT_WORKERS: int = 30
-    MAX_WORKERS: int = 100
+    DEFAULT_WORKERS: int = 20
+    MAX_WORKERS: int = 50
     BATCH_SIZE: int = 300
     HTTP_TIMEOUT: int = 8
     FFMPEG_TIMEOUT: int = 15
@@ -531,7 +531,8 @@ def sort_channels(channels: List[Dict]) -> List[Dict]:
 
         # 央视频道：按 CCTV 数字排序（同频道多源按质量降序）
         if group == '央视频道':
-            return (g_idx, _cctv_num(name), -quality, _normalize_name(name), name)
+            # 用归一化名作为 tiebreaker，让 CCTV3 / CCTV-3 综艺 在同 num 内排连续
+            return (g_idx, _cctv_num(name), -quality, _normalize_channel_name(name), name)
 
         # 卫视频道：优先频道置顶（按归一化名匹配），同频道多源按质量降序
         if group == '卫视频道':
