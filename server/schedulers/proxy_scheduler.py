@@ -17,11 +17,15 @@ Proxy Scheduler - 代理配置同步器（编排层）
   - constants: 常量与配置加载
 """
 import os
+import sys
 import time
 import json
 import yaml
 import schedule
 from typing import Dict, Optional
+
+# 确保项目根目录在 sys.path（让 logger 模块可被 import）
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from logger import get_logger
 
