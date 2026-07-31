@@ -46,9 +46,9 @@ class IPTVConfig:
                 'iPanda': ['ipanda']
             },
             CHANNEL_MAPPING={
-                '央视频道': ['CCTV', 'CGTN'],
-                '卫视频道': ['湖南卫视', '江苏卫视', '浙江卫视', '东方卫视', '北京卫视', '广东卫视', '安徽卫视', '山东卫视', '河南卫视', '河北卫视', '湖北卫视', '四川卫视', '重庆卫视', '天津卫视', '江西卫视', '云南卫视', '贵州卫视', '广西卫视', '苏州4K'],
-                '地方频道': ['重庆', '天津', '山东', '山西', '陕西', '福建', '安徽', '贵州', '云南', '广西', '海南', '黑龙江', '吉林', '辽宁', '内蒙古', '宁夏', '新疆', '青海', '甘肃', '西藏', '地方', '广州', '佛山', '江门', '汕头', '深圳', '珠海', '东莞', '中山', '惠州', '肇庆', '清远', '韶关', '河源', '梅州', '汕尾', '揭阳', '阳江', '茂名', '湛江', '潮州', '云浮', '南宁', '南京', '宁波', '杭州', '余杭', '上虞', '湖州', '松阳', '庆元', '民视', '余姚', '开化', '南国', '邢台', '绍兴', '嵊州', '新昌', '福州', '萧山', '钱江', '财经', '新闻综合'],
+                '央视频道': ['CCTV', 'CGTN', 'CETV'],
+                '卫视频道': ['湖南卫视', '江苏卫视', '浙江卫视', '东方卫视', '北京卫视', '广东卫视', '安徽卫视', '山东卫视', '河南卫视', '河北卫视', '湖北卫视', '四川卫视', '重庆卫视', '天津卫视', '江西卫视', '云南卫视', '贵州卫视', '广西卫视'],
+                '地方频道': ['重庆', '天津', '山东', '山西', '陕西', '福建', '安徽', '贵州', '云南', '广西', '海南', '黑龙江', '吉林', '辽宁', '内蒙古', '宁夏', '新疆', '青海', '甘肃', '西藏', '地方', '广州', '佛山', '江门', '汕头', '深圳', '珠海', '东莞', '中山', '惠州', '肇庆', '清远', '韶关', '河源', '梅州', '汕尾', '揭阳', '阳江', '茂名', '湛江', '潮州', '云浮', '南宁', '南京', '宁波', '杭州', '余杭', '上虞', '湖州', '松阳', '庆元', '民视', '余姚', '开化', '南国', '邢台', '绍兴', '嵊州', '新昌', '福州', '萧山', '钱江', '财经', '新闻综合', '苏州'],
                 '电影电视': ['电影'],
                 '体育赛事': ['体育', '足球'],
                 '少儿教育': ['少儿', '动画', '卡通', '动漫'],
@@ -313,16 +313,20 @@ def classify_channels(channels: List[Dict], keep_unmatched: bool = False) -> Lis
     for ch in channels:
         name = ch.get('channel_name', '').upper()
         group_title = ch.get('group_title', '').upper()
-        new_group = '其他'
-        for group, keywords in IPTV_CONFIG.GROUP_MAPPING.items():
-            if any(kw.upper() in group_title for kw in keywords):
+        # 优先用 CHANNEL_MAPPING（频道名匹配更精确，例如 CETV、苏州4K）
+        new_group = None
+        for group, keywords in IPTV_CONFIG.CHANNEL_MAPPING.items():
+            if any(kw.upper() in name for kw in keywords):
                 new_group = group
                 break
-        if new_group == '其他':
-            for group, keywords in IPTV_CONFIG.CHANNEL_MAPPING.items():
-                if any(kw.upper() in name for kw in keywords):
+        # 兜底用 GROUP_MAPPING（按 group_title 匹配）
+        if new_group is None:
+            for group, keywords in IPTV_CONFIG.GROUP_MAPPING.items():
+                if any(kw.upper() in group_title for kw in keywords):
                     new_group = group
                     break
+        if new_group is None:
+            new_group = '其他'
         ch['group_title'] = new_group
         if new_group != '其他' or keep_unmatched:
             result.append(ch)
