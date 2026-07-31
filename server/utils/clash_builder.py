@@ -11,7 +11,7 @@ from typing import Dict, List, Optional
 
 from .constants import (
     MAX_WORKERS, SPECIAL_EXACT_DOMAINS,
-    LOYALSOLDIER_RULES, LOYALSOLDIER_BASE, BLACKMATRIX7_GLOBAL,
+    LOYALSOLDIER_RULES, LOYALSOLDIER_BASE,
 )
 from .dns_resolver import resolve
 from .geo_locator import get_ip_country, infer_from_server
@@ -111,15 +111,10 @@ def _build_rule_providers(proxies: List[str]) -> dict:
     }
     providers = {}
     for key, (filename, behavior) in LOYALSOLDIER_RULES.items():
-        # global 用 blackmatrix7 的源
-        if key == 'global':
-            url = BLACKMATRIX7_GLOBAL
-        else:
-            url = LOYALSOLDIER_BASE + filename
         providers[key] = {
             **rule_provider_common,
             'behavior': behavior,
-            'url': url,
+            'url': LOYALSOLDIER_BASE + filename,
             'path': f'./ruleset/{key}.yaml',
         }
     return providers
@@ -149,7 +144,6 @@ def _build_prepend_rules(proxy_group_name: Optional[str]) -> List[str]:
         f"RULE-SET,google,{g}",
         f"RULE-SET,proxy,{g}",
         f"RULE-SET,gfw,{g}",
-        f"RULE-SET,global,{g}",
         f"RULE-SET,telegramcidr,{g},no-resolve",
         f"RULE-SET,tld-not-cn,{g}",
         "RULE-SET,private,DIRECT",

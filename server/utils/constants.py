@@ -99,10 +99,6 @@ LOYALSOLDIER_RULES: dict = {
 }
 
 LOYALSOLDIER_BASE = 'https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/'
-BLACKMATRIX7_GLOBAL = (
-    'https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@release/'
-    'rule/Clash/Global/Global_Domain_For_Clash.txt'
-)
 
 
 # ============================================================
